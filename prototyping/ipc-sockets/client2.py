@@ -6,10 +6,8 @@
              information can be communicated via Linux sockets in Python.
 """
 
-import os
+from prototype_globals import SOCKET_PATH
 from unix_socket_client import UnixSocketClient
-
-SOCKET_PATH = os.path.join('tmp', 'prototype-socket.sock')
 
 
 def main():

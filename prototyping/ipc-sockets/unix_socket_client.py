@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-    file: unix-socket-client.py
+    file: unix_socket_client.py
     author: Shane Snover
     purpose: A wrapper for the Python API to the Unix socket for clients.
 """
