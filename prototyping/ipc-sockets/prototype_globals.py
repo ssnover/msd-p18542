@@ -6,6 +6,4 @@
              place.
 """
 
-import os
-
-SOCKET_PATH = os.path.join("tmp", "prototyping-socket.sock")
+SOCKET_PATH = "prototyping-socket.sock"

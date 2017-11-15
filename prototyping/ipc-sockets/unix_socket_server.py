@@ -18,7 +18,9 @@ class UnixSocketServer:
         self.socket_path = socket_path
         if os.path.exists(socket_path):
             os.remove(socket_path)
+        # open(socket_path, 'a').close()
         self.server = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
+        self.server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     def bind(self):
         self.server.bind(self.socket_path)
