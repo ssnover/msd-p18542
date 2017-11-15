@@ -16,6 +16,7 @@ def wireless_send(byte_to_send):
     character.
     :return: Success or failure.
     """
+
     message_ack_status = False
 
     return message_ack_status
@@ -24,9 +25,10 @@ def wireless_send(byte_to_send):
 def getopts(argument_list):
     """
     Parses command line arguments from argv.
-    :param argv: The command line input from the terminal, separated as a list.
+    :param argument_list: The command line input from the terminal, separated as a list.
     :return: Dictionary of argument name to value.
     """
+
     opts = {}
     while argument_list:
         if argument_list[0][0] == '-':
@@ -40,6 +42,7 @@ def main():
     Entry point of the application.
     :return: None.
     """
+
     my_arguments = getopts(argv)
     # open the serial port
     print(my_arguments)
