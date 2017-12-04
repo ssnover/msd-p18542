@@ -8,12 +8,19 @@
 """
 
 
+import os
+from picamera import PiCamera
+
+
 def main():
     """
     The entry point of the application.
     :return: None
     """
-    pass
+    my_camera = PiCamera()
+    image_path = os.path.join(os.sep, 'home', 'pi', 'asar', 'images', 'prototyping-image.jpg')
+
+    my_camera.capture(image_path)
 
 
 if __name__ == "__main__":
