@@ -14,6 +14,7 @@ void setup()
 {
   Serial.begin(9600);
   pinMode(2, OUTPUT);
+  DDRB = 0x3F;
 }
 
 
@@ -24,6 +25,7 @@ void loop()
     volatile uint8_t receivedByte = Serial.read();
     Serial.write(MESSAGE_ACK);
     PORTD ^= (1 << 2);
+    PORTB = receivedByte & 0x3F;
   }
   
 }

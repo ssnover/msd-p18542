@@ -24,6 +24,8 @@ def wireless_send(byte_to_send):
     message_ack_status = False
 
     raw_byte = bytearray.fromhex(byte_to_send.lstrip('0x'))
+    if raw_byte == b'':
+        raw_byte = b'\x00'
     my_serial_device.write(raw_byte)
 
     try:
@@ -31,6 +33,8 @@ def wireless_send(byte_to_send):
             message_ack_status = (my_serial_device.read(1) == MESSAGE_ACK)
     except KeyboardInterrupt:
         print("\rUser ended program.")
+
+    my_serial_device.close()
 
     return message_ack_status
 
