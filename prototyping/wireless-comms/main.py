@@ -2,11 +2,14 @@
 """
     file: main.py
     author: Shane Snover
-    purpose: Initializes the application and listens for packets.
+    purpose: Initializes the application and checks arguments for a byte to send.
 """
 
 from sys import argv
 import serial
+
+DEVICE_FILEPATH = "/dev/ttyACM0"
+my_serial_device = serial.Serial(DEVICE_FILEPATH, 9600, timeout=0)
 
 
 def wireless_send(byte_to_send):
@@ -17,7 +20,17 @@ def wireless_send(byte_to_send):
     :return: Success or failure.
     """
 
+    MESSAGE_ACK = b'\xaa'
     message_ack_status = False
+
+    raw_byte = bytearray.fromhex(byte_to_send.lstrip('0x'))
+    my_serial_device.write(raw_byte)
+
+    try:
+        while not message_ack_status:
+            message_ack_status = (my_serial_device.read(1) == MESSAGE_ACK)
+    except KeyboardInterrupt:
+        print("\rUser ended program.")
 
     return message_ack_status
 
