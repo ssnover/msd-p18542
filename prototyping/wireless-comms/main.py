@@ -8,18 +8,19 @@
 from sys import argv
 import serial
 
+PI_SERIAL_PATH = "/dev/ttyAMA0"
 DEVICE_FILEPATH = "/dev/ttyACM0"
-my_serial_device = serial.Serial(DEVICE_FILEPATH, 9600, timeout=0)
 
 
-def wireless_send(byte_to_send):
+def wireless_send(byte_to_send, port):
     """
     Sends a byte over serial.
     :param byte_to_send: A byte as a string '0xNN'. Where N are two hexadecimal
     character.
+    :param port: The filepath for the serial port connection.
     :return: Success or failure.
     """
-
+    my_serial_device = serial.Serial(port, 9600, timeout=0)
     MESSAGE_ACK = b'\xaa'
     message_ack_status = False
 
@@ -63,7 +64,10 @@ def main():
     my_arguments = getopts(argv)
     # open the serial port
     print(my_arguments)
-    send_status = wireless_send(my_arguments['b'])
+    port = DEVICE_FILEPATH
+    if 'p' in my_arguments and my_arguments['p'] == 'pi':
+        port = PI_SERIAL_PATH
+    send_status = wireless_send(my_arguments['b'], port)
     print("Message Status: ", end='')
     print(send_status)
     return
