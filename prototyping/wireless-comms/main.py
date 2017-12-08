@@ -8,11 +8,11 @@
 from sys import argv
 import serial
 
-PI_SERIAL_PATH = "/dev/ttyAMA0"
-DEVICE_FILEPATH = "/dev/ttyACM0"
+PI_SERIAL_PATH = "/dev/serial0"
+LAPTOP_FILEPATH = "/dev/ttyACM0"
 
 
-def wireless_send(byte_to_send, port):
+def wireless_send(byte_to_send, port='/dev/ttyACM0'):
     """
     Sends a byte over serial.
     :param byte_to_send: A byte as a string '0xNN'. Where N are two hexadecimal
