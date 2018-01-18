@@ -11,7 +11,7 @@
 #include <stdint.h>
 
 
-namespace asar
+namespace ASAR
 {
 class WHEEL_ENCODER
 {
@@ -48,6 +48,6 @@ private:
     void incrementChannelBCount();
 };
 
-} // namespace asar
+} // namespace ASAR
 
 #endif // WHEEL_ENCODER_H
