@@ -6,8 +6,12 @@
  *  2. Motor Movement
  *  
  */
+
+ #include "MOTOR.h"
+
+ ASAR::MOTOR myMOTOR;
  
-const int led = 13;
+/*const int led = 13;
 const int delaytime = 100;
 
 const int enablepin_right = 8;
@@ -103,12 +107,28 @@ void readEncoders()
   Serial.print("B2: "); Serial.println(b2Val); 
 
   delay(500);
-
-  
-
-  
-
-  
-
 }
+
+  
+*/
+void setup()
+{
+  
+}
+void loop()
+{
+  myMOTOR.Forward(5);
+  delay(2000);
+  myMOTOR.Stop();
+  delay(1000);
+  myMOTOR.Forward(1);
+  delay(2000);
+  myMOTOR.Stop();
+  delay(1000);
+}
+
+
+  
+
+  
 
