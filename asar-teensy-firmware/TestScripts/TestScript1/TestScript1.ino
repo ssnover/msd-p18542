@@ -125,6 +125,14 @@ void loop()
   delay(2000);
   myMOTOR.Stop();
   delay(1000);
+  myMOTOR.RightTurn(3);
+  delay(2000);
+  myMOTOR.Stop();
+  delay(500);
+  myMOTOR.LeftTurn(3);
+  delay(2000);
+  myMOTOR.Stop();
+  delay(1000);
 }
 
 
