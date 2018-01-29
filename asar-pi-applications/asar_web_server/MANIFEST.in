@@ -1,0 +1,3 @@
+graft asar_web_server/templates
+graft asar_web_server/static
+include asar_web_server/schema.sql
