@@ -38,10 +38,10 @@ EELAYER END
 $Descr A 11000 8500
 encoding utf-8
 Sheet 1 1
-Title "Robot PCB Schematic"
-Date "2018-01-01"
-Rev "3"
-Comp "MSD P18542"
+Title "ASAR ROBOT PCB INTERFACE PCB "
+Date "2018-02-07"
+Rev "4"
+Comp "Real Time Terrain Mapping | P18542"
 Comment1 ""
 Comment2 ""
 Comment3 ""
@@ -110,16 +110,16 @@ $EndComp
 $Comp
 L SW_SPST SW1
 U 1 1 5A49AC00
-P 2200 1650
-F 0 "SW1" H 2200 1775 50  0000 C CNN
-F 1 "SW_SPST" H 2200 1550 50  0000 C CNN
-F 2 "footprints:WireConnection_1.20mmDrill" H 2200 1650 50  0001 C CNN
-F 3 "" H 2200 1650 50  0001 C CNN
-F 4 "100SP1T1B1M1QEH" H 2200 1650 60  0001 C CNN "P/N"
-F 5 "E-Switch" H 2200 1650 60  0001 C CNN "MFG"
-F 6 "SWITCH TOGGLE SPDT 5A 120V" H 2200 1650 60  0001 C CNN "Description"
-F 7 "2.11" H 2200 1650 60  0001 C CNN "Cost"
-	1    2200 1650
+P 2150 1150
+F 0 "SW1" H 2150 1275 50  0000 C CNN
+F 1 "SW_SPST" H 2150 1050 50  0000 C CNN
+F 2 "footprints:WireConnection_1.20mmDrill" H 2150 1150 50  0001 C CNN
+F 3 "" H 2150 1150 50  0001 C CNN
+F 4 "100SP1T1B1M1QEH" H 2150 1150 60  0001 C CNN "P/N"
+F 5 "E-Switch" H 2150 1150 60  0001 C CNN "MFG"
+F 6 "SWITCH TOGGLE SPDT 5A 120V" H 2150 1150 60  0001 C CNN "Description"
+F 7 "2.11" H 2150 1150 60  0001 C CNN "Cost"
+	1    2150 1150
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -210,7 +210,7 @@ F 5 "Littlefuse Inc." V 4600 6450 60  0001 C CNN "MFG"
 F 6 "PTC RESET FUSE 16V 2A RADIAL" V 4600 6450 60  0001 C CNN "Description"
 F 7 ".60" V 4600 6450 60  0001 C CNN "Cost"
 	1    4600 6450
-	0    1    1    0   
+	0    -1   -1   0   
 $EndComp
 $Comp
 L CON2_DC-MOTOR J7
@@ -491,13 +491,13 @@ XBEE_Rx
 Text Label 2150 3800 0    60   ~ 0
 XBEE_RESET
 Text Label 2150 3900 0    60   ~ 0
-PWM_LeftA
-Text Label 2150 4000 0    60   ~ 0
 PWM_LeftB
+Text Label 2150 4000 0    60   ~ 0
+PWM_RightB
 Text Label 2150 4100 0    60   ~ 0
 PWM_RightA
 Text Label 2150 4200 0    60   ~ 0
-PWM_RightB
+PWM_LeftA
 Text Label 2150 4300 0    60   ~ 0
 EnableLeft
 Text Label 2150 4400 0    60   ~ 0
@@ -539,26 +539,548 @@ F 3 "" H 4450 3500 50  0001 C CNN
 	1    4450 3500
 	1    0    0    -1  
 $EndComp
-Text Label 3950 4000 0    60   ~ 0
-Encoder_OUTA1
-Text Label 3950 4100 0    60   ~ 0
-Encoder_OUTB1
-Text Label 3950 4200 0    60   ~ 0
-Encoder_OUTA2
-Text Label 3950 4300 0    60   ~ 0
-Encoder_OUTB2
-Text Label 3950 4400 0    60   ~ 0
-FlameDigital
 Text Label 3950 4500 0    60   ~ 0
-FlameAnalog
+Encoder_OUTA1
+Text Label 3950 4400 0    60   ~ 0
+Encoder_OUTB1
 Text Label 3950 4600 0    60   ~ 0
-PingTrig
+Encoder_OUTA2
 Text Label 3950 4700 0    60   ~ 0
+Encoder_OUTB2
+Text Label 3950 4000 0    60   ~ 0
+FlameDigital
+Text Label 3950 4100 0    60   ~ 0
+FlameAnalog
+Text Label 3950 4200 0    60   ~ 0
+PingTrig
+Text Label 3950 4300 0    60   ~ 0
 PingEcho
 Text Label 3950 4800 0    60   ~ 0
 Debug
 Text Label 6800 1400 0    60   ~ 0
 Debug
+Text Label 2100 6450 0    60   ~ 0
+MOT1p
+Text Label 2100 6750 0    60   ~ 0
+MOT1n
+$Comp
+L Earth #PWR011
+U 1 1 5A4ABCE4
+P 2900 6600
+F 0 "#PWR011" H 2900 6350 50  0001 C CNN
+F 1 "Earth" H 2900 6450 50  0001 C CNN
+F 2 "" H 2900 6600 50  0001 C CNN
+F 3 "" H 2900 6600 50  0001 C CNN
+	1    2900 6600
+	1    0    0    -1  
+$EndComp
+Text Label 2550 6250 0    60   ~ 0
+EnableLeft
+Text Label 2550 6350 0    60   ~ 0
+PWM_LeftA
+Text Label 2500 6850 0    60   ~ 0
+PWM_LeftB
+$Comp
+L +BATT #PWR012
+U 1 1 5A4ACF4B
+P 2650 7100
+F 0 "#PWR012" H 2650 6950 50  0001 C CNN
+F 1 "+BATT" H 2650 7240 50  0000 C CNN
+F 2 "" H 2650 7100 50  0001 C CNN
+F 3 "" H 2650 7100 50  0001 C CNN
+	1    2650 7100
+	1    0    0    -1  
+$EndComp
+$Comp
+L +5V #PWR013
+U 1 1 5A4AD9D0
+P 4350 6150
+F 0 "#PWR013" H 4350 6000 50  0001 C CNN
+F 1 "+5V" H 4350 6290 50  0000 C CNN
+F 2 "" H 4350 6150 50  0001 C CNN
+F 3 "" H 4350 6150 50  0001 C CNN
+	1    4350 6150
+	1    0    0    -1  
+$EndComp
+Text Label 4100 6350 0    60   ~ 0
+PWM_RightA
+Text Label 4750 6450 0    60   ~ 0
+MOT2p
+Text Label 4800 6750 0    60   ~ 0
+MOT2n
+$Comp
+L Earth #PWR014
+U 1 1 5A4ADEBB
+P 4400 6600
+F 0 "#PWR014" H 4400 6350 50  0001 C CNN
+F 1 "Earth" H 4400 6450 50  0001 C CNN
+F 2 "" H 4400 6600 50  0001 C CNN
+F 3 "" H 4400 6600 50  0001 C CNN
+	1    4400 6600
+	1    0    0    -1  
+$EndComp
+Text Label 4100 6850 0    60   ~ 0
+PWM_RightB
+Text Label 4100 6950 0    60   ~ 0
+EnableRight
+Text Label 6700 3500 0    60   ~ 0
+PiezoSpeak
+Text Label 6750 4400 0    60   ~ 0
+ServoSignal
+$Comp
+L +5V #PWR015
+U 1 1 5A4AF19E
+P 6600 4450
+F 0 "#PWR015" H 6600 4300 50  0001 C CNN
+F 1 "+5V" H 6600 4590 50  0000 C CNN
+F 2 "" H 6600 4450 50  0001 C CNN
+F 3 "" H 6600 4450 50  0001 C CNN
+	1    6600 4450
+	1    0    0    -1  
+$EndComp
+$Comp
+L Earth #PWR016
+U 1 1 5A4AF2D5
+P 6900 4750
+F 0 "#PWR016" H 6900 4500 50  0001 C CNN
+F 1 "Earth" H 6900 4600 50  0001 C CNN
+F 2 "" H 6900 4750 50  0001 C CNN
+F 3 "" H 6900 4750 50  0001 C CNN
+	1    6900 4750
+	1    0    0    -1  
+$EndComp
+$Comp
+L +5V #PWR017
+U 1 1 5A4AF495
+P 7000 5450
+F 0 "#PWR017" H 7000 5300 50  0001 C CNN
+F 1 "+5V" H 7000 5590 50  0000 C CNN
+F 2 "" H 7000 5450 50  0001 C CNN
+F 3 "" H 7000 5450 50  0001 C CNN
+	1    7000 5450
+	1    0    0    -1  
+$EndComp
+$Comp
+L Earth #PWR018
+U 1 1 5A4AF59A
+P 6800 5500
+F 0 "#PWR018" H 6800 5250 50  0001 C CNN
+F 1 "Earth" H 6800 5350 50  0001 C CNN
+F 2 "" H 6800 5500 50  0001 C CNN
+F 3 "" H 6800 5500 50  0001 C CNN
+	1    6800 5500
+	1    0    0    -1  
+$EndComp
+Text Label 6850 5700 0    60   ~ 0
+XBEE_Tx
+Text Label 6850 5800 0    60   ~ 0
+XBEE_Rx
+Text Label 6700 5900 0    60   ~ 0
+XBEE_RESET
+$Comp
+L +5V #PWR019
+U 1 1 5A4AFC4E
+P 9100 1400
+F 0 "#PWR019" H 9100 1250 50  0001 C CNN
+F 1 "+5V" H 9100 1540 50  0000 C CNN
+F 2 "" H 9100 1400 50  0001 C CNN
+F 3 "" H 9100 1400 50  0001 C CNN
+	1    9100 1400
+	1    0    0    -1  
+$EndComp
+Text Label 8950 1550 0    60   ~ 0
+PingTrig
+Text Label 8950 1650 0    60   ~ 0
+PingEcho
+$Comp
+L Earth #PWR020
+U 1 1 5A4AFF57
+P 9050 1800
+F 0 "#PWR020" H 9050 1550 50  0001 C CNN
+F 1 "Earth" H 9050 1650 50  0001 C CNN
+F 2 "" H 9050 1800 50  0001 C CNN
+F 3 "" H 9050 1800 50  0001 C CNN
+	1    9050 1800
+	1    0    0    -1  
+$EndComp
+Text Label 8800 2900 0    60   ~ 0
+FlameDigital
+Text Label 8800 3200 0    60   ~ 0
+FlameAnalog
+$Comp
+L Earth #PWR021
+U 1 1 5A4B0545
+P 8650 3150
+F 0 "#PWR021" H 8650 2900 50  0001 C CNN
+F 1 "Earth" H 8650 3000 50  0001 C CNN
+F 2 "" H 8650 3150 50  0001 C CNN
+F 3 "" H 8650 3150 50  0001 C CNN
+	1    8650 3150
+	1    0    0    -1  
+$EndComp
+$Comp
+L +5V #PWR022
+U 1 1 5A4B058F
+P 8650 2900
+F 0 "#PWR022" H 8650 2750 50  0001 C CNN
+F 1 "+5V" H 8650 3040 50  0000 C CNN
+F 2 "" H 8650 2900 50  0001 C CNN
+F 3 "" H 8650 2900 50  0001 C CNN
+	1    8650 2900
+	1    0    0    -1  
+$EndComp
+$Comp
+L CON6_M-Encoder J5
+U 1 1 5A4B0B23
+P 9250 4700
+F 0 "J5" H 8850 5500 60  0000 C CNN
+F 1 "CON6_M-Encoder" H 8900 4600 60  0000 C CNN
+F 2 "footprints:5-103634-5" H 8900 4600 60  0001 C CNN
+F 3 "" H 8900 4600 60  0001 C CNN
+F 4 "5-103634-5" H 9250 4700 60  0001 C CNN "P/N"
+F 5 "TE Connectivity" H 9250 4700 60  0001 C CNN "MFG"
+F 6 "CONN HEADER RTANG 6POS PCB TIN" H 9250 4700 60  0001 C CNN "Description"
+F 7 "1.40" H 9250 4700 60  0001 C CNN "Cost"
+	1    9250 4700
+	-1   0    0    -1  
+$EndComp
+$Comp
+L CON6_M-Encoder J6
+U 1 1 5A4B0BAE
+P 9250 6000
+F 0 "J6" H 8850 6800 60  0000 C CNN
+F 1 "CON6_M-Encoder" H 8900 5900 60  0000 C CNN
+F 2 "footprints:5-103634-5" H 8900 5900 60  0001 C CNN
+F 3 "" H 8900 5900 60  0001 C CNN
+F 4 "5-103634-5" H 9250 6000 60  0001 C CNN "P/N"
+F 5 "TE Connectivity" H 9250 6000 60  0001 C CNN "MFG"
+F 6 "CONN HEADER RTANG 6POS PCB TIN" H 9250 6000 60  0001 C CNN "Description"
+F 7 "1.40" H 9250 6000 60  0001 C CNN "Cost"
+	1    9250 6000
+	-1   0    0    -1  
+$EndComp
+Text Label 8950 4100 0    60   ~ 0
+MOT2p
+Text Label 8950 4200 0    60   ~ 0
+MOT2n
+Text Label 8600 4500 0    60   ~ 0
+Encoder_OUTA1
+Text Label 8600 4600 0    60   ~ 0
+Encoder_OUTB1
+$Comp
+L Earth #PWR023
+U 1 1 5A4B139B
+P 8750 4250
+F 0 "#PWR023" H 8750 4000 50  0001 C CNN
+F 1 "Earth" H 8750 4100 50  0001 C CNN
+F 2 "" H 8750 4250 50  0001 C CNN
+F 3 "" H 8750 4250 50  0001 C CNN
+	1    8750 4250
+	1    0    0    -1  
+$EndComp
+$Comp
+L +5V #PWR024
+U 1 1 5A4B1485
+P 8550 4300
+F 0 "#PWR024" H 8550 4150 50  0001 C CNN
+F 1 "+5V" H 8550 4440 50  0000 C CNN
+F 2 "" H 8550 4300 50  0001 C CNN
+F 3 "" H 8550 4300 50  0001 C CNN
+	1    8550 4300
+	1    0    0    -1  
+$EndComp
+Text Label 8600 5800 0    60   ~ 0
+Encoder_OUTA2
+Text Label 8600 5900 0    60   ~ 0
+Encoder_OUTB2
+$Comp
+L +5V #PWR025
+U 1 1 5A4B1B64
+P 8550 5600
+F 0 "#PWR025" H 8550 5450 50  0001 C CNN
+F 1 "+5V" H 8550 5740 50  0000 C CNN
+F 2 "" H 8550 5600 50  0001 C CNN
+F 3 "" H 8550 5600 50  0001 C CNN
+	1    8550 5600
+	1    0    0    -1  
+$EndComp
+$Comp
+L Earth #PWR026
+U 1 1 5A4B1FAD
+P 8700 5550
+F 0 "#PWR026" H 8700 5300 50  0001 C CNN
+F 1 "Earth" H 8700 5400 50  0001 C CNN
+F 2 "" H 8700 5550 50  0001 C CNN
+F 3 "" H 8700 5550 50  0001 C CNN
+	1    8700 5550
+	1    0    0    -1  
+$EndComp
+$Comp
+L TestHeaders J12
+U 1 1 5A4B36BB
+P 1600 4950
+F 0 "J12" H 1600 6500 60  0000 C CNN
+F 1 "TestHeaders" H 1550 4900 60  0000 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_1x15_Pitch2.54mm" H 1600 4950 60  0001 C CNN
+F 3 "" H 1600 4950 60  0001 C CNN
+F 4 "PRPC015SAAN-RC" H 1600 4950 60  0001 C CNN "P/N"
+F 5 "Sullins Connector" H 1600 4950 60  0001 C CNN "MFG"
+F 6 "CONN HEADER .100\" SNGL STR 15POS" H 1600 4950 60  0001 C CNN "Description"
+F 7 "0.38" H 1600 4950 60  0001 C CNN "Cost"
+	1    1600 4950
+	1    0    0    -1  
+$EndComp
+$Comp
+L TestHeaders J13
+U 1 1 5A4B3786
+P 5450 4950
+F 0 "J13" H 5450 6500 60  0000 C CNN
+F 1 "TestHeaders" H 5400 4900 60  0000 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_1x15_Pitch2.54mm" H 5450 4950 60  0001 C CNN
+F 3 "" H 5450 4950 60  0001 C CNN
+F 4 "PRPC015SAAN-RC" H 5450 4950 60  0001 C CNN "P/N"
+F 5 "Sullins Connector" H 5450 4950 60  0001 C CNN "MFG"
+F 6 "CONN HEADER .100\" SNGL STR 15POS" H 5450 4950 60  0001 C CNN "Description"
+F 7 ".38" H 5450 4950 60  0001 C CNN "Cost"
+	1    5450 4950
+	-1   0    0    -1  
+$EndComp
+$Comp
+L +BATT #PWR027
+U 1 1 5A4B3B31
+P 1850 3350
+F 0 "#PWR027" H 1850 3200 50  0001 C CNN
+F 1 "+BATT" H 1850 3490 50  0000 C CNN
+F 2 "" H 1850 3350 50  0001 C CNN
+F 3 "" H 1850 3350 50  0001 C CNN
+	1    1850 3350
+	1    0    0    -1  
+$EndComp
+$Comp
+L Earth #PWR028
+U 1 1 5A4B47A4
+P 2050 5000
+F 0 "#PWR028" H 2050 4750 50  0001 C CNN
+F 1 "Earth" H 2050 4850 50  0001 C CNN
+F 2 "" H 2050 5000 50  0001 C CNN
+F 3 "" H 2050 5000 50  0001 C CNN
+	1    2050 5000
+	1    0    0    -1  
+$EndComp
+$Comp
+L +5V #PWR029
+U 1 1 5A4B4AF8
+P 5250 3400
+F 0 "#PWR029" H 5250 3250 50  0001 C CNN
+F 1 "+5V" H 5250 3540 50  0000 C CNN
+F 2 "" H 5250 3400 50  0001 C CNN
+F 3 "" H 5250 3400 50  0001 C CNN
+	1    5250 3400
+	1    0    0    -1  
+$EndComp
+$Comp
+L +3V3 #PWR030
+U 1 1 5A4B4D2D
+P 4900 3650
+F 0 "#PWR030" H 4900 3500 50  0001 C CNN
+F 1 "+3V3" H 4900 3790 50  0000 C CNN
+F 2 "" H 4900 3650 50  0001 C CNN
+F 3 "" H 4900 3650 50  0001 C CNN
+	1    4900 3650
+	1    0    0    -1  
+$EndComp
+$Comp
+L Earth #PWR031
+U 1 1 5A4B571D
+P 5150 5000
+F 0 "#PWR031" H 5150 4750 50  0001 C CNN
+F 1 "Earth" H 5150 4850 50  0001 C CNN
+F 2 "" H 5150 5000 50  0001 C CNN
+F 3 "" H 5150 5000 50  0001 C CNN
+	1    5150 5000
+	1    0    0    -1  
+$EndComp
+$Comp
+L Earth #PWR032
+U 1 1 5A4A7344
+P 6200 2750
+F 0 "#PWR032" H 6200 2500 50  0001 C CNN
+F 1 "Earth" H 6200 2600 50  0001 C CNN
+F 2 "" H 6200 2750 50  0001 C CNN
+F 3 "" H 6200 2750 50  0001 C CNN
+	1    6200 2750
+	1    0    0    -1  
+$EndComp
+NoConn ~ 3950 3800
+NoConn ~ 2750 4800
+NoConn ~ 9300 1850
+$Comp
+L R R1
+U 1 1 5A4ACE43
+P 5300 1750
+F 0 "R1" V 5380 1750 50  0000 C CNN
+F 1 "R_1K" V 5300 1750 50  0000 C CNN
+F 2 "Resistors_SMD:R_1206_HandSoldering" V 5230 1750 50  0001 C CNN
+F 3 "" H 5300 1750 50  0001 C CNN
+F 4 "RC1206JR-071KL" V 5300 1750 60  0001 C CNN "P/N"
+F 5 "Yageo" V 5300 1750 60  0001 C CNN "MFG"
+F 6 "RES SMD 1K OHM 5% 1/4W 1206" V 5300 1750 60  0001 C CNN "Descrpition"
+F 7 "0.10" V 5300 1750 60  0001 C CNN "Cost"
+	1    5300 1750
+	1    0    0    -1  
+$EndComp
+$Comp
+L CON2_Battery J11
+U 1 1 5A49A9D5
+P 1300 1750
+F 0 "J11" H 1500 2450 60  0000 C CNN
+F 1 "CON2_Battery" H 1500 1700 60  0000 C CNN
+F 2 "Connectors_JST:JST_PH_B2B-PH-K_02x2.00mm_Straight" H 1500 1700 60  0001 C CNN
+F 3 "" H 1500 1700 60  0001 C CNN
+F 4 "B2B-PH-K-S(LF)(SN" H 1300 1750 60  0001 C CNN "P/N"
+F 5 "JST Sales America Inc" H 1300 1750 60  0001 C CNN "MFG"
+F 6 "CONN HEADER PH TOP 2POS 2MM" H 1300 1750 60  0001 C CNN "Description"
+F 7 ".17" H 1300 1750 60  0001 C CNN "Cost"
+	1    1300 1750
+	-1   0    0    -1  
+$EndComp
+$Comp
+L MountingHole MH1
+U 1 1 5A523D83
+P 700 3350
+F 0 "MH1" H 700 3150 60  0000 C CNN
+F 1 "MountingHole_4mm" H 900 3550 60  0000 C CNN
+F 2 "Mounting_Holes:MountingHole_4mm_Pad" H 700 3350 60  0001 C CNN
+F 3 "" H 700 3350 60  0001 C CNN
+	1    700  3350
+	1    0    0    -1  
+$EndComp
+$Comp
+L MountingHole MH2
+U 1 1 5A52415D
+P 700 3850
+F 0 "MH2" H 700 3650 60  0000 C CNN
+F 1 "MountingHole_4mm" H 900 4050 60  0000 C CNN
+F 2 "Mounting_Holes:MountingHole_4mm_Pad" H 700 3850 60  0001 C CNN
+F 3 "" H 700 3850 60  0001 C CNN
+	1    700  3850
+	1    0    0    -1  
+$EndComp
+$Comp
+L MountingHole MH3
+U 1 1 5A5241D7
+P 700 4350
+F 0 "MH3" H 700 4150 60  0000 C CNN
+F 1 "MountingHole_4mm" H 900 4550 60  0000 C CNN
+F 2 "Mounting_Holes:MountingHole_4mm_Pad" H 700 4350 60  0001 C CNN
+F 3 "" H 700 4350 60  0001 C CNN
+	1    700  4350
+	1    0    0    -1  
+$EndComp
+$Comp
+L MountingHole MH4
+U 1 1 5A52425C
+P 700 4850
+F 0 "MH4" H 700 4650 60  0000 C CNN
+F 1 "MountingHole_4mm" H 900 5050 60  0000 C CNN
+F 2 "Mounting_Holes:MountingHole_4mm_Pad" H 700 4850 60  0001 C CNN
+F 3 "" H 700 4850 60  0001 C CNN
+	1    700  4850
+	1    0    0    -1  
+$EndComp
+Text Label 1850 1650 0    60   ~ 0
+Bat_Negative
+Text Label 5500 2050 0    60   ~ 0
+Bat_LED
+Text Label 5950 2000 0    60   ~ 0
+5vLED
+Text Label 6400 2050 0    60   ~ 0
+3v3LED
+Text Label 6800 2000 0    60   ~ 0
+DebugLED
+Text Label 2850 6450 0    60   ~ 0
+H_out1
+Text Label 4150 6450 0    60   ~ 0
+H_Out4
+Text Label 3950 3900 0    60   ~ 0
+noConnect22
+Text Label 1950 4700 0    60   ~ 0
+noconnect11
+Text Label 8950 5400 0    60   ~ 0
+MOT1p
+Text Label 8950 5500 0    60   ~ 0
+MOT1n
+$Comp
+L Fuse F4
+U 1 1 5A55BDC3
+P 4600 6750
+F 0 "F4" V 4680 6750 50  0000 C CNN
+F 1 "16V_2A" V 4525 6750 50  0000 C CNN
+F 2 "footprints:RHEF100" V 4530 6750 50  0001 C CNN
+F 3 "" H 4600 6750 50  0001 C CNN
+F 4 "RHEF200" V 4600 6750 60  0001 C CNN "P/N"
+F 5 "Littlefuse Inc." V 4600 6750 60  0001 C CNN "MFG"
+F 6 "PTC RESET FUSE 16V 2A RADIAL" V 4600 6750 60  0001 C CNN "Description"
+F 7 ".60" V 4600 6750 60  0001 C CNN "Cost"
+	1    4600 6750
+	0    -1   -1   0   
+$EndComp
+Text Label 4150 6750 0    60   ~ 0
+H_Out3
+$Comp
+L Fuse F3
+U 1 1 5A55C4A6
+P 2650 6750
+F 0 "F3" V 2730 6750 50  0000 C CNN
+F 1 "16V_2A" V 2575 6750 50  0000 C CNN
+F 2 "footprints:RHEF100" V 2580 6750 50  0001 C CNN
+F 3 "" H 2650 6750 50  0001 C CNN
+F 4 "RHEF200" V 2650 6750 60  0001 C CNN "P/N"
+F 5 "Littlefuse Inc." V 2650 6750 60  0001 C CNN "MFG"
+F 6 "PTC RESET FUSE 16V 2A RADIAL" V 2650 6750 60  0001 C CNN "Description"
+F 7 ".60" V 2650 6750 60  0001 C CNN "Cost"
+	1    2650 6750
+	0    1    1    0   
+$EndComp
+Text Label 2850 6750 0    60   ~ 0
+H_out2
+$Comp
+L Earth #PWR033
+U 1 1 5A6B685D
+P 1450 5750
+F 0 "#PWR033" H 1450 5500 50  0001 C CNN
+F 1 "Earth" H 1450 5600 50  0001 C CNN
+F 2 "" H 1450 5750 50  0001 C CNN
+F 3 "" H 1450 5750 50  0001 C CNN
+	1    1450 5750
+	1    0    0    -1  
+$EndComp
+$Comp
+L R R7
+U 1 1 5A6B69F8
+P 1250 5100
+F 0 "R7" V 1330 5100 50  0000 C CNN
+F 1 "R_0" V 1250 5100 50  0000 C CNN
+F 2 "Resistors_SMD:R_1206_HandSoldering" V 1180 5100 50  0001 C CNN
+F 3 "" H 1250 5100 50  0001 C CNN
+F 4 "RC1206JR-070RL" V 1250 5100 60  0001 C CNN "P/N"
+F 5 "Yageo" V 1250 5100 60  0001 C CNN "MFG"
+F 6 "RES SMD 0 OHM JUMPER 1/4W 1206" V 1250 5100 60  0001 C CNN "Description"
+F 7 "0.10" V 1250 5100 60  0001 C CNN "Cost"
+	1    1250 5100
+	0    1    1    0   
+$EndComp
+$Comp
+L GNDPWR #Chassis034
+U 1 1 5A52443B
+P 1050 5750
+F 0 "#Chassis034" H 1050 5550 50  0001 C CNN
+F 1 "GNDPWR" H 1050 5620 50  0001 C CNN
+F 2 "" H 1050 5700 50  0001 C CNN
+F 3 "" H 1050 5700 50  0001 C CNN
+	1    1050 5750
+	1    0    0    -1  
+$EndComp
 Wire Wire Line
 	5500 1900 5500 2150
 Wire Wire Line
@@ -568,17 +1090,9 @@ Wire Wire Line
 Wire Wire Line
 	6800 1900 6800 2150
 Wire Wire Line
-	1500 1150 3400 1150
+	1700 1650 4250 1650
 Wire Wire Line
-	1700 1400 1500 1400
-Wire Wire Line
-	2400 1650 4250 1650
-Wire Wire Line
-	1700 1400 1700 1650
-Wire Wire Line
-	1700 1650 2000 1650
-Wire Wire Line
-	3050 1250 3050 1150
+	3050 1150 3050 1250
 Connection ~ 3050 1150
 Wire Wire Line
 	3050 1650 3050 1550
@@ -689,21 +1203,6 @@ Wire Wire Line
 	2500 6450 2050 6450
 Wire Wire Line
 	2050 6750 2050 6600
-Text Label 2100 6450 0    60   ~ 0
-MOT1+
-Text Label 2100 6750 0    60   ~ 0
-MOT1-
-$Comp
-L Earth #PWR011
-U 1 1 5A4ABCE4
-P 2900 6600
-F 0 "#PWR011" H 2900 6350 50  0001 C CNN
-F 1 "Earth" H 2900 6450 50  0001 C CNN
-F 2 "" H 2900 6600 50  0001 C CNN
-F 3 "" H 2900 6600 50  0001 C CNN
-	1    2900 6600
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	2900 6550 3050 6550
 Wire Wire Line
@@ -714,75 +1213,26 @@ Wire Wire Line
 	3050 6250 2550 6250
 Wire Wire Line
 	3050 6350 2550 6350
-Text Label 2550 6250 0    60   ~ 0
-EnableLeft
-Text Label 2550 6350 0    60   ~ 0
-PWM_LeftA
 Wire Wire Line
 	3050 6450 2800 6450
-Wire Wire Line
-	2050 6750 3050 6750
-Text Label 2500 6850 0    60   ~ 0
-PWM_LeftB
-$Comp
-L +BATT #PWR012
-U 1 1 5A4ACF4B
-P 2650 7100
-F 0 "#PWR012" H 2650 6950 50  0001 C CNN
-F 1 "+BATT" H 2650 7240 50  0000 C CNN
-F 2 "" H 2650 7100 50  0001 C CNN
-F 3 "" H 2650 7100 50  0001 C CNN
-	1    2650 7100
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	3050 6950 3050 7150
 Wire Wire Line
 	3050 7150 2650 7150
 Wire Wire Line
 	2650 7150 2650 7100
-$Comp
-L +5V #PWR013
-U 1 1 5A4AD9D0
-P 4350 6150
-F 0 "#PWR013" H 4350 6000 50  0001 C CNN
-F 1 "+5V" H 4350 6290 50  0000 C CNN
-F 2 "" H 4350 6150 50  0001 C CNN
-F 3 "" H 4350 6150 50  0001 C CNN
-	1    4350 6150
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	4100 6250 4350 6250
 Wire Wire Line
 	4350 6250 4350 6150
 Wire Wire Line
 	4100 6350 4450 6350
-Text Label 4100 6350 0    60   ~ 0
-PWM_RightA
 Wire Wire Line
 	4100 6450 4450 6450
 Wire Wire Line
 	4750 6450 5000 6450
 Wire Wire Line
-	4100 6750 5000 6750
-Wire Wire Line
 	5000 6750 5000 6600
-Text Label 4750 6450 0    60   ~ 0
-MOT2+
-Text Label 4650 6750 0    60   ~ 0
-MOT2-
-$Comp
-L Earth #PWR014
-U 1 1 5A4ADEBB
-P 4400 6600
-F 0 "#PWR014" H 4400 6350 50  0001 C CNN
-F 1 "Earth" H 4400 6450 50  0001 C CNN
-F 2 "" H 4400 6600 50  0001 C CNN
-F 3 "" H 4400 6600 50  0001 C CNN
-	1    4400 6600
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	4100 6650 4150 6650
 Wire Wire Line
@@ -801,89 +1251,24 @@ Wire Wire Line
 	4100 6850 4550 6850
 Wire Wire Line
 	4100 6950 4550 6950
-Text Label 4100 6850 0    60   ~ 0
-PWM_RightB
-Text Label 4100 6950 0    60   ~ 0
-EnableRight
 Wire Wire Line
-	6800 3500 7250 3500
-Text Label 6800 3500 0    60   ~ 0
-PiezoSpeak
-$Comp
-L Earth #PWR015
-U 1 1 5A4AEBB1
-P 6950 3650
-F 0 "#PWR015" H 6950 3400 50  0001 C CNN
-F 1 "Earth" H 6950 3500 50  0001 C CNN
-F 2 "" H 6950 3650 50  0001 C CNN
-F 3 "" H 6950 3650 50  0001 C CNN
-	1    6950 3650
-	1    0    0    -1  
-$EndComp
+	6600 3500 7250 3500
 Wire Wire Line
-	7250 3600 6950 3600
-Wire Wire Line
-	6950 3600 6950 3650
-Text Label 6750 4400 0    60   ~ 0
-ServoSignal
+	7250 3600 6750 3600
 Wire Wire Line
 	7200 4400 6750 4400
-$Comp
-L +5V #PWR016
-U 1 1 5A4AF19E
-P 6600 4450
-F 0 "#PWR016" H 6600 4300 50  0001 C CNN
-F 1 "+5V" H 6600 4590 50  0000 C CNN
-F 2 "" H 6600 4450 50  0001 C CNN
-F 3 "" H 6600 4450 50  0001 C CNN
-	1    6600 4450
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	7200 4550 6600 4550
 Wire Wire Line
 	6600 4550 6600 4450
-$Comp
-L Earth #PWR017
-U 1 1 5A4AF2D5
-P 6900 4750
-F 0 "#PWR017" H 6900 4500 50  0001 C CNN
-F 1 "Earth" H 6900 4600 50  0001 C CNN
-F 2 "" H 6900 4750 50  0001 C CNN
-F 3 "" H 6900 4750 50  0001 C CNN
-	1    6900 4750
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	7200 4700 6900 4700
 Wire Wire Line
 	6900 4700 6900 4750
-$Comp
-L +5V #PWR018
-U 1 1 5A4AF495
-P 7000 5450
-F 0 "#PWR018" H 7000 5300 50  0001 C CNN
-F 1 "+5V" H 7000 5590 50  0000 C CNN
-F 2 "" H 7000 5450 50  0001 C CNN
-F 3 "" H 7000 5450 50  0001 C CNN
-	1    7000 5450
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	7200 5500 7000 5500
 Wire Wire Line
 	7000 5500 7000 5450
-$Comp
-L Earth #PWR019
-U 1 1 5A4AF59A
-P 6800 5500
-F 0 "#PWR019" H 6800 5250 50  0001 C CNN
-F 1 "Earth" H 6800 5350 50  0001 C CNN
-F 2 "" H 6800 5500 50  0001 C CNN
-F 3 "" H 6800 5500 50  0001 C CNN
-	1    6800 5500
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	7200 5600 6950 5600
 Wire Wire Line
@@ -892,86 +1277,28 @@ Wire Wire Line
 	6950 5450 6800 5450
 Wire Wire Line
 	6800 5450 6800 5500
-Text Label 6850 5700 0    60   ~ 0
-XBEE_Tx
-Text Label 6850 5800 0    60   ~ 0
-XBEE_Rx
-Text Label 6700 5900 0    60   ~ 0
-XBEE_RESET
 Wire Wire Line
 	7200 5700 6850 5700
 Wire Wire Line
 	7200 5800 6850 5800
 Wire Wire Line
 	7200 5900 6700 5900
-$Comp
-L +5V #PWR020
-U 1 1 5A4AFC4E
-P 9100 1400
-F 0 "#PWR020" H 9100 1250 50  0001 C CNN
-F 1 "+5V" H 9100 1540 50  0000 C CNN
-F 2 "" H 9100 1400 50  0001 C CNN
-F 3 "" H 9100 1400 50  0001 C CNN
-	1    9100 1400
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	9300 1450 9100 1450
 Wire Wire Line
 	9100 1450 9100 1400
-Text Label 8950 1550 0    60   ~ 0
-PingTrig
-Text Label 8950 1650 0    60   ~ 0
-PingEcho
 Wire Wire Line
 	9300 1550 8950 1550
 Wire Wire Line
 	9300 1650 8950 1650
-$Comp
-L Earth #PWR021
-U 1 1 5A4AFF57
-P 9050 1800
-F 0 "#PWR021" H 9050 1550 50  0001 C CNN
-F 1 "Earth" H 9050 1650 50  0001 C CNN
-F 2 "" H 9050 1800 50  0001 C CNN
-F 3 "" H 9050 1800 50  0001 C CNN
-	1    9050 1800
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	9300 1750 9050 1750
 Wire Wire Line
 	9050 1750 9050 1800
-Text Label 8800 2900 0    60   ~ 0
-FlameDigital
-Text Label 8800 3200 0    60   ~ 0
-FlameAnalog
 Wire Wire Line
 	9350 2900 8800 2900
 Wire Wire Line
 	9350 3200 8800 3200
-$Comp
-L Earth #PWR022
-U 1 1 5A4B0545
-P 8650 3150
-F 0 "#PWR022" H 8650 2900 50  0001 C CNN
-F 1 "Earth" H 8650 3000 50  0001 C CNN
-F 2 "" H 8650 3150 50  0001 C CNN
-F 3 "" H 8650 3150 50  0001 C CNN
-	1    8650 3150
-	1    0    0    -1  
-$EndComp
-$Comp
-L +5V #PWR023
-U 1 1 5A4B058F
-P 8650 2900
-F 0 "#PWR023" H 8650 2750 50  0001 C CNN
-F 1 "+5V" H 8650 3040 50  0000 C CNN
-F 2 "" H 8650 2900 50  0001 C CNN
-F 3 "" H 8650 2900 50  0001 C CNN
-	1    8650 2900
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	9350 3000 8650 3000
 Wire Wire Line
@@ -980,44 +1307,6 @@ Wire Wire Line
 	9350 3100 8650 3100
 Wire Wire Line
 	8650 3100 8650 3150
-$Comp
-L CON6_M-Encoder J5
-U 1 1 5A4B0B23
-P 9250 4700
-F 0 "J5" H 8850 5500 60  0000 C CNN
-F 1 "CON6_M-Encoder" H 8900 4600 60  0000 C CNN
-F 2 "footprints:5-103634-5" H 8900 4600 60  0001 C CNN
-F 3 "" H 8900 4600 60  0001 C CNN
-F 4 "5-103634-5" H 9250 4700 60  0001 C CNN "P/N"
-F 5 "TE Connectivity" H 9250 4700 60  0001 C CNN "MFG"
-F 6 "CONN HEADER RTANG 6POS PCB TIN" H 9250 4700 60  0001 C CNN "Description"
-F 7 "1.40" H 9250 4700 60  0001 C CNN "Cost"
-	1    9250 4700
-	-1   0    0    -1  
-$EndComp
-$Comp
-L CON6_M-Encoder J6
-U 1 1 5A4B0BAE
-P 9250 6000
-F 0 "J6" H 8850 6800 60  0000 C CNN
-F 1 "CON6_M-Encoder" H 8900 5900 60  0000 C CNN
-F 2 "footprints:5-103634-5" H 8900 5900 60  0001 C CNN
-F 3 "" H 8900 5900 60  0001 C CNN
-F 4 "5-103634-5" H 9250 6000 60  0001 C CNN "P/N"
-F 5 "TE Connectivity" H 9250 6000 60  0001 C CNN "MFG"
-F 6 "CONN HEADER RTANG 6POS PCB TIN" H 9250 6000 60  0001 C CNN "Description"
-F 7 "1.40" H 9250 6000 60  0001 C CNN "Cost"
-	1    9250 6000
-	-1   0    0    -1  
-$EndComp
-Text Label 8950 4100 0    60   ~ 0
-MOT1+
-Text Label 8950 4200 0    60   ~ 0
-MOT1-
-Text Label 8600 4500 0    60   ~ 0
-Encoder_OUTA1
-Text Label 8600 4600 0    60   ~ 0
-Encoder_OUTB1
 Wire Wire Line
 	9250 4100 8950 4100
 Wire Wire Line
@@ -1026,17 +1315,6 @@ Wire Wire Line
 	9250 4500 8600 4500
 Wire Wire Line
 	9250 4600 8600 4600
-$Comp
-L Earth #PWR024
-U 1 1 5A4B139B
-P 8750 4250
-F 0 "#PWR024" H 8750 4000 50  0001 C CNN
-F 1 "Earth" H 8750 4100 50  0001 C CNN
-F 2 "" H 8750 4250 50  0001 C CNN
-F 3 "" H 8750 4250 50  0001 C CNN
-	1    8750 4250
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	9250 4300 8850 4300
 Wire Wire Line
@@ -1045,29 +1323,10 @@ Wire Wire Line
 	8850 4200 8750 4200
 Wire Wire Line
 	8750 4200 8750 4250
-$Comp
-L +5V #PWR025
-U 1 1 5A4B1485
-P 8550 4300
-F 0 "#PWR025" H 8550 4150 50  0001 C CNN
-F 1 "+5V" H 8550 4440 50  0000 C CNN
-F 2 "" H 8550 4300 50  0001 C CNN
-F 3 "" H 8550 4300 50  0001 C CNN
-	1    8550 4300
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	9250 4400 8550 4400
 Wire Wire Line
 	8550 4400 8550 4300
-Text Label 8950 5400 0    60   ~ 0
-MOT2+
-Text Label 8950 5500 0    60   ~ 0
-MOT2-
-Text Label 8600 5800 0    60   ~ 0
-Encoder_OUTA2
-Text Label 8600 5900 0    60   ~ 0
-Encoder_OUTB2
 Wire Wire Line
 	9250 5400 8950 5400
 Wire Wire Line
@@ -1076,30 +1335,8 @@ Wire Wire Line
 	9250 5800 8600 5800
 Wire Wire Line
 	9250 5900 8600 5900
-$Comp
-L +5V #PWR026
-U 1 1 5A4B1B64
-P 8550 5600
-F 0 "#PWR026" H 8550 5450 50  0001 C CNN
-F 1 "+5V" H 8550 5740 50  0000 C CNN
-F 2 "" H 8550 5600 50  0001 C CNN
-F 3 "" H 8550 5600 50  0001 C CNN
-	1    8550 5600
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	9250 5600 8850 5600
-$Comp
-L Earth #PWR027
-U 1 1 5A4B1FAD
-P 8700 5550
-F 0 "#PWR027" H 8700 5300 50  0001 C CNN
-F 1 "Earth" H 8700 5400 50  0001 C CNN
-F 2 "" H 8700 5550 50  0001 C CNN
-F 3 "" H 8700 5550 50  0001 C CNN
-	1    8700 5550
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	8850 5600 8850 5500
 Wire Wire Line
@@ -1110,62 +1347,10 @@ Wire Wire Line
 	9250 5700 8550 5700
 Wire Wire Line
 	8550 5700 8550 5600
-$Comp
-L TestHeaders J12
-U 1 1 5A4B36BB
-P 1600 4950
-F 0 "J12" H 1600 6500 60  0000 C CNN
-F 1 "TestHeaders" H 1550 4900 60  0000 C CNN
-F 2 "Pin_Headers:Pin_Header_Straight_1x15_Pitch2.54mm" H 1600 4950 60  0001 C CNN
-F 3 "" H 1600 4950 60  0001 C CNN
-F 4 "PRPC015SAAN-RC" H 1600 4950 60  0001 C CNN "P/N"
-F 5 "Sullins Connector" H 1600 4950 60  0001 C CNN "MFG"
-F 6 "CONN HEADER .100\" SNGL STR 15POS" H 1600 4950 60  0001 C CNN "Description"
-F 7 "0.38" H 1600 4950 60  0001 C CNN "Cost"
-	1    1600 4950
-	1    0    0    -1  
-$EndComp
-$Comp
-L TestHeaders J13
-U 1 1 5A4B3786
-P 5450 4950
-F 0 "J13" H 5450 6500 60  0000 C CNN
-F 1 "TestHeaders" H 5400 4900 60  0000 C CNN
-F 2 "Pin_Headers:Pin_Header_Straight_1x15_Pitch2.54mm" H 5450 4950 60  0001 C CNN
-F 3 "" H 5450 4950 60  0001 C CNN
-F 4 "PRPC015SAAN-RC" H 5450 4950 60  0001 C CNN "P/N"
-F 5 "Sullins Connector" H 5450 4950 60  0001 C CNN "MFG"
-F 6 "CONN HEADER .100\" SNGL STR 15POS" H 5450 4950 60  0001 C CNN "Description"
-F 7 ".38" H 5450 4950 60  0001 C CNN "Cost"
-	1    5450 4950
-	-1   0    0    -1  
-$EndComp
-$Comp
-L +BATT #PWR028
-U 1 1 5A4B3B31
-P 1850 3350
-F 0 "#PWR028" H 1850 3200 50  0001 C CNN
-F 1 "+BATT" H 1850 3490 50  0000 C CNN
-F 2 "" H 1850 3350 50  0001 C CNN
-F 3 "" H 1850 3350 50  0001 C CNN
-	1    1850 3350
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	1850 3350 1850 3500
 Wire Wire Line
 	1850 3500 1600 3500
-$Comp
-L Earth #PWR029
-U 1 1 5A4B47A4
-P 2050 5000
-F 0 "#PWR029" H 2050 4750 50  0001 C CNN
-F 1 "Earth" H 2050 4850 50  0001 C CNN
-F 2 "" H 2050 5000 50  0001 C CNN
-F 3 "" H 2050 5000 50  0001 C CNN
-	1    2050 5000
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	2050 4800 2050 5000
 Wire Wire Line
@@ -1173,17 +1358,6 @@ Wire Wire Line
 Wire Wire Line
 	1600 4900 2050 4900
 Connection ~ 2050 4900
-$Comp
-L +5V #PWR030
-U 1 1 5A4B4AF8
-P 5250 3400
-F 0 "#PWR030" H 5250 3250 50  0001 C CNN
-F 1 "+5V" H 5250 3540 50  0000 C CNN
-F 2 "" H 5250 3400 50  0001 C CNN
-F 3 "" H 5250 3400 50  0001 C CNN
-	1    5250 3400
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	5250 3600 5450 3600
 Wire Wire Line
@@ -1193,17 +1367,6 @@ Wire Wire Line
 Wire Wire Line
 	5250 3500 5250 3550
 Connection ~ 5250 3550
-$Comp
-L +3V3 #PWR031
-U 1 1 5A4B4D2D
-P 4900 3650
-F 0 "#PWR031" H 4900 3500 50  0001 C CNN
-F 1 "+3V3" H 4900 3790 50  0000 C CNN
-F 2 "" H 4900 3650 50  0001 C CNN
-F 3 "" H 4900 3650 50  0001 C CNN
-	1    4900 3650
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	5450 3700 4900 3700
 Wire Wire Line
@@ -1211,17 +1374,6 @@ Wire Wire Line
 Wire Wire Line
 	4900 3800 5450 3800
 Connection ~ 4900 3700
-$Comp
-L Earth #PWR032
-U 1 1 5A4B571D
-P 5150 5000
-F 0 "#PWR032" H 5150 4750 50  0001 C CNN
-F 1 "Earth" H 5150 4850 50  0001 C CNN
-F 2 "" H 5150 5000 50  0001 C CNN
-F 3 "" H 5150 5000 50  0001 C CNN
-	1    5150 5000
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	5450 4900 5150 4900
 Wire Wire Line
@@ -1230,38 +1382,9 @@ Wire Wire Line
 	3950 3900 5450 3900
 Wire Wire Line
 	1600 4700 2750 4700
-$Comp
-L Earth #PWR033
-U 1 1 5A4A7344
-P 6200 2750
-F 0 "#PWR033" H 6200 2500 50  0001 C CNN
-F 1 "Earth" H 6200 2600 50  0001 C CNN
-F 2 "" H 6200 2750 50  0001 C CNN
-F 3 "" H 6200 2750 50  0001 C CNN
-	1    6200 2750
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	6200 2750 6200 2600
 Connection ~ 6200 2600
-NoConn ~ 3950 3800
-NoConn ~ 2750 4800
-NoConn ~ 9300 1850
-$Comp
-L R R1
-U 1 1 5A4ACE43
-P 5300 1750
-F 0 "R1" V 5380 1750 50  0000 C CNN
-F 1 "R_1K" V 5300 1750 50  0000 C CNN
-F 2 "Resistors_SMD:R_1206_HandSoldering" V 5230 1750 50  0001 C CNN
-F 3 "" H 5300 1750 50  0001 C CNN
-F 4 "RC1206JR-071KL" V 5300 1750 60  0001 C CNN "P/N"
-F 5 "Yageo" V 5300 1750 60  0001 C CNN "MFG"
-F 6 "RES SMD 1K OHM 5% 1/4W 1206" V 5300 1750 60  0001 C CNN "Descrpition"
-F 7 "0.10" V 5300 1750 60  0001 C CNN "Cost"
-	1    5300 1750
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	5300 1600 5300 1550
 Wire Wire Line
@@ -1272,76 +1395,10 @@ Wire Wire Line
 Wire Wire Line
 	5300 2000 5500 2000
 Connection ~ 5500 2000
-$Comp
-L CON2_Battery J11
-U 1 1 5A49A9D5
-P 1300 1600
-F 0 "J11" H 1500 2300 60  0000 C CNN
-F 1 "CON2_Battery" H 1500 1550 60  0000 C CNN
-F 2 "Wire_Connections_Bridges:WireConnection_2.50mmDrill" H 1500 1550 60  0001 C CNN
-F 3 "" H 1500 1550 60  0001 C CNN
-	1    1300 1600
-	-1   0    0    -1  
-$EndComp
-$Comp
-L MountingHole MH1
-U 1 1 5A523D83
-P 700 3350
-F 0 "MH1" H 700 3150 60  0000 C CNN
-F 1 "MountingHole_4mm" H 900 3550 60  0000 C CNN
-F 2 "Mounting_Holes:MountingHole_4mm_Pad" H 700 3350 60  0001 C CNN
-F 3 "" H 700 3350 60  0001 C CNN
-	1    700  3350
-	1    0    0    -1  
-$EndComp
-$Comp
-L MountingHole MH2
-U 1 1 5A52415D
-P 700 3850
-F 0 "MH2" H 700 3650 60  0000 C CNN
-F 1 "MountingHole_4mm" H 900 4050 60  0000 C CNN
-F 2 "Mounting_Holes:MountingHole_4mm_Pad" H 700 3850 60  0001 C CNN
-F 3 "" H 700 3850 60  0001 C CNN
-	1    700  3850
-	1    0    0    -1  
-$EndComp
-$Comp
-L MountingHole MH3
-U 1 1 5A5241D7
-P 700 4350
-F 0 "MH3" H 700 4150 60  0000 C CNN
-F 1 "MountingHole_4mm" H 900 4550 60  0000 C CNN
-F 2 "Mounting_Holes:MountingHole_4mm_Pad" H 700 4350 60  0001 C CNN
-F 3 "" H 700 4350 60  0001 C CNN
-	1    700  4350
-	1    0    0    -1  
-$EndComp
-$Comp
-L MountingHole MH4
-U 1 1 5A52425C
-P 700 4850
-F 0 "MH4" H 700 4650 60  0000 C CNN
-F 1 "MountingHole_4mm" H 900 5050 60  0000 C CNN
-F 2 "Mounting_Holes:MountingHole_4mm_Pad" H 700 4850 60  0001 C CNN
-F 3 "" H 700 4850 60  0001 C CNN
-	1    700  4850
-	1    0    0    -1  
-$EndComp
-$Comp
-L GNDPWR #Chassis034
-U 1 1 5A52443B
-P 1050 5200
-F 0 "#Chassis034" H 1050 5000 50  0001 C CNN
-F 1 "GNDPWR" H 1050 5070 50  0001 C CNN
-F 2 "" H 1050 5150 50  0001 C CNN
-F 3 "" H 1050 5150 50  0001 C CNN
-	1    1050 5200
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	900  3350 1050 3350
 Wire Wire Line
-	1050 3350 1050 5200
+	1050 3350 1050 5750
 Wire Wire Line
 	900  3850 1050 3850
 Connection ~ 1050 3850
@@ -1351,4 +1408,108 @@ Connection ~ 1050 4350
 Wire Wire Line
 	900  4850 1050 4850
 Connection ~ 1050 4850
+Wire Wire Line
+	4750 6750 5000 6750
+Wire Wire Line
+	4450 6750 4100 6750
+Wire Wire Line
+	3050 6750 2800 6750
+Wire Wire Line
+	2500 6750 2050 6750
+Connection ~ 1050 5100
+Wire Wire Line
+	1450 5100 1450 5750
+Wire Wire Line
+	1100 5100 1050 5100
+Text Label 950  3350 0    60   ~ 0
+CHASSIS
+$Comp
+L R R6
+U 1 1 5A7219F0
+P 6600 3600
+F 0 "R6" V 6680 3600 50  0000 C CNN
+F 1 "R_0" V 6600 3600 50  0000 C CNN
+F 2 "Resistors_SMD:R_1206_HandSoldering" V 6530 3600 50  0001 C CNN
+F 3 "" H 6600 3600 50  0001 C CNN
+F 4 "RC1206JR-070RL" V 6600 3600 60  0001 C CNN "P/N"
+F 5 "Yageo" V 6600 3600 60  0001 C CNN "MFG"
+F 6 "RES SMD 0 OHM JUMPER 1/4W 1206" V 6600 3600 60  0001 C CNN "Description"
+F 7 "0.10" V 6600 3600 60  0001 C CNN "Cost"
+	1    6600 3600
+	0    1    1    0   
+$EndComp
+$Comp
+L Earth #PWR035
+U 1 1 5A721E4E
+P 6300 3650
+F 0 "#PWR035" H 6300 3400 50  0001 C CNN
+F 1 "Earth" H 6300 3500 50  0001 C CNN
+F 2 "" H 6300 3650 50  0001 C CNN
+F 3 "" H 6300 3650 50  0001 C CNN
+	1    6300 3650
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6300 3600 6450 3600
+$Comp
+L C C3
+U 1 1 5A722E3F
+P 1250 5400
+F 0 "C3" V 1400 5350 50  0000 L CNN
+F 1 ".1uF" V 1200 5200 50  0000 L CNN
+F 2 "Capacitors_SMD:C_1206_HandSoldering" H 1288 5250 50  0001 C CNN
+F 3 "" H 1250 5400 50  0001 C CNN
+F 4 "GRM319R71H104KA01D" H 1250 5400 60  0001 C CNN "P/N"
+F 5 "Murata" H 1250 5400 60  0001 C CNN "MFG"
+F 6 "CAP CER 0.1UF 50V X7R 1206" H 1250 5400 60  0001 C CNN "Decription"
+F 7 "0.26" H 1250 5400 60  0001 C CNN "Cost"
+	1    1250 5400
+	0    1    1    0   
+$EndComp
+Connection ~ 1050 5400
+Connection ~ 1450 5400
+Wire Wire Line
+	1450 5100 1400 5100
+Wire Wire Line
+	1050 5400 1100 5400
+Wire Wire Line
+	1400 5400 1450 5400
+Wire Wire Line
+	2350 1150 3400 1150
+Wire Wire Line
+	1500 1550 1700 1550
+Wire Wire Line
+	1700 1550 1700 1650
+Wire Wire Line
+	1500 1300 1700 1300
+Text Label 1750 1150 0    60   ~ 0
+Bat_Positive
+Wire Wire Line
+	1700 1300 1700 1150
+Wire Wire Line
+	1700 1150 1950 1150
+Text Label 1450 5650 0    60   ~ 0
+Ground
+Text Label 1050 5650 0    60   ~ 0
+Chassis
+Text Notes 950  5300 0    60   ~ 0
+Do Not Install\n
+Text Notes 3050 3200 0    60   ~ 0
+Teensy Headers\n
+Text Notes 5950 1100 0    60   ~ 0
+Debug LEDs\n
+Text Notes 2300 750  0    60   ~ 0
+Regulator: 12V -> 5v\n
+Text Notes 9250 1200 0    60   ~ 0
+Ultrasonic Sensor\n
+Text Notes 9350 2600 0    60   ~ 0
+Flame Sensor\n
+Text Notes 9450 5050 0    60   ~ 0
+↑ Encoders  ↓\n
+Text Notes 3250 5900 0    60   ~ 0
+Motor Driver\n
+Wire Wire Line
+	6300 3600 6300 3650
+Text Label 6800 3600 0    60   ~ 0
+Piezo-
 $EndSCHEMATC
