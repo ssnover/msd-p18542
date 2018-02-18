@@ -14,6 +14,10 @@ body {
     padding: 10px 10px 10px 10px;
 }
 
-.menu select {
+.menu {
+    display: inline-block;
+}
+
+select {
     display: inline-block;
 }
