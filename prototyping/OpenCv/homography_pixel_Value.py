@@ -1,6 +1,6 @@
 from utils import get_four_points
 from pyimagesearch.shapedetector import ShapeDetector
-import argparse
+
 import numpy as np
 import imutils
 import cv2
@@ -36,14 +36,6 @@ if __name__ == '__main__':
     cv2.imshow("Image", im_dst)
     cv2.waitKey(0)
 
-    # construct the argument parse and parse the arguments
-    # ap = argparse.ArgumentParser()
-    # ap.add_argument("-i", "shapes_and_colors.png", required=True)
-    # args = vars(ap.parse_args())
-
-    # load the image and resize it to a smaller factor so that
-    # the shapes can be approximated better
-    #image = cv2.imread("Image")
     image = im_dst
     resized = imutils.resize(image, width=300)
     ratio = image.shape[0] / float(resized.shape[0])
@@ -86,6 +78,7 @@ if __name__ == '__main__':
                 pixel = image[cY + i, cX + k]
                 pixel_hsv.insert(i + k, pixel)
                 print(pixel)
+                print(pixel_hsv)
         # calculate the average H, S, and V values for each hexagon tile
         print(np.mean(pixel_hsv, axis=0))
 

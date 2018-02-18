@@ -3,13 +3,12 @@ import numpy as np
 from utils import get_four_points
 from pyimagesearch.shapedetector import ShapeDetector
 import imutils
+from four_corners import four_points
 
 if __name__ == '__main__':
     # Read in the image.
-
-
     im_src = cv2.imread('hex_t.png')
-
+    '''
     imgray = cv2.cvtColor(im_src,cv2.COLOR_BGR2GRAY)
     ret,thresh = cv2.threshold(imgray,127,255,0)
     image, contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
@@ -40,6 +39,7 @@ if __name__ == '__main__':
         px = image[cY, cX]
         print(px)
         print(cX, cY)
+        '''
     # Destination image
     size = (600, 500, 3)
 
@@ -53,6 +53,7 @@ if __name__ == '__main__':
             [0, size[1] - 1]
         ], dtype=float
     )
+    '''
     # Draw the contours around each shape, the circle in the center and name the shape
     cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
     cv2.circle(image, (cX, cY), 7, (255, 255, 255), -1)
@@ -62,22 +63,22 @@ if __name__ == '__main__':
     # show the output image
     cv2.imshow("Image", image)
     cv2.waitKey(0)
-    print
-    '''
+
         Click on the four corners of the book -- top left first and
         bottom left last -- and then hit ENTER
         '''
 
     # Show image and wait for 4 clicks.
     cv2.imshow("Image", im_src)
-    pts_src = get_four_points(im_src);
-
+    pts_src = four_points(im_src)
+    print(pts_src)
+    print(pts_dst)
     # Calculate the homography
     h, status = cv2.findHomography(pts_src, pts_dst)
 
     # Warp source image to destination
     im_dst = cv2.warpPerspective(im_src, h, size[0:2])
-    print(pts_src)
+    # print(pts_src)
     print(pts_dst)
     # Show output
     cv2.imshow("Image", im_dst)

@@ -5,8 +5,15 @@
 from pyimagesearch.shapedetector import ShapeDetector
 import argparse
 import imutils
+import numpy as np
 import cv2
 
+four = {}
+four['points'] = []
+four_corners = []
+four_corners = []
+
+#data['points'] = []
 # construct the argument parse and parse the arguments
 # ap = argparse.ArgumentParser()
 # ap.add_argument("-i", "shapes_and_colors.png", required=True)
@@ -46,20 +53,26 @@ for c in cnts:
         c *= ratio
         c = c.astype("int")
         px = image[cY, cX]
-        print(px)
+        #print(px)
 
         cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
         cv2.circle(image, (cX, cY), 7, (255, 255, 255), -1)
         cv2.putText(image, shape, (cX, cY), cv2.FONT_HERSHEY_SIMPLEX,
                 0.5, (255, 255, 255), 2)
-        print(cX, cY)
-        data = {}
-        data['points'] = []
-        if len(data['points']) < 4:
-         data['points'].append([cX, cY])
-         #cv2.imshow("Image", image)
+        #print(cX, cY)
+
+
+        if len(four_corners) < 4:
+            four_corners.append([cX, cY])
+            points = np.vstack(four_corners).astype(float)
+           # print(four_corners)
+            cv2.imshow("Image", image)
          #cv2.waitKey(0)
 
     # show the output image
+    four_corners.reverse()
 
-    #cv2.waitKey(0)
+    four['points'] = four_corners
+    points = np.vstack(four['points']).astype(float)
+    print(four)
+
