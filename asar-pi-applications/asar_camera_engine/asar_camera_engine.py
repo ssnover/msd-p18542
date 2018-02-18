@@ -9,6 +9,7 @@ import os
 import threading
 import time
 
+
 try:
     from picamera import PiCamera
 except ImportError:
@@ -42,7 +43,6 @@ class ASARCameraEngine:
         Stop the ASAR camera engine execution.
         :return: None.
         """
-        self.my_worker_thread.stop()
         self.my_running_status = False
 
     def takePicture(self):
@@ -64,7 +64,7 @@ class ASARCameraEngine:
         Executed by the camera engine thread to take a picture on a set rate.
         :return:
         """
-        while True:
+        while self.my_running_status:
             self.takePicture()
             time.sleep(1 / self.my_capture_frequency)
 
@@ -74,8 +74,10 @@ def main():
     Entry point for testing.
     :return:
     """
-    TOTAL_TIME_TO_RUN_SECONDS = 60
-    my_camera = ASARCameraEngine(2)
+    TOTAL_TIME_TO_RUN_SECONDS = 10
+    CAPTURE_FREQUENCY_HZ = 2
+
+    my_camera = ASARCameraEngine(CAPTURE_FREQUENCY_HZ)
     my_camera.begin()
 
     start_time = datetime.datetime.now()
