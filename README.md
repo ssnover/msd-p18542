@@ -1,6 +1,5 @@
 # msd-p18542
 Repository for RIT MSD P18542 source code, schematics, and CAD models.
-
 # P18542: Real Time Terrain Mapping
 In search and rescue operations time is often of the essence and the terrain can end up being wildly different than expected. The ability to image a landscape and use this data to determine the quickest route for operatives driving vehicles in this changing terrain in real-time could save lives in these scenarios. The goal of this project is to lay groundwork on this idea by imaging an area in real-time and using the image to plot route for a small autonomous vehicle.
 
@@ -15,8 +14,8 @@ The source code for the applications running on the Teensy is written for C++11 
 
 ## ASAR Aerial Platform
 The second major portion of the project is a series of Python 3 modules run on a Raspberry Pi 3. These present a GUI for running the simulation and algorithms related to the computer vision and path finding aspects of the project. The major components include:
-1. asar-camera-engine - Interface to the Raspberry Pi Camera
-2. asar-vision - Generates a terrain map model from images
+1. `asar-camera-engine` - Interface to the Raspberry Pi Camera
+2. `asar-vision` - Generates a terrain map model from images
 3. asar-path-finder - Takes the map model and finds the quickest path between two points
 4. asar-web-ui - A web app hosted on the Pi to act as a GUI
 5. asar-comms-server - Interface to the Pi's hardware UART
