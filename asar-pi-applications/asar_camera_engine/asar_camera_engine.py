@@ -59,8 +59,15 @@ class ASARCameraEngine:
         :return: Path to the image.
         """
         current_time = datetime.datetime.now()
-        dt_string = str(current_time.year) + str(current_time.month) + str(current_time.day) + '_' + str(
-            current_time.hour) + str(current_time.minute) + str(current_time.second)
+        dt_string = '{:04d}'.format(current_time.year) \
+                  + '{:02d}'.format(current_time.month) \
+                  + '{:02d}'.format(current_time.day) \
+                  + '_' \
+                  + '{:02d}'.format(current_time.hour) \
+                  + '{:02d}'.format(current_time.minute) \
+                  + '{:02d}'.format(current_time.second) \
+                  + '_' \
+                  + '{:06d}'.format(current_time.microsecond)
         filename = dt_string + '.jpg'
         image_path = os.path.join(self.my_images_directory, filename)
 
@@ -94,7 +101,7 @@ class ASARCameraEngine:
             print("Taking that picture!")
             # need to start putting image paths in database
             self.takePicture()
-            time.sleep(1 / self.my_capture_frequency)
+            time.sleep(1 / self.my_capture_frequency - 0.1)
 
     def cameraEngineVideoContext(self, path, length_in_seconds):
         """
@@ -122,10 +129,11 @@ def main():
     """
     TOTAL_TIME_TO_RUN_SECONDS = 10
     CAPTURE_FREQUENCY_HZ = 2
+    IMAGE_STORAGE_LOCATION = os.path.join(os.sep, 'home', 'pi', 'asar', 'images')
 
     my_camera = ASARCameraEngine(CAPTURE_FREQUENCY_HZ,
                                  os.path.join(os.sep, 'tmp', 'asar.db'),
-                                 os.path.join(os.sep, 'home', 'pi', 'asar', 'images'))
+                                 IMAGE_STORAGE_LOCATION)
     my_camera.begin()
     start_time = datetime.datetime.now()
 
@@ -133,6 +141,12 @@ def main():
         time.sleep(1)
 
     my_camera.end()
+
+    for filename in os.listdir(IMAGE_STORAGE_LOCATION):
+        if '.jpg' in filename:
+            os.remove(os.path.join(IMAGE_STORAGE_LOCATION, filename))
+
+    return 0
 
 
 if __name__ == "__main__":
