@@ -12,47 +12,65 @@ import threading
 from time import sleep
 
 
-class ASARCommunicationsServer:
+class ASARCommunicationsServer(object):
     """
-        Class
+    Object for interfacing with the robot over XBee UART radios.
+
+    This class abstracts the encoding and handling of messages such that the
+    application can easily read new messages that have already been parsed and
+    decoded and send messages without worrying about the required encoding.
     """
 
     def __init__(self, driver_path, baud_rate=9600):
+        """
+        Constructs the communication server.
+        :param driver_path: The path to the USB port driver file.
+        :param baud_rate: The baud rate of the UART communication.
+        """
         self.my_driver_path = driver_path
         self.my_baud_rate = baud_rate
         self.my_handlers = {}
         self.my_server_is_running = False
-        self.my_serial_port = None
-        self.my_message_termination = bytes('\n', encoding='utf-8')
-        self.my_received_message_buffer = []
-        self.my_receive_worker_thread = None
-        return
-
-    def begin(self):
-        """
-        Initializes and the server for full duplex communication.
-        """
-        # Create the serial port object
         self.my_serial_port = serial.Serial(self.my_driver_path,
                                             self.my_baud_rate,
                                             parity=serial.PARITY_NONE,
                                             bytesize=serial.EIGHTBITS,
                                             timeout=1)
-        self.my_serial_port.reset_input_buffer()
-        self.my_serial_port.open()
-        # Internal bookkeeping to mark the server is running
-        self.my_server_is_running = True
-        # Spin up a new thread to run the server
+        self.my_message_termination = b'\n'
+        self.my_received_message_buffer = []
         self.my_receive_worker_thread = threading.Thread(target=self.server_context,
-                                                         name="ASAR Comms Server Thread").start()
-        return
+                                                         args=(),
+                                                         name="ASAR Comms Server Thread")
+
+    def begin(self):
+        """
+        Initializes and the server for full duplex communication.
+
+        :return Success of the call to begin.
+        """
+        # Create the serial port object
+        if self.my_server_is_running:
+            # Already running
+            return False
+
+        self.my_serial_port.reset_input_buffer()
+
+        # check that another program is not using the serial port
+        if not self.my_serial_port.isOpen():
+            self.my_serial_port.open()
+            # Internal bookkeeping to mark the server is running
+            self.my_server_is_running = True
+            # Spin up a new thread to run the server
+            self.my_receive_worker_thread.start()
+
+        return self.my_server_is_running
 
     def end(self):
         """
         Closes the communications server.
         """
-        self.my_receive_worker_thread.stop()
         self.my_server_is_running = False
+        self.my_receive_worker_thread.join()
         self.my_serial_port.close()
         return
 
@@ -60,14 +78,20 @@ class ASARCommunicationsServer:
         """
         Sends a string of bytes over the communications server.
         """
-        self.my_serial_port.write(message_to_transmit, encoding='utf-8')
-        return
+        if self.my_server_is_running:
+            self.my_serial_port.write(message_to_transmit.encode('utf-8') + self.my_message_termination)
+            return True
+        else:
+            return False
 
     def read(self):
         """
         Reads a message from the buffer.
         """
-        return self.my_received_message_buffer.pop(0)
+        if self.messages_received() > 0:
+            return self.my_received_message_buffer.pop(0)
+        else:
+            return ""
 
     def messages_received(self):
         """
@@ -86,6 +110,7 @@ class ASARCommunicationsServer:
         while self.my_server_is_running:
             new_byte = self.my_serial_port.read(1)
             if new_byte is not b'':
+                # empty bytestring indicates a timeout
                 message_in_progress += [new_byte]
             if new_byte is self.my_message_termination:
                 # full new message has been received
@@ -115,10 +140,14 @@ def main():
                 file = open(message_dump_file, 'w')
                 file.write(my_comms_server.read() + '\n')
                 file.close()
+            print("I'm listening...")
             my_comms_server.write("I'm listening...")
         else:
+            print("I'm talking...")
             my_comms_server.write("I'm talking...")
         sleep(1)
+
+    my_comms_server.end()
 
 
 if __name__ == "__main__":
