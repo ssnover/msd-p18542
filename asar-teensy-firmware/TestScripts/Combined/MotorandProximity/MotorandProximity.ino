@@ -1,11 +1,14 @@
-/*
- * ProximityClassTest.ino
- * Autho: Aaron Mallabar
- * Date: February 19, 2018
- * Description Testing the Proximity_Sensor Class
+/* TestScript1.ino
+ *  Author: Aaron Mallabar
+ *  Date:   January 18,2017
+ *  Description: Start Testing some of the capabilities of our MSD prototype Robot PCB.
+ *  1. Motor Movement
+ *  
  */
-#include "Proximity_Sensor.h"
-#include "PITimer.h"
+
+ #include "MOTOR.h"
+ #include "Proximity_Sensor.h"
+ #include "PITimer.h"
 
 const int LED = 13;
 const int Period = .1;
@@ -13,15 +16,17 @@ bool Flag = 0;
 
 void callback();
 
-ASAR::Proximity_Sensor myPing;
+ ASAR::MOTOR myMOTOR;
+ ASAR::Proximity_Sensor myPing;
 
-void setup() 
+ void callback();
+
+void setup()
 {
   Serial.begin(9600);
   pinMode(LED, OUTPUT);
   PITimer1.period(Period);
   PITimer1.start(callback);
-
 }
 
 void loop()
@@ -29,16 +34,24 @@ void loop()
   int distance = 0;
   distance = myPing.CheckProximity();
   Serial.println(distance);
-  if (distance < 10)
+  if (distance < 25)
   {
     digitalWrite(LED, HIGH);
+    myMOTOR.Forward(5);
+    
   }
   else 
   {
     digitalWrite(LED, LOW);
+    myMOTOR.Stop();
+    delay(5);
+    myMOTOR.Backwards(5);
   }
 
 }
+  
+
+
 
 void callback()
 {
@@ -49,3 +62,8 @@ void callback()
   //digitalWrite(LED, !digitalRead(LED));
   Flag = true;
 }
+
+  
+
+  
+
