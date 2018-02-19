@@ -6,6 +6,7 @@
 
 import datetime
 import os
+import sqlite3
 import threading
 import time
 
@@ -19,13 +20,13 @@ except ImportError:
 
 class ASARCameraEngine:
 
-    def __init__(self, frequency, database_path):
+    def __init__(self, frequency, database_path, image_path):
         """
         Constructor.
         """
         self.my_camera = PiCamera()
         self.my_database_path = database_path
-        self.my_images_directory = os.path.join(os.sep, 'home', 'pi', 'asar', 'images')
+        self.my_images_directory = image_path
         self.my_capture_frequency = frequency
         self.my_worker_thread = threading.Thread(target=self.cameraEngineImageContext, args=())
         self.my_worker_thread.daemon = True
@@ -104,7 +105,6 @@ class ASARCameraEngine:
         :return: None
         """
         self.my_camera_is_busy = True
-
         start_time = datetime.datetime.now()
         self.my_camera.start_recording(path)
 
@@ -112,7 +112,6 @@ class ASARCameraEngine:
             pass
 
         self.my_camera.stop_recording()
-
         self.my_camera_is_busy = False
 
 
@@ -124,9 +123,10 @@ def main():
     TOTAL_TIME_TO_RUN_SECONDS = 10
     CAPTURE_FREQUENCY_HZ = 2
 
-    my_camera = ASARCameraEngine(CAPTURE_FREQUENCY_HZ, os.path.join(os.sep, 'tmp', 'asar.db'))
+    my_camera = ASARCameraEngine(CAPTURE_FREQUENCY_HZ,
+                                 os.path.join(os.sep, 'tmp', 'asar.db'),
+                                 os.path.join(os.sep, 'home', 'pi', 'asar', 'images'))
     my_camera.begin()
-
     start_time = datetime.datetime.now()
 
     while (datetime.datetime.now() - start_time).seconds < TOTAL_TIME_TO_RUN_SECONDS:
