@@ -7,6 +7,7 @@ import cv2
 if __name__ == '__main__':
     # initialize the pixel value list
     pixel_hsv = []
+    pixel_hsv_averages = []
     # Read in the image.
     im_src = cv2.imread("hex_t.png")
 
@@ -78,15 +79,17 @@ if __name__ == '__main__':
                 pixel = image[cY + i, cX + k]
                 pixel_hsv.insert(i + k, pixel)
                 print(pixel)
-                print(pixel_hsv)
-        # calculate the average H, S, and V values for each hexagon tile
-        print(np.mean(pixel_hsv, axis=0))
 
+        # calculate the average H, S, and V values for each hexagon tile
+        pixel_hsv_averages.append(np.mean(pixel_hsv, axis=0))
+        print(np.mean(pixel_hsv, axis=0))
+        print(pixel_hsv_averages)
         # Draw the contours around each shape, the circle in the center and name the shape
         cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
         cv2.circle(image, (cX, cY), 7, (255, 255, 255), -1)
         cv2.putText(image, shape, (cX, cY), cv2.FONT_HERSHEY_SIMPLEX,
                     0.5, (255, 255, 255), 2)
+
 
 
 
