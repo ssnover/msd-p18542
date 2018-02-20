@@ -29,6 +29,11 @@ def get_attributes(image):
         # compute the center of the contour, then detect the name of the
         # shape using only the contour
         M = cv2.moments(c)
+        if M["m10"] == 0:
+            M["m10"] = M["m10"]+1
+        if M["m00"] == 0:
+            M["m00"] = M["m00"]+1
+
         cX = int((M["m10"] / M["m00"]) * ratio)
         cY = int((M["m01"] / M["m00"]) * ratio)
         shape = sd.detect(c)
@@ -61,10 +66,11 @@ def get_attributes(image):
             cv2.circle(image, (cX, cY), 7, (255, 255, 255), -1)
             cv2.putText(image, shape, (cX, cY), cv2.FONT_HERSHEY_SIMPLEX,
                         0.5, (255, 255, 255), 2)
-            # cv2.waitKey(0)
 
-    # show the output image
-    cv2.imshow("Image", image)
+
+         # show the output image
+        cv2.imshow("Image", image)
+        cv2.waitKey(0)
 
     print(hexagon_attributes)
     return hexagon_attributes

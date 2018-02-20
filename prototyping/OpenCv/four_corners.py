@@ -10,12 +10,13 @@ import cv2
 
 def four_points(image):
 
+
     four = {}
     four['points'] = []
     four_corners = []
+
     # load the image and resize it to a smaller factor so that
     # the shapes can be approximated better
-    # image = cv2.imread(image)
     resized = imutils.resize(image, width=300)
     ratio = image.shape[0] / float(resized.shape[0])
 
@@ -27,6 +28,7 @@ def four_points(image):
 
     # find contours in the thresholded image and initialize the
     # shape detector
+
     cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
                          cv2.CHAIN_APPROX_SIMPLE)
     cnts = cnts[0] if imutils.is_cv2() else cnts[1]
@@ -60,7 +62,7 @@ def four_points(image):
 
                 print(four_corners)
                 cv2.imshow("Image", image)
-            #cv2.waitKey(0)
+            cv2.waitKey(0)
 
     # show the output image
     four_corners.reverse()

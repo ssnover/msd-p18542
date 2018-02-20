@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from four_corners import four_points
 from get_attributes import get_attributes
+import json
 if __name__ == '__main__':
     # Read in the image.
 
@@ -31,9 +32,12 @@ if __name__ == '__main__':
     # Warp source image to destination
     im_dst = cv2.warpPerspective(im_src, h, size[0:2])
     # print(pts_src)
+
     attributes = get_attributes(im_dst)
     print(pts_dst)
+    json_str = json.dumps(attributes)
     # Show output
     cv2.imshow("Image", im_dst)
+    print(json_str)
     cv2.waitKey(0)
 
