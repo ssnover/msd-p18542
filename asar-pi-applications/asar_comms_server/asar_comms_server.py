@@ -36,7 +36,7 @@ class ASARCommunicationsServer(object):
                                             parity=serial.PARITY_NONE,
                                             bytesize=serial.EIGHTBITS,
                                             timeout=1)
-        self.my_message_termination = b'\n'
+        self.my_message_termination_char = '\n'
         self.my_received_message_buffer = []
         self.my_receive_worker_thread = threading.Thread(target=self.server_context,
                                                          args=(),
@@ -56,12 +56,11 @@ class ASARCommunicationsServer(object):
         self.my_serial_port.reset_input_buffer()
 
         # check that another program is not using the serial port
-        if not self.my_serial_port.isOpen():
-            self.my_serial_port.open()
-            # Internal bookkeeping to mark the server is running
-            self.my_server_is_running = True
-            # Spin up a new thread to run the server
-            self.my_receive_worker_thread.start()
+        print("Opening the serial port")
+        # Internal bookkeeping to mark the server is running
+        self.my_server_is_running = True
+        # Spin up a new thread to run the server
+        self.my_receive_worker_thread.start()
 
         return self.my_server_is_running
 
@@ -70,7 +69,7 @@ class ASARCommunicationsServer(object):
         Closes the communications server.
         """
         self.my_server_is_running = False
-        self.my_receive_worker_thread.join()
+        #self.my_receive_worker_thread.join()
         self.my_serial_port.close()
         return
 
@@ -79,7 +78,8 @@ class ASARCommunicationsServer(object):
         Sends a string of bytes over the communications server.
         """
         if self.my_server_is_running:
-            self.my_serial_port.write(message_to_transmit.encode('utf-8') + self.my_message_termination)
+            print("Transmit away!")
+            self.my_serial_port.write((message_to_transmit + self.my_message_termination_char).encode('utf-8'))
             return True
         else:
             return False
@@ -105,31 +105,32 @@ class ASARCommunicationsServer(object):
         A method to be run in a separate thread to handle messages as they're received.
         :return:
         """
-        message_in_progress = []
+        message_in_progress = ""
 
         while self.my_server_is_running:
-            new_byte = self.my_serial_port.read(1)
-            if new_byte is not b'':
-                # empty bytestring indicates a timeout
-                message_in_progress += [new_byte]
-            if new_byte is self.my_message_termination:
+            new_byte = self.my_serial_port.read(1).decode('utf-8')
+            if new_byte is not '':
+                # empty string indicates a timeout
+                message_in_progress += new_byte
+            if new_byte is self.my_message_termination_char:
                 # full new message has been received
                 # add to the buffer, make a deep copy
                 self.my_received_message_buffer += [message_in_progress[:]]
+                print(message_in_progress)
                 # call the callbacks
                 for callback in self.my_handlers:
                     callback()
                 # then empty our local buffer
-                message_in_progress = []
+                message_in_progress = ""
 
 
 def main():
     """
     Run a series of tests or an individual test.
     """
-    TOTAL_TIME_TO_RUN = 60
-    message_dump_file = os.path.join("", "tmp", "comms_received.txt")
-    my_comms_server = ASARCommunicationsServer("/dev/ttyACM0", 9600)
+    TOTAL_TIME_TO_RUN = 10
+    message_dump_file = os.path.join(os.sep, "tmp", "comms_received.txt")
+    my_comms_server = ASARCommunicationsServer("/dev/serial0", 9600)
     my_comms_server.begin()
 
     start_time = datetime.datetime.now()
@@ -137,14 +138,14 @@ def main():
     while (datetime.datetime.now() - start_time).seconds < TOTAL_TIME_TO_RUN:
         if my_comms_server.messages_received():
             while my_comms_server.messages_received():
-                file = open(message_dump_file, 'w')
+                file = open(message_dump_file, 'a')
                 file.write(my_comms_server.read() + '\n')
                 file.close()
             print("I'm listening...")
             my_comms_server.write("I'm listening...")
         else:
             print("I'm talking...")
-            my_comms_server.write("I'm talking...")
+            my_comms_server.write("I'm talking...\n")
         sleep(1)
 
     my_comms_server.end()
