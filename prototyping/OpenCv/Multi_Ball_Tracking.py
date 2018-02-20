@@ -26,6 +26,8 @@ greenLower = (21, 93, 81)
 greenUpper = (64, 255, 255)
 redLower = (125, 68,75)
 redUpper = (255, 255, 180)
+# blueLower = (104, 163,97)
+# blueUpper = (255, 255, 255)
 
 pts = deque(maxlen=args["buffer"])
 

@@ -4,10 +4,10 @@ from utils import get_four_points
 
 if __name__ == '__main__':
     # Read in the image.
-    im_src = cv2.imread("book1.jpg")
+    im_src = cv2.imread("Hexagon_Terrain2.jpg")
 
     # Destination image
-    size = (300, 400, 3)
+    size = (600, 500, 3)
 
     im_dst = np.zeros(size, np.uint8)
 
