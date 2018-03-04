@@ -6,6 +6,13 @@
 const int LED = 13;         //Debug LED
 bool Flag = false;          //Flag to start loop
 const double sPeriod = .1;  //Period at which loop runs
+
+int instructCounter = 0;
+int action[20] = {0x00};
+int distance[20] ={0x00};
+int angle[20] = {0x00};
+int speedy[20] = {0x00};
+
 void callback();            //Interrupt function starting the loop
 void readInstruct();        //Function that reads xbee and updates insruction variables
 void printInstructSet();    //Prints all available instructions
@@ -25,6 +32,7 @@ void loop()
   while (Flag)              //Run the loop only when flag (from callback) is raised
   {
     readInstruct();         //read the instructions from xbee
+    printInstructSet();
     Flag = false;           //lower the flag so loop doesnt run again until time
   }
 }
@@ -42,11 +50,6 @@ void callback()
 void readInstruct()
 {
   int reading[5] = {0};               //temporary hold place from direct reading of xbee
-  int instructCounter = 0;
-  int action[20] = {0x00};
-  int distance[20] ={0x00};
-  int angle[20] = {0x00};
-  int speedy[20] = {0x00};
   if (XBEE.available())               //Only if there is something from xbee to read
   {
     if (XBEE.read() == 0xFF)           //Start reading, if the start bit is read
@@ -99,5 +102,28 @@ void readInstruct()
     }//end if, ending the specific instruction                                
   }// end if reading available
 }//end readinstruction function
-  
+
+
+/* Function that prints full instruction set */
+void printInstructSet()
+{
+  for (int i = 0; i <= instructCounter; i--) //For each instruction
+  {
+    Serial.print("Instruction: "); Serial.println(i);
+    Serial.print("  Move Type: "); Serial.println(action[i]);
+    if (action[i] == 0xCC)  //If go forward command
+    {
+      Serial.print("    Distance: "); Serial.println(distance[i]);
+      Serial.print("    Speed: "); Serial.println(speedy[i]);
+    }
+    else if (action[i] == 0xAA || action[i] == 0xBB) //If turning command
+    {
+      Serial.print("    Angle: "); Serial.print(angle[i]); Serial.println (" degrees");
+    }
+    else //If not either a go forward or turn command
+    {
+      Serial.println("STOP!");
+    }
+  }
+}
 
