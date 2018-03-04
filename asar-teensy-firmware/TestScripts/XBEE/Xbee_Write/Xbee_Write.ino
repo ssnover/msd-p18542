@@ -17,10 +17,10 @@ void setup()
 void loop()
 {
   digitalWrite(ledpin, LOW);
-  XBEE.print("a");
+  XBEE.print("Hello");
   Serial.println("Writing..");
-  delay(500);
-  digitalWrite(ledpin, HIGH);
-  delay(500);
+  delay(2000);
+  
+
 }
 
