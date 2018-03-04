@@ -43,18 +43,30 @@ void readInstruct()
   int reading[5] = {0};               //temporary hold place from direct reading of xbee
   if (XBEE.available())               //Only if there is something from xbee to read
   {
-    if (XBEE.read() == 255)           //Start reading, if the start bit is read
+    if (XBEE.read() == 0xFF)           //Start reading, if the start bit is read
     {
       for (int i=0; i <= 3; i++)          //Read the next four inputs
       {
         reading[i] = XBEE.read();             //and fill up the temportaryarray
       }                                   //end of instruction
-      for (int i = 0; i <= 4; i++)        //loop back through the temporary array
+      switch (reading[0])
       {
-        Serial.print(reading[i]);             //Print the array on serial monitor
-        Serial.print(", ");
-      }                                   //end of array
-      Serial.println();                   //print a new line in serial monitor
+        case 0xAA :
+          Serial.print("Turn Left for");
+          break;
+        case 0xBB :
+          Serial.print("Turn Right for");
+          break;            
+        case 0xCC :
+          Serial.println("March at");
+          break;          
+        case 0x00 :
+          Serial.println("Stop!!");
+          break;    
+        default: 
+          Serial.println("Error, Something with wrong with the communication!");
+          break;      
+      }                                  
     }                                
   }
 }
