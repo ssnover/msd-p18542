@@ -1,7 +1,9 @@
+#include <Wire.h>
+
 #include "PITimer.h"
 #include "Wire.h"
 
-#define XBEE Serial1
+auto XBEE = Serial1;
 
 const int LED = 13;         //Debug LED
 bool Flag = false;          //Flag to start loop
@@ -32,7 +34,7 @@ void loop()
   while (Flag)              //Run the loop only when flag (from callback) is raised
   {
     readInstruct();         //read the instructions from xbee
-    printInstructSet();
+    //printInstructSet();
     Flag = false;           //lower the flag so loop doesnt run again until time
   }
 }
@@ -57,7 +59,8 @@ void readInstruct()
       instructCounter ++; 
       for (int i=0; i <= 0xFF; i++)          //Read all the inputs (until stop bit is read)
       {
-        reading[i] = XBEE.read();             //and fill up the temportaryarray
+        reading[i] = XBEE.read();             //and fill up the temporary array
+        //Serial.print("Raw reading: "); Serial.println(reading[i], HEX); This print works as expected
         if (reading[i] == 0xF0)               //If read stop byte
         {
           break;                                  //Break FOR loop (stop reading)
@@ -101,28 +104,43 @@ void readInstruct()
       }//end switch (between actions)                                 
     }//end if, ending the specific instruction                                
   }// end if reading available
+  Serial.print("InstructCounter: "); Serial.println(instructCounter);
+  for (int i = 0; i <= instructCounter; i++)
+  {
+    Serial.println(action[i]);
+  }
 }//end readinstruction function
 
 
 /* Function that prints full instruction set */
 void printInstructSet()
 {
-  for (int i = 0; i <= instructCounter; i--) //For each instruction
+  if (instructCounter > 0)
   {
-    Serial.print("Instruction: "); Serial.println(i);
-    Serial.print("  Move Type: "); Serial.println(action[i]);
-    if (action[i] == 0xCC)  //If go forward command
+    for (int i = 0; i <= instructCounter; i++) //For each instruction
     {
-      Serial.print("    Distance: "); Serial.println(distance[i]);
-      Serial.print("    Speed: "); Serial.println(speedy[i]);
-    }
-    else if (action[i] == 0xAA || action[i] == 0xBB) //If turning command
-    {
-      Serial.print("    Angle: "); Serial.print(angle[i]); Serial.println (" degrees");
-    }
-    else //If not either a go forward or turn command
-    {
-      Serial.println("STOP!");
+      Serial.print("Instruction: "); Serial.println(i);
+      switch (action[instructCounter])      //switch between the different types of moves
+      {
+        case 0xAA : //Turn Left
+          Serial.println("  Move Type: Left Turn");
+          Serial.print("    Angle: "); Serial.print(angle[i]); Serial.println (" degrees");
+          break;
+        case 0xBB : //Turn Right
+          Serial.println("  Move Type: Right Turn");
+          Serial.print("    Angle: "); Serial.print(angle[i]); Serial.println (" degrees");
+          break;
+        case 0xCC : //Forwarmd
+          Serial.println("  Move Type: Forward");
+          Serial.print("    Distance: "); Serial.println(distance[i]);
+          Serial.print("    Speed: "); Serial.println(speedy[i]);
+          break;
+        case 0x00 : //STOP
+          Serial.println("  Move Type: Stop");
+          break;
+        default :
+          Serial.println(" Invalid Move type");
+      }
     }
   }
 }
