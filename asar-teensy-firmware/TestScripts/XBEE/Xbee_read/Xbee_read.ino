@@ -3,57 +3,60 @@
 
 #define XBEE Serial1
 
-const int LED = 13;
-bool Flag = false;
-const double sPeriod = 1;
-void callback();
-void readInstruct();
-char xbee_input[4] = {0};
+const int LED = 13;         //Debug LED
+bool Flag = false;          //Flag to start loop
+const double sPeriod = .1;  //Period at which loop runs
+void callback();            //Interrupt function starting the loop
+void readInstruct();        //Function that reads xbee and updates insruction variables
 
 void setup()
 {
-  Serial.begin(9600);
-  XBEE.begin(9600);
-  pinMode(LED, OUTPUT);
-  PITimer1.period(sPeriod);     // initialize timer1
-  PITimer1.start(callback);           // attaches callback() as a timer overflow interrupt
+  Serial.begin(9600);       //Initialize Serial Monitor w/ baud rate
+  XBEE.begin(9600);         //Initialize Xbee, with baud rate
+  pinMode(LED, OUTPUT);     //Initialize LED as output
+  PITimer1.period(sPeriod); // initialize timer1
+  PITimer1.start(callback); // attaches callback() as a timer overflow interrupt
 }
-int counter = 0;
+
+/*Main loop reads xbee and updates instructions to robot calling the readInstruct function*/
 void loop()
 {
-  while (Flag)
+  while (Flag)              //Run the loop only when flag (from callback) is raised
   {
-    readInstruct();
-    Serial.println(xbee_input);
-    counter ++;
-    Flag = false;
+    readInstruct();         //read the instructions from xbee
+    Flag = false;           //lower the flag so loop doesnt run again until time
   }
 }
 
-void callback()
+/*callback function is interrupt function that tells the loop when it is time to run. *
+* It gets called every sPeriod Seconds                                                */
+void callback()                                     
 {
-  digitalWrite(LED, digitalRead(13) ^ 1);
-  Flag = true;
+  digitalWrite(LED, digitalRead(13) ^ 1); //toggle LED
+  Flag = true;                            //Raise Flag
 }
 
+
+/*Read Instruction from xbee*/
 void readInstruct()
 {
-  if (XBEE.available() > 0 && XBEE.read() == 'F' && XBEE.read() == 'F')
+  int reading[5] = {0};               //temporary hold place from direct reading of xbee
+  if (XBEE.available())               //Only if there is something from xbee to read
   {
-    for (int i = 0; i < 5; i++)
+    if (XBEE.read() == 255)           //Start reading, if the start bit is read
     {
-      xbee_input[i] = XBEE.read();
-    }
+      for (int i=0; i <= 3; i++)          //Read the next four inputs
+      {
+        reading[i] = XBEE.read();             //and fill up the temportaryarray
+      }                                   //end of instruction
+      for (int i = 0; i <= 4; i++)        //loop back through the temporary array
+      {
+        Serial.print(reading[i]);             //Print the array on serial monitor
+        Serial.print(", ");
+      }                                   //end of array
+      Serial.println();                   //print a new line in serial monitor
+    }                                
   }
-  else
-  {
-   xbee_input[0] = ' ';
-   xbee_input[1] = ' ';
-   xbee_input[2] = ' ';
-   xbee_input[3] = ' ';
-   xbee_input[4] = ' ';
-  }
- 
 }
   
 
