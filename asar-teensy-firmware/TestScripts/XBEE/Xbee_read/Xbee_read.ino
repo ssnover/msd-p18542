@@ -8,7 +8,7 @@ auto XBEE = Serial1;
 const int LED = 13;         //Debug LED
 bool Flag = false;          //Flag to start loop
 const double sPeriod = .1;  //Period at which loop runs
-
+int rawRead[5] = {0};               //temporary hold place from direct reading of xbee
 int instructCounter = 0;
 int action[20] = {0x00};
 int distance[20] ={0x00};
@@ -16,13 +16,13 @@ int angle[20] = {0x00};
 int speedy[20] = {0x00};
 
 void callback();            //Interrupt function starting the loop
-void readInstruct();        //Function that reads xbee and updates insruction variables
+void readRawInstruct();     //Function that reads xbee and updates insruction variables
 void printInstructSet();    //Prints all available instructions
 
 void setup()
 {
-  Serial.begin(9600);       //Initialize Serial Monitor w/ baud rate
-  XBEE.begin(9600);         //Initialize Xbee, with baud rate
+  Serial.begin(115200);       //Initialize Serial Monitor w/ baud rate
+  XBEE.begin(115200);         //Initialize Xbee, with baud rate
   pinMode(LED, OUTPUT);     //Initialize LED as output
   PITimer1.period(sPeriod); // initialize timer1
   PITimer1.start(callback); // attaches callback() as a timer overflow interrupt
@@ -33,7 +33,16 @@ void loop()
 {
   while (Flag)              //Run the loop only when flag (from callback) is raised
   {
-    readInstruct();         //read the instructions from xbee
+    readRawInstruct();         //read the instructions from xbee
+    if (rawRead[0] != 0)
+    {
+      for (int i = 0; i <= 3; i++)
+      {
+        Serial.print("Argument # "); Serial.print(i);
+        Serial.print(", Raw reading: "); Serial.println(rawRead[i], HEX);       
+      }
+    }
+    rawRead[0] = 0;
     //printInstructSet();
     Flag = false;           //lower the flag so loop doesnt run again until time
   }
@@ -47,9 +56,31 @@ void callback()
   Flag = true;                            //Raise Flag
 }
 
+/*Read a single Instruction from xbee*/
+void readRawInstruct()
+{
+  if (XBEE.available() && XBEE.read() == 0xFF)               //Only if there is something from xbee to read
+  {
+    instructCounter ++; 
+    for (int i = 0; i <= 5; i++)        //Read all the inputs (until stop bit is read)
+    {
+      rawRead[i] = XBEE.read();             //and fill up the temporary array
+     // Serial.print("Argument # "); Serial.print(i);
+      //Serial.print(", Raw reading: "); Serial.println(rawRead[i], HEX); 
+      if(rawRead[i] == 0xF0)
+      {
+        i = 6;
+      }
+      else if (i >= 4)
+      {
+        Serial.println("ERROR001: Stop Bit Not Detected");
+      }
+    }
+  }                                   
+}
 
 /*Read Instruction from xbee*/
-void readInstruct()
+/*void readInstruct()
 {
   int reading[5] = {0};               //temporary hold place from direct reading of xbee
   if (XBEE.available())               //Only if there is something from xbee to read
@@ -57,17 +88,14 @@ void readInstruct()
     if (XBEE.read() == 0xFF)           //Start reading, if the start bit is read
     {
       instructCounter ++; 
-      for (int i=0; i <= 0xFF; i++)          //Read all the inputs (until stop bit is read)
+      for (int i = 0; i <= 5; i++)        //Read all the inputs (until stop bit is read)
       {
         reading[i] = XBEE.read();             //and fill up the temporary array
-        //Serial.print("Raw reading: "); Serial.println(reading[i], HEX); This print works as expected
-        if (reading[i] == 0xF0)               //If read stop byte
+        //Serial.print("Argument # "); Serial.print(i);
+        //Serial.print(", Raw reading: "); Serial.println(reading[i], HEX); 
+        if(reading[i] == 0xF0)
         {
-          break;                                  //Break FOR loop (stop reading)
-        }
-        else if(i > 5)                        //If Stop bit not read by expected time
-        {
-          Serial.println("Error");               //Send Error Message   
+          i = 6;
         }
       }                                   //end of instruction
       action[instructCounter] = reading[0]; //add the action to instruction set
@@ -101,15 +129,10 @@ void readInstruct()
         default: //If the action type is not recognized
           Serial.println("Error, Something with wrong with the communication!"); //print error message
           break;      
-      }//end switch (between actions)                                 
-    }//end if, ending the specific instruction                                
+      }                               
+    }                              
   }// end if reading available
-  Serial.print("InstructCounter: "); Serial.println(instructCounter);
-  for (int i = 0; i <= instructCounter; i++)
-  {
-    Serial.println(action[i]);
-  }
-}//end readinstruction function
+}*/
 
 
 /* Function that prints full instruction set */
