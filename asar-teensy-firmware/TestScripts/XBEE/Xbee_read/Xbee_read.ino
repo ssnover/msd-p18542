@@ -8,8 +8,9 @@ auto XBEE = Serial1;
 const int LED = 13;         //Debug LED
 bool Flag = false;          //Flag to start loop
 const double sPeriod = .1;  //Period at which loop runs
+int expectedNumInstructions = 5;
+int instructNum = 1;
 int rawRead[5] = {0};               //temporary hold place from direct reading of xbee
-int instructCounter = 0;
 int action[20] = {0x00};
 int distance[20] ={0x00};
 int angle[20] = {0x00};
@@ -17,7 +18,8 @@ int speedy[20] = {0x00};
 
 void callback();            //Interrupt function starting the loop
 void readRawInstruct();     //Function that reads xbee and updates insruction variables
-void printInstructSet();    //Prints all available instructions
+void Interpret_instruct();
+void printInstructSet();
 
 void setup()
 {
@@ -36,13 +38,17 @@ void loop()
     readRawInstruct();         //read the instructions from xbee
     if (rawRead[0] != 0)
     {
-      for (int i = 0; i <= 3; i++)
+      Interpret_instruct();
+      if (instructNum >= expectedNumInstructions)
       {
-        Serial.print("Argument # "); Serial.print(i);
-        Serial.print(", Raw reading: "); Serial.println(rawRead[i], HEX);       
+        printInstructSet();
       }
+      instructNum ++; 
     }
-    rawRead[0] = 0;
+    for (int i = 0; i < 5; i++)
+    {
+      rawRead[i] = 0;
+    }
     //printInstructSet();
     Flag = false;           //lower the flag so loop doesnt run again until time
   }
@@ -61,7 +67,6 @@ void readRawInstruct()
 {
   if (XBEE.available() && XBEE.read() == 0xFF)               //Only if there is something from xbee to read
   {
-    instructCounter ++; 
     for (int i = 0; i <= 5; i++)        //Read all the inputs (until stop bit is read)
     {
       rawRead[i] = XBEE.read();             //and fill up the temporary array
@@ -73,98 +78,79 @@ void readRawInstruct()
       }
       else if (i >= 4)
       {
-        Serial.println("ERROR001: Stop Bit Not Detected");
+        Serial.println("ERROR-001: Stop Bit Not Detected");
       }
     }
   }                                   
 }
 
-/*Read Instruction from xbee*/
-/*void readInstruct()
+/*Interprets a single raw reading instruction, fills relevant arrays 
+ * with the index being the number of instruction */
+void Interpret_instruct()
 {
-  int reading[5] = {0};               //temporary hold place from direct reading of xbee
-  if (XBEE.available())               //Only if there is something from xbee to read
+  action[instructNum] = rawRead[0]; //add the action to instruction set
+  //Serial.print("Instruction: "); Serial.print(instructNum);
+ // Serial.print(" -- "); Serial.println(action[instructNum], HEX);
+  switch (action[instructNum])      //switch between the different types of moves
   {
-    if (XBEE.read() == 0xFF)           //Start reading, if the start bit is read
-    {
-      instructCounter ++; 
-      for (int i = 0; i <= 5; i++)        //Read all the inputs (until stop bit is read)
+    case 0xAA : //Turn Left
+      angle[instructNum] = rawRead[1]; //add the relative turning angle to instruction set
+      if (rawRead[2] != 0xF0)      //If the stop bit isnt next, something went wrong
       {
-        reading[i] = XBEE.read();             //and fill up the temporary array
-        //Serial.print("Argument # "); Serial.print(i);
-        //Serial.print(", Raw reading: "); Serial.println(reading[i], HEX); 
-        if(reading[i] == 0xF0)
-        {
-          i = 6;
-        }
-      }                                   //end of instruction
-      action[instructCounter] = reading[0]; //add the action to instruction set
-      switch (action[instructCounter])      //switch between the different types of moves
+        Serial.println("ERROR-002: Stop Bit Not Detected as expected"); //print error message
+      }
+      break;
+    case 0xBB : //Turn Right
+      angle[instructNum] = rawRead[1]; //add the turning angle to instruction set
+      if (rawRead[2] != 0xF0)      //If the stop bit isnt next, something went wrong     
       {
-        case 0xAA : //Turn Left
-          angle[instructCounter] = reading[1]; //add the relative turning angle to instruction set
-          if (reading[2] != 0xF0)      //If the stop bit isnt next, something went wrong
-          {
-            Serial.println("An Error in Communication has occured"); //print error message
-          }
-          break;
-        case 0xBB : //Turn Right
-          angle[instructCounter] = reading[1]; //add the turning angle to instruction set
-          if (reading[2] != 0xF0)      //If the stop bit isnt next, something went wrong     
-          {
-            Serial.println("An Error in Communication has occured"); //print error message
-          }
-          break;            
-        case 0xCC : //Go Forward
-          distance[instructCounter] = reading[1]; //Add the distance of move to instruction set
-          speedy[instructCounter] = reading[2];   //add the speed of move to instruction set
-          if (reading[3] != 0xF0)      //If the stop bit isnt next, something went wrong
-          {
-            Serial.println("An Error in Communication has occured"); //print error message
-          }
-          break;          
-        case 0x00 : //Stop
-          Serial.println("Stop!!");
-          break;    
-        default: //If the action type is not recognized
-          Serial.println("Error, Something with wrong with the communication!"); //print error message
-          break;      
-      }                               
-    }                              
-  }// end if reading available
-}*/
+        Serial.println("ERROR-002: Stop Bit Not Detected as expected"); //print error message
+      }
+      break;            
+    case 0xCC : //Go Forward
+     // Serial.println("Forward Move");
+      distance[instructNum] = rawRead[1]; //Add the distance of move to instruction set
+      speedy[instructNum] = rawRead[2];   //add the speed of move to instruction set
+      if (rawRead[3] != 0xF0)      //If the stop bit isnt next, something went wrong
+      {
+        Serial.println("ERROR-002: Stop Bit Not Detected as expected"); //print error message
+      }
+      break;           
+    default: //If the action type is not recognized
+      Serial.println("ERROR-003: Move-type not not recognized"); //print error message
+      break;  
+  }
+}
 
 
 /* Function that prints full instruction set */
 void printInstructSet()
 {
-  if (instructCounter > 0)
+  for (int i = 0; i <= instructNum; i++) //For each instruction
   {
-    for (int i = 0; i <= instructCounter; i++) //For each instruction
+    Serial.print("Instruction: "); Serial.println(i);
+    switch (action[i])      //switch between the different types of moves
     {
-      Serial.print("Instruction: "); Serial.println(i);
-      switch (action[instructCounter])      //switch between the different types of moves
-      {
-        case 0xAA : //Turn Left
-          Serial.println("  Move Type: Left Turn");
-          Serial.print("    Angle: "); Serial.print(angle[i]); Serial.println (" degrees");
-          break;
-        case 0xBB : //Turn Right
-          Serial.println("  Move Type: Right Turn");
-          Serial.print("    Angle: "); Serial.print(angle[i]); Serial.println (" degrees");
-          break;
-        case 0xCC : //Forwarmd
-          Serial.println("  Move Type: Forward");
-          Serial.print("    Distance: "); Serial.println(distance[i]);
-          Serial.print("    Speed: "); Serial.println(speedy[i]);
-          break;
-        case 0x00 : //STOP
-          Serial.println("  Move Type: Stop");
-          break;
-        default :
-          Serial.println(" Invalid Move type");
-      }
+      case 0xAA : //Turn Left
+        Serial.println("  Move Type: Left Turn");
+        Serial.print("    Angle: "); Serial.print(angle[i]); Serial.println (" degrees");
+        break;
+      case 0xBB : //Turn Right
+        Serial.println("  Move Type: Right Turn");
+        Serial.print("    Angle: "); Serial.print(angle[i]); Serial.println (" degrees");
+        break;
+      case 0xCC : //Forwarmd
+        Serial.println("  Move Type: Forward");
+        Serial.print("    Distance: "); Serial.println(distance[i]);
+        Serial.print("    Speed: "); Serial.println(speedy[i]);
+        break;
+      case 0x00 : //STOP
+        Serial.println("  Move Type: Stop");
+        break;
+      default :
+        Serial.println(" Invalid Move type");
     }
   }
 }
+
 
