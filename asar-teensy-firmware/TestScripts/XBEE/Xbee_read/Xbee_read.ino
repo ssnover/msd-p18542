@@ -5,52 +5,55 @@
 
 auto XBEE = Serial1;
 
-const int LED = 13;         //Debug LED
-bool Flag = false;          //Flag to start loop
-const double sPeriod = .1;  //Period at which loop runs
-int expectedNumInstructions = 5;
-int instructNum = 1;
-int rawRead[5] = {0};               //temporary hold place from direct reading of xbee
+const int LED = 13;             //Debug LED
+bool Flag = false;              //Flag to start loop
+const double sPeriod = .001;      //Period at which loop runs
+int expectedNumInstructions = 5;//size of instruction set
+int instructNum = 1;            //couner for instruction number initialized to one
+int rawRead[5] = {0};           //temporary hold place from direct reading of xbee
+
+/*Set of arrays that include all the instrctions  *
+ *(index of array is instruction number           */
 int action[20] = {0x00};
 int distance[20] ={0x00};
 int angle[20] = {0x00};
 int speedy[20] = {0x00};
 
-void callback();            //Interrupt function starting the loop
-void readRawInstruct();     //Function that reads xbee and updates insruction variables
-void Interpret_instruct();
-void printInstructSet();
+/*Function Declerations*/
+void callback();           //Interrupt function starting the loop
+void readRawInstruct();    //Function that reads xbee and updates insruction variables
+void Interpret_instruct(); //Interprets a single instruction and fills global instructions
+void printInstructSet();   //prints all of the instructions
 
 void setup()
 {
-  Serial.begin(115200);       //Initialize Serial Monitor w/ baud rate
-  XBEE.begin(115200);         //Initialize Xbee, with baud rate
+  Serial.begin(115200);     //Initialize Serial Monitor w/ baud rate
+  XBEE.begin(115200);       //Initialize Xbee, with baud rate
   pinMode(LED, OUTPUT);     //Initialize LED as output
-  PITimer1.period(sPeriod); // initialize timer1
-  PITimer1.start(callback); // attaches callback() as a timer overflow interrupt
+  PITimer1.period(sPeriod); //Initialize timer1
+  PITimer1.start(callback); //attaches callback() as a timer overflow interrupt
 }
 
 /*Main loop reads xbee and updates instructions to robot calling the readInstruct function*/
 void loop()
 {
-  while (Flag)              //Run the loop only when flag (from callback) is raised
+  while (Flag)    //Run the loop only when flag (from callback) is raised
   {
-    readRawInstruct();         //read the instructions from xbee
-    if (rawRead[0] != 0)
+    Flag = false;              //lower the flag so loop doesnt run again until time
+    readRawInstruct();         //reads a single instruction set from the XBEE
+    if (rawRead[0] != 0)       // If an instruction was actually read
     {
-      Interpret_instruct();
-      if (instructNum >= expectedNumInstructions)
+      Interpret_instruct();   //Function call that interprets the latest instruction and fills global arrays      
+      if (instructNum >= expectedNumInstructions) //If last instuction was read and intepretted
       {
-        printInstructSet();
+        printInstructSet();   //Prints the entire instruction set
+        instructNum = 1;      //reset the instruction counter
       }
-      instructNum ++; 
+      else                    //Otherwise (not the last instruction)
+      {
+        instructNum ++;       //Increment the instruction counter
+      }
     }
-    for (int i = 0; i < 5; i++)
-    {
-      rawRead[i] = 0;
-    }
-    //printInstructSet();
-    Flag = false;           //lower the flag so loop doesnt run again until time
   }
 }
 
@@ -70,7 +73,7 @@ void readRawInstruct()
     for (int i = 0; i <= 5; i++)        //Read all the inputs (until stop bit is read)
     {
       rawRead[i] = XBEE.read();             //and fill up the temporary array
-     // Serial.print("Argument # "); Serial.print(i);
+      //Serial.print("Argument # "); Serial.print(i);
       //Serial.print(", Raw reading: "); Serial.println(rawRead[i], HEX); 
       if(rawRead[i] == 0xF0)
       {
@@ -89,29 +92,26 @@ void readRawInstruct()
 void Interpret_instruct()
 {
   action[instructNum] = rawRead[0]; //add the action to instruction set
-  //Serial.print("Instruction: "); Serial.print(instructNum);
- // Serial.print(" -- "); Serial.println(action[instructNum], HEX);
   switch (action[instructNum])      //switch between the different types of moves
   {
     case 0xAA : //Turn Left
       angle[instructNum] = rawRead[1]; //add the relative turning angle to instruction set
-      if (rawRead[2] != 0xF0)      //If the stop bit isnt next, something went wrong
+      if (rawRead[2] != 0xF0)          //If the stop bit isnt next, something went wrong
       {
         Serial.println("ERROR-002: Stop Bit Not Detected as expected"); //print error message
       }
       break;
     case 0xBB : //Turn Right
       angle[instructNum] = rawRead[1]; //add the turning angle to instruction set
-      if (rawRead[2] != 0xF0)      //If the stop bit isnt next, something went wrong     
+      if (rawRead[2] != 0xF0)          //If the stop bit isnt next, something went wrong     
       {
         Serial.println("ERROR-002: Stop Bit Not Detected as expected"); //print error message
       }
       break;            
     case 0xCC : //Go Forward
-     // Serial.println("Forward Move");
       distance[instructNum] = rawRead[1]; //Add the distance of move to instruction set
       speedy[instructNum] = rawRead[2];   //add the speed of move to instruction set
-      if (rawRead[3] != 0xF0)      //If the stop bit isnt next, something went wrong
+      if (rawRead[3] != 0xF0)             //If the stop bit isnt next, something went wrong
       {
         Serial.println("ERROR-002: Stop Bit Not Detected as expected"); //print error message
       }
@@ -120,13 +120,17 @@ void Interpret_instruct()
       Serial.println("ERROR-003: Move-type not not recognized"); //print error message
       break;  
   }
+  for (int i = 0; i < 5; i++) 
+  {
+    rawRead[i] = 0;
+  }
 }
 
 
 /* Function that prints full instruction set */
 void printInstructSet()
 {
-  for (int i = 0; i <= instructNum; i++) //For each instruction
+  for (int i = 1; i <= instructNum; i++) //For each instruction
   {
     Serial.print("Instruction: "); Serial.println(i);
     switch (action[i])      //switch between the different types of moves
@@ -144,11 +148,8 @@ void printInstructSet()
         Serial.print("    Distance: "); Serial.println(distance[i]);
         Serial.print("    Speed: "); Serial.println(speedy[i]);
         break;
-      case 0x00 : //STOP
-        Serial.println("  Move Type: Stop");
-        break;
       default :
-        Serial.println(" Invalid Move type");
+        Serial.println("ERROR-003: Move-type not not recognized");
     }
   }
 }
