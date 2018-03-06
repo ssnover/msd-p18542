@@ -8,7 +8,7 @@ auto XBEE = Serial1;
 const int LED = 13;             //Debug LED
 bool Flag = false;              //Flag to start loop
 const double sPeriod = .001;      //Period at which loop runs
-int expectedNumInstructions = 5;//size of instruction set
+
 int instructNum = 1;            //couner for instruction number initialized to one
 int rawRead[5] = {0};           //temporary hold place from direct reading of xbee
 
@@ -24,6 +24,7 @@ void callback();           //Interrupt function starting the loop
 void readRawInstruct();    //Function that reads xbee and updates insruction variables
 void Interpret_instruct(); //Interprets a single instruction and fills global instructions
 void printInstructSet();   //prints all of the instructions
+void GetInstructions(int expectedNumInstructions);
 
 void setup()
 {
@@ -34,26 +35,12 @@ void setup()
   PITimer1.start(callback); //attaches callback() as a timer overflow interrupt
 }
 
-/*Main loop reads xbee and updates instructions to robot calling the readInstruct function*/
 void loop()
 {
   while (Flag)    //Run the loop only when flag (from callback) is raised
   {
     Flag = false;              //lower the flag so loop doesnt run again until time
-    readRawInstruct();         //reads a single instruction set from the XBEE
-    if (rawRead[0] != 0)       // If an instruction was actually read
-    {
-      Interpret_instruct();   //Function call that interprets the latest instruction and fills global arrays      
-      if (instructNum >= expectedNumInstructions) //If last instuction was read and intepretted
-      {
-        printInstructSet();   //Prints the entire instruction set
-        instructNum = 1;      //reset the instruction counter
-      }
-      else                    //Otherwise (not the last instruction)
-      {
-        instructNum ++;       //Increment the instruction counter
-      }
-    }
+    GetInstructions(5);
   }
 }
 
@@ -154,4 +141,22 @@ void printInstructSet()
   }
 }
 
+/*Main loop reads xbee data, interpretes it as instucionts and prints them on motior*/
+void GetInstructions(int expectedNumInstructions)
+{
+  readRawInstruct();         //reads a single instruction set from the XBEE
+  if (rawRead[0] != 0)       // If an instruction was actually read
+  {
+    Interpret_instruct();   //Function call that interprets the latest instruction and fills global arrays      
+    if (instructNum >= expectedNumInstructions) //If last instuction was read and intepretted
+    {
+      printInstructSet();   //Prints the entire instruction set
+      instructNum = 1;      //reset the instruction counter
+    }
+    else                    //Otherwise (not the last instruction)
+    {
+      instructNum ++;       //Increment the instruction counter
+    }
+  }
+}
 
