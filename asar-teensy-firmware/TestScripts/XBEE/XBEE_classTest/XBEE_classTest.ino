@@ -29,7 +29,7 @@ void loop()
   while(Flag)
   {
     Flag = false;
-    myXBEE.GetInstruction(5);
+    myXBEE.GetInstructions(5);
   }
 }
 

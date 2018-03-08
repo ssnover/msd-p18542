@@ -6,7 +6,7 @@
  *  
  */
 
-#ifdef XBEE_H
+#ifndef XBEE_H
 #define XBEE_H
 
 namespace ASAR

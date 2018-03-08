@@ -1,4 +1,3 @@
-#include <Wire.h>
 
 #include "PITimer.h"
 #include "Wire.h"
