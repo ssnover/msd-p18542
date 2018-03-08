@@ -8,7 +8,7 @@
 #include "PITimer.h"
 
 const int LED = 13;
-const int Period = .1;
+const double Period = .01;
 bool Flag = 0;
 
 void callback();
@@ -35,10 +35,6 @@ void loop()
 
 void callback()
 {
-    if (!Flag)
-    {
-      Serial.println("Error: Didn't Get to Bottom of Loop");
-    }
-  //digitalWrite(LED, !digitalRead(LED));
+  digitalWrite(LED, !digitalRead(LED));
   Flag = true;
 }
