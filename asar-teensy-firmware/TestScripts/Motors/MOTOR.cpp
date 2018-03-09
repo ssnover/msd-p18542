@@ -123,17 +123,21 @@ double MOTOR::getPosition()
 	Lrevs = LeftCounts / CountsPerRev;
   Rrevs = RightCounts / CountsPerRev;
   double pos = 0;
-	if ((abs(Lrevs - Rrevs)/Lrevs <= .1) || Lrevs+Rrevs == 0)
-	{
-    double revs = (Lrevs + Rrevs) / 2;
-		pos =  revs * 2* 3.14159 * WheelRadius;
-	}
-	else
-	{
-		Serial.print("Are we turning?");
-	}
+  double revs = (Lrevs + Rrevs) / 2;
+  pos =  revs * 2* 3.14159 * WheelRadius;
   return pos;
 
+}
+
+double MOTOR::getAngle()
+{
+  ReadCounts();
+  Lrevs = LeftCounts / CountsPerRev;
+  Rrevs = RightCounts / CountsPerRev; 
+  double angle = 0;
+  angle = (Lrevs - Rrevs)*10;
+  return angle;
+  
 }
 
 void MOTOR::initEncoder()

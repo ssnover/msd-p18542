@@ -11,6 +11,7 @@
  ASAR::MOTOR myMOTOR;
 
  float distance = 0;
+ float angle = 0;
 
  const float goThisFar = 3;
  
@@ -25,10 +26,16 @@ void setup()
 void loop()
 {
   distance = myMOTOR.getPosition();
+  angle = myMOTOR.getAngle();
   Serial.print("Distance: "); Serial.print(distance);Serial.println(" Meters"); 
-  if (distance <= goThisFar)
+  Serial.print("Angle: "); Serial.print(angle);Serial.println(" Degrees"); 
+  if (distance <= goThisFar && distance >= 0)
   {
     myMOTOR.Forward(3);
+  }
+  else if (angle <= 90)
+  {
+    myMOTOR.RightTurn(3);
   }
   else
   {
