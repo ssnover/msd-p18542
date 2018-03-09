@@ -21,15 +21,10 @@
 			void RightTurn(const int Speed);
 			void LeftTurn(const int Speed);
 			void Stop();
-      void getPosition();
+      double getPosition();
       void initPosition();
 
-      /*These things should be private later*/
-      double LeftCounts = 0;
-			double RightCounts = 0;
-      double Lrevs = 0;
-      double Rrevs = 0;
-			double Robot_position = 0;
+
 
 			void ReadCounts(); //Hand describes left hand side 'l' or right hand side 'r'
 		
@@ -48,6 +43,12 @@
 			const int encoderA2 = 15;	 //2 = Right
 			const int encoderB1 = 17;
 			const int encoderB2 = 14;
+
+           /*These things should be private later*/
+      double LeftCounts = 0;
+      double RightCounts = 0;
+      double Lrevs = 0;
+      double Rrevs = 0;
 
 		 
 	 };

@@ -21,15 +21,17 @@ void setup()
 }
 void loop()
 {
-  myMOTOR.getPosition();
-  distance = myMOTOR.Robot_position;
-  Serial.print("revs: "); Serial.println(myMOTOR.Lrevs); 
+  
+  distance = myMOTOR.getPosition();
   Serial.print("Distance: "); Serial.print(distance);Serial.println(" Meters"); 
+  myMOTOR.initPosition();
   digitalWrite(13, !digitalRead(13));
   myMOTOR.Forward(1);
   delay(1200);
   myMOTOR.Stop();
   delay(500);
+  
+  
   
   
 

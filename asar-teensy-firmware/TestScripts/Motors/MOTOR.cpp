@@ -18,7 +18,7 @@ namespace ASAR
 {
 namespace
 {
-	const int CountsPerRev = 48*34;
+	const int CountsPerRev = 48*34; //48 Counts per motor rev * N=34 Gear output
 	const float WheelRadius = .045;
   Encoder LeftEncoder(16, 17);
   Encoder RightEncoder(15, 14);
@@ -118,34 +118,29 @@ void MOTOR::ReadCounts()
 
 }
 
-void MOTOR::getPosition()
+double MOTOR::getPosition()
 {
 	ReadCounts();
 	Lrevs = LeftCounts / CountsPerRev;
   Rrevs = RightCounts / CountsPerRev;
-
-  //Robot_position =  Lrevs * 2* 3.14159 * WheelRadius;
-
-  
-//  /*Uncomment to add two motor capability*/
+  double pos = 0;
 	if ((abs(Lrevs - Rrevs)/Lrevs <= .1) || Lrevs+Rrevs == 0)
 	{
     double revs = (Lrevs + Rrevs) / 2;
-		Robot_position =  revs * 2* 3.14159 * WheelRadius;
+		pos =  revs * 2* 3.14159 * WheelRadius;
 	}
 	else
 	{
 		Serial.print("Are we turning?");
 	}
+  return pos;
 
 }
 
 void MOTOR::initPosition()
 {
-  Serial.println("initializing...");
-  LeftCounts = 0;
-  RightCounts = 0;
-  //Serial.print("Initialized Left Counts: "); Serial.println(LeftCounts);
+  LeftEncoder.write(0);
+  RightEncoder.write(0);
 }
 
 } // namespace ASAR
