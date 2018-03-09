@@ -16,6 +16,13 @@
 
 namespace ASAR
 {
+namespace
+{
+	const int CountsPerRev = 48;
+	const float WheelRadius = .045;
+  Encoder LeftEncoder(16, 17);
+  Encoder RightEncoder(15, 14);
+}
 MOTOR::MOTOR()
 {
 	pinMode(this->enablepin_right, OUTPUT);
@@ -24,7 +31,7 @@ MOTOR::MOTOR()
 	pinMode(this->PWM_LeftB, OUTPUT);
 	pinMode(this->PWM_RightA, OUTPUT);
 	pinMode(this->PWM_RightB, OUTPUT);
-	
+
 }
 
 MOTOR::~MOTOR()
@@ -102,6 +109,45 @@ void MOTOR::Stop()
 	analogWrite(this->PWM_LeftB, 0);
     
 }
+
+void MOTOR::ReadCounts()
+{
+
+	LeftCounts = -LeftEncoder.read();
+	RightCounts = RightEncoder.read();
+
+}
+
+void MOTOR::getPosition()
+{
+	ReadCounts();
+	Lrevs = LeftCounts / CountsPerRev;
+  Rrevs = RightCounts / CountsPerRev;
+
+  Robot_position =  Lrevs * 2* 3.14 * WheelRadius;
+
+  
+  /*Uncomment to add two motor capability*/
+//	if (abs(Lrevs - Rrevs)/Lrevs <= 10)
+//	{
+//		Robot_position =  Lrevs * 2* 3.14159 * WheelRadius;
+// 
+//	}
+//	else
+//	{
+//		//Serial.print("Are we turning?");
+//	}
+
+}
+
+void MOTOR::initPosition()
+{
+  Serial.println("initializing...");
+  LeftCounts = 0;
+  RightCounts = 0;
+  //Serial.print("Initialized Left Counts: "); Serial.println(LeftCounts);
+}
+
 } // namespace ASAR
 
 

@@ -5,6 +5,8 @@
  
  #ifndef MOTOR_H
  #define MOTOR_H
+
+#include "Encoder.h"
  
  namespace ASAR
  {
@@ -19,7 +21,19 @@
 			void RightTurn(const int Speed);
 			void LeftTurn(const int Speed);
 			void Stop();
-			
+      void getPosition();
+      void initPosition();
+
+      /*These things should be private later*/
+      double LeftCounts = 0;
+			double RightCounts = 0;
+      double Lrevs = 0;
+      double Rrevs = 0;
+			double Robot_position = 0;
+
+			void ReadCounts(); //Hand describes left hand side 'l' or right hand side 'r'
+		
+      		
 			
 		 
 		 private:
@@ -30,6 +44,11 @@
 			const int PWM_RightB = 4;
 			const int PWM_RightA = 5; 
 			const int PWM_LeftA = 6;
+			const int encoderA1 = 16;  //1 = Left
+			const int encoderA2 = 15;	 //2 = Right
+			const int encoderB1 = 17;
+			const int encoderB2 = 14;
+
 		 
 	 };
  }

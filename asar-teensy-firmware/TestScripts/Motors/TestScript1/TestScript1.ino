@@ -9,16 +9,26 @@
  #include "MOTOR.h"
 
  ASAR::MOTOR myMOTOR;
+
+ float distance = 0;
  
 
 void setup()
 {
-  
+  pinMode(13, OUTPUT);
+  Serial.begin(9600);
+
 }
 void loop()
 {
-  myMOTOR.Forward(5);
+  Serial.println("Go");
+  myMOTOR.getPosition();
+  distance = myMOTOR.Robot_position;
+  Serial.print("Distance: "); Serial.print(distance);Serial.println(" Meters"); 
+  digitalWrite(13, !digitalRead(13));
+  delay(500);
   
+
 }
 
 
