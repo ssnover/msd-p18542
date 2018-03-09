@@ -44,8 +44,7 @@ MOTOR::~MOTOR()
 
 void MOTOR::Forward(const int Speed)
 {
-	auto PWMval = Speed * 50; //Convert Speed Setting to PWM Val
-	
+	int PWMval = Speed * 50; //Convert Speed Setting to PWM Val
 	digitalWrite(this->enablepin_right, HIGH);
 	digitalWrite(this->enablepin_left, HIGH);
  
@@ -60,7 +59,7 @@ void MOTOR::Forward(const int Speed)
   
 void MOTOR::Backwards(const int Speed)
 {
-	auto PWMval = Speed * 50; //Convert Speed Setting to PWM Val
+	int PWMval = Speed * 50; //Convert Speed Setting to PWM Val
 
 	digitalWrite(this->enablepin_right, HIGH);
 	digitalWrite(this->enablepin_left, HIGH);
@@ -74,7 +73,7 @@ void MOTOR::Backwards(const int Speed)
   
 void MOTOR::RightTurn(const int Speed)
 {
-	auto PWMval = Speed * 50; //Convert Speed Setting to PWM Val
+	int PWMval = Speed * 50; //Convert Speed Setting to PWM Val
 	digitalWrite(this->enablepin_right, HIGH);
 	digitalWrite(this->enablepin_left, HIGH);
   
@@ -87,7 +86,7 @@ void MOTOR::RightTurn(const int Speed)
 
 void MOTOR::LeftTurn(const int Speed)
 {
-	auto PWMval = Speed * 50; //Convert Speed Setting to PWM Val
+	int PWMval = Speed * 50; //Convert Speed Setting to PWM Val
 	digitalWrite(this->enablepin_right, HIGH);
 	digitalWrite(this->enablepin_left, HIGH);
   
@@ -137,7 +136,7 @@ double MOTOR::getPosition()
 
 }
 
-void MOTOR::initPosition()
+void MOTOR::initEncoder()
 {
   LeftEncoder.write(0);
   RightEncoder.write(0);

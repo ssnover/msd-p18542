@@ -11,29 +11,33 @@
  ASAR::MOTOR myMOTOR;
 
  float distance = 0;
+
+ const float goThisFar = 3;
  
 
 void setup()
 {
   pinMode(13, OUTPUT);
   Serial.begin(9600);
+  myMOTOR.initEncoder();
 
 }
 void loop()
 {
-  
   distance = myMOTOR.getPosition();
   Serial.print("Distance: "); Serial.print(distance);Serial.println(" Meters"); 
-  myMOTOR.initPosition();
-  digitalWrite(13, !digitalRead(13));
-  myMOTOR.Forward(1);
-  delay(1200);
-  myMOTOR.Stop();
-  delay(500);
-  
-  
-  
-  
+  if (distance <= goThisFar)
+  {
+    myMOTOR.Forward(3);
+  }
+  else
+  {
+    myMOTOR.Stop();
+  }
+
+  delay(100);
+
+
 
 }
 

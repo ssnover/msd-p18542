@@ -21,12 +21,12 @@
 			void RightTurn(const int Speed);
 			void LeftTurn(const int Speed);
 			void Stop();
-      double getPosition();
-      void initPosition();
-
-
-
-			void ReadCounts(); //Hand describes left hand side 'l' or right hand side 'r'
+    double getPosition();
+    void initEncoder();
+    
+    
+    
+    void ReadCounts(); //Hand describes left hand side 'l' or right hand side 'r'
 		
       		
 			
