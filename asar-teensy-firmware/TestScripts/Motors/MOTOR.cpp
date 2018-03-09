@@ -18,7 +18,7 @@ namespace ASAR
 {
 namespace
 {
-	const int CountsPerRev = 48;
+	const int CountsPerRev = 48*34;
 	const float WheelRadius = .045;
   Encoder LeftEncoder(16, 17);
   Encoder RightEncoder(15, 14);
@@ -124,19 +124,19 @@ void MOTOR::getPosition()
 	Lrevs = LeftCounts / CountsPerRev;
   Rrevs = RightCounts / CountsPerRev;
 
-  Robot_position =  Lrevs * 2* 3.14 * WheelRadius;
+  //Robot_position =  Lrevs * 2* 3.14159 * WheelRadius;
 
   
-  /*Uncomment to add two motor capability*/
-//	if (abs(Lrevs - Rrevs)/Lrevs <= 10)
-//	{
-//		Robot_position =  Lrevs * 2* 3.14159 * WheelRadius;
-// 
-//	}
-//	else
-//	{
-//		//Serial.print("Are we turning?");
-//	}
+//  /*Uncomment to add two motor capability*/
+	if ((abs(Lrevs - Rrevs)/Lrevs <= .1) || Lrevs+Rrevs == 0)
+	{
+    double revs = (Lrevs + Rrevs) / 2;
+		Robot_position =  revs * 2* 3.14159 * WheelRadius;
+	}
+	else
+	{
+		Serial.print("Are we turning?");
+	}
 
 }
 
