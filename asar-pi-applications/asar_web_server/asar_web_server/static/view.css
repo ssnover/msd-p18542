@@ -21,3 +21,7 @@ body {
 select {
     display: inline-block;
 }
+
+.my_button {
+    display: inline-block;
+}

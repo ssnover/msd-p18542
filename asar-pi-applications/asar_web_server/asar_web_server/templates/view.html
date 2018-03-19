@@ -22,46 +22,23 @@
     </div>
     <div class="bottom">
         <p>Bottom</p>
-        <div class="dropdown_menus">
-            <div class="menu">
-                <!-- Danger Setting -->
-                <select>
-                    <option value="">Danger Setting</option>
-                    <option value="1">Safe</option>
-                    <option value="2">Precarious</option>
-                    <option value="3">Impending Doom</option>
-                </select>
-            </div>
-            <div class="menu">
-                <!-- Speed Setting -->
-                <select>
-                    <option value="">Speed Setting</option>
-                    <option value="1">Fast</option>
-                    <option value="2">Furious</option>
-                    <option value="3">Fast & Furious</option>
-                </select>
-            </div>
-            <div class="menu">
-                <!-- Environment Scenario -->
-                <select>
-                    <option value="">Environment Scenario</option>
-                    <option value="1">Forest Fire</option>
-                    <option value="2">Blizzard</option>
-                </select>
-            </div>
-        </div>
+        <form action="/configure" method="post">
+            <div display=inline-block>{{ form.danger() }}</div>
+            <div display=inline-block>{{ form.environment() }}</div>
+            <div>{{ form.submit() }}</div> <!-- May need to provide arguments to this so it knows that view to call-->
+        </form>
         <div class="simulation_buttons">
             <div class="my_button">
                 <!-- Play -->
-                <button>Play</button>
+                <input type="image" src="../static/play.jpg" width="60" height="40" type="button" value="clickMe" onclick="play_clicked();" />
             </div>
             <div class="my_button">
                 <!-- Pause -->
-                <button>Pause</button>
+                <input type="image" src="../static/pause-button.png" width="60" height="40" type="button" value="clickMe" onclick="pause_clicked();" />
             </div>
             <div class="my_button">
                 <!-- Stop -->
-                <button>Stop</button>
+                <input type="image" src="../static/stop-button.png" width="40" height="40" type="button" value="clickMe" onclick="stop_clicked();" />
             </div>
         </div>
     </div>
