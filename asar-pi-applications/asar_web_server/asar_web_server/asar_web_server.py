@@ -86,6 +86,12 @@ def command_console():
     This function loads the resources into the HTML template for the GUI for
     using the web server.
     """
+    backend_database = getDatabase(app.config['DATABASE'])
+    backend_database.execute("""insert into settings
+                                (time_set, danger, environment, state)
+                                values (?, ?, ?, ?)""",
+                                [datetime.datetime.now(), 0, 0, 0]) # TODO: Make enum classes
+
     form = SimulationSettingsForm()
     if form.validate_on_submit():
         danger = form.danger.data
@@ -100,21 +106,17 @@ def configure_simulation_from_gui(user_input):
     Captures the form submission into the database. Needs the POST method for
     form submission.
     """
-    backend_database = getDatabase(app.config['DATABASE'])
-    cursor = backend_database.execute("""select state from settings
-                                         order by time_set desc
-                                         limit 1""")
-    current_state = cursor.fetchall()
-    print(current_state)
-    # currently this will break because we don't have an initial setting of the state, which should be to STOPPED
-    # TODO: Add route for setting the state
-    backend_database.execute("""insert into settings
-                                (time_set, danger, environment, state)
-                                values (?, ?, ?, ?)""",
-                             [datetime.datetime.now(),
-                              user_input[0],
-                              user_input[1],
-                              current_state])
+    settings = get_current_settings()
+    print(settings[2]) # The third item is the state value
+    update_settings(user_input[0], user_input[1], settings[2])
+
+@app.route('/set_state', methods=['POST'])
+def update_simulation_state(new_state):
+    """
+    Update the state of the simulation in the database.
+    """
+    settings = get_current_settings()
+    update_settings(settings[0], settings[1], new_state)
 
 
 @app.route('/image_stream')
@@ -135,12 +137,43 @@ def add_image_in_db_for_prototyping():
     Adds a hardcoded image to the database for testing purposes.
     """
     IMAGE_PATH = os.path.join(os.sep, 'home', 'ssnover', 'develop', 'msd-p18542', 'asar-pi-applications', 'asar_web_server', 'asar_web_server', 'static', 'hondas2000.jpg')
-    backend_database = getDatabase(app.config['DATABASE'])
-    backend_database.execute("""insert into images 
-                                (image_path, time_taken) 
-                                values (?, ?)""",
-                             [IMAGE_PATH, datetime.datetime.now()])
+    add_image_to_database(IMAGE_PATH)
     return redirect('/')
+
+
+def update_settings(danger, environment, state):
+    """
+    Utility method for setting values in the database.
+    """
+    backend_database = getDatabase(app.config['DATABASE'])
+    backend_database.execute("""insert into settings
+                                (time_set, danger, environment, state)
+                                values (?, ?, ?, ?)""",
+                             [datetime.datetime.now(),
+                              danger,
+                              environment,
+                              state])
+
+def get_current_settings():
+    """
+    Utility method to retrieve a tuple of the current simulation settings.
+    """
+    backend_database = getDatabase(app.config['DATABASE'])
+    cursor = backend_database.execute("""select danger, environment, state from settings
+                                         order by time_set desc
+                                         limit 1""")
+    current_settings = cursor.fetchall()[0]
+    return current_settings
+
+def add_image_to_database(path_to_image):
+    """
+    Utility method for adding image to database.
+    """
+    backend_database = getDatabase(app.config['DATABASE'])
+    backend_database.execute("""insert into images
+                                (image_path, time_taken)
+                                values (?, ?)""",
+                             [path_to_image, datetime.datetime.now()])
 
 
 def main():
