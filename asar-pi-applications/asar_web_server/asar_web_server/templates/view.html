@@ -9,11 +9,9 @@
     <div class="top">
         <p>Top</p>
         <div class="map">
-            <!-- This section is for the map view
-            <script src="../static/overhead-imaging.js"></script>
-            -->
-            <img src="../static/hondas2000.jpg"
-                 alt="honda s2k"
+            <img id="overhead_view"
+                 src="../static/please-stand-by.jpg"
+                 alt="Aerial View from Camera"
                  width="500">
         </div>
         <div class="estimate_window">
@@ -42,7 +40,11 @@
             </div>
         </div>
     </div>
+    <br>
+    <br>
+    <button type="button" onclick="updating_image = false; get_latest_image();">Update!</button>
 </body>
 
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 <script type="text/javascript" src="../static/buttons.js"></script>
+<script type="text/javascript" src="../static/overhead-imaging.js"></script>

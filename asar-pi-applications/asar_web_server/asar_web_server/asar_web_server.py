@@ -17,7 +17,7 @@ import threading
 
 app = Flask(__name__)
 app.config.from_object(Config)
-
+SAMPLE_IMAGE_PATH = os.path.join(os.sep, 'home', 'ssnover', 'develop', 'msd-p18542', 'asar-pi-applications', 'asar_web_server', 'asar_web_server', 'static', 'hondas2000.jpg')
 APP_WORKER_THREAD = threading.Thread(target=app.run, name="ASAR Web Application Server Thread")
 
 
@@ -134,9 +134,15 @@ def most_recent_image():
     """
     backend_database = getDatabase(app.config['DATABASE'])
     cursor = backend_database.execute('select image_path from images order by time_taken desc')
-    image_data = cursor.fetchall()
-    path_to_image = image_data[0][0]
-    return send_file(path_to_image, attachment_filename='stream-latest.jpg')
+    result = cursor.fetchall()
+    if (len(result) > 0):
+        print("Sending off the most recent image.")
+        path_to_image = result[0][0]
+        return send_file(path_to_image, mimetype='image/jpeg')
+    else:
+        print("Sending the default image.")
+        return send_file(SAMPLE_IMAGE_PATH, mimetype='image/jpeg')
+
 
 @app.route('/add_image')
 def add_image_in_db_for_prototyping():
@@ -162,6 +168,7 @@ def update_settings(danger, environment, state):
                               environment,
                               state])
     backend_database.commit()
+
 
 def get_current_settings():
     """
