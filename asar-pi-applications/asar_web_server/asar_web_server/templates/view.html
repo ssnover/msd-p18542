@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<head>
+    <title>ASAR Web Application</title>
+    <link rel="stylesheet" href="../static/view.css">
+</head>
+
+<body>
+    <p>Hello World!</p>
+    <div class="top">
+        <p>Top</p>
+        <div class="map">
+            <img id="overhead_view"
+                 src="../static/please-stand-by.jpg"
+                 alt="Aerial View from Camera"
+                 width="500">
+        </div>
+        <div class="estimate_window">
+            <!-- Contains some text and a window with countdown timer -->
+        </div>
+    </div>
+    <div class="bottom">
+        <p>Bottom</p>
+        <form action="" method="post">
+            <div display=inline-block>{{ form.danger() }}</div>
+            <div display=inline-block>{{ form.environment() }}</div>
+            <div>{{ form.submit() }}</div> <!-- May need to provide arguments to this so it knows that view to call-->
+        </form>
+        <div class="simulation_buttons">
+            <div class="my_button">
+                <!-- Play -->
+                <input type="image" src="../static/play.jpg" width="60" height="40" type="button" value="clickMe" onclick="play_clicked();" />
+            </div>
+            <div class="my_button">
+                <!-- Pause -->
+                <input type="image" src="../static/pause-button.png" width="60" height="40" type="button" value="clickMe" onclick="pause_clicked();" />
+            </div>
+            <div class="my_button">
+                <!-- Stop -->
+                <input type="image" src="../static/stop-button.png" width="40" height="40" type="button" value="clickMe" onclick="stop_clicked();" />
+            </div>
+        </div>
+    </div>
+    <br>
+    <br>
+    <button type="button" onclick="updating_image = false; get_latest_image();">Update!</button>
+</body>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script type="text/javascript" src="../static/buttons.js"></script>
+<script type="text/javascript" src="../static/overhead-imaging.js"></script>

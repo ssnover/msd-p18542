@@ -1,0 +1,27 @@
+body {
+    width: 100%;
+    height: 100%;
+}
+
+.top {
+    width: 100%;
+    height: 75%;
+}
+
+.map {
+    width: 50%;
+    height: 100%;
+    padding: 10px 10px 10px 10px;
+}
+
+.menu {
+    display: inline-block;
+}
+
+select {
+    display: inline-block;
+}
+
+.my_button {
+    display: inline-block;
+}
