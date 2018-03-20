@@ -28,27 +28,28 @@ ASAR::MOTOR myMOTOR;
 void setup() 
 {
   Serial.begin(9600);
+  delay(1000);
   pinMode(LED, OUTPUT);
   PITimer1.period(Period);
   PITimer1.start(callback);
   myMOTOR.initEncoder();
+  Serial.println("Waiting...");
   while(myXBEE.action[1] == 0)
   {
-    Serial.println("Waiting...");
     myXBEE.GetInstructions(5);
-    delay(100);
   }
-  Serial.println("My Actions Are.....");
-  for(int i = 0; i > 5; i++)
+  Serial.println("My Actions Are..");
+  for(int i = 0; i < 5; i++)
   {
-    Serial.println(myXBEE.action[i]);
+    Serial.print(i); Serial.print(". ");
+    Serial.println(myXBEE.action[i], HEX);
   }
   
 }
 
 void loop()
 {
-  while(Flag)
+ /* while(Flag)
   {
     Flag = false;
     instructDone = false;
@@ -93,7 +94,7 @@ void loop()
       myMOTOR.initEncoder();
       digitalWrite(LED, !digitalRead(LED));
     }
-  }
+  }*/
 }
 
 void callback()

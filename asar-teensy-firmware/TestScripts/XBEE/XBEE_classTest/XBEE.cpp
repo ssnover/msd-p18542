@@ -29,10 +29,10 @@ namespace ASAR
 	  {
 	    for (int i = 0; i <= 5; i++)        //Read all the inputs (until stop bit is read)
 	   	{
-				rawRead[i] = Serial1.read();             //and fill up the temporary array
+				this->rawRead[i] = Serial1.read();             //and fill up the temporary array
 	      	//Serial.print("Argument # "); Serial.print(i);
 	      	//Serial.print(", Raw reading: "); Serial.println(rawRead[i], HEX); 
-	      if(rawRead[i] == 0xF0)
+	      if(this->rawRead[i] == 0xF0)
 	      {
 	       	i = 6;
 	  		}
@@ -49,27 +49,27 @@ namespace ASAR
    * with the index being the number of instruction */
   void XBEE::Interpret_instruct()
   {
-    action[instructNum] = rawRead[0]; //add the action to instruction set
+    action[instructNum] = this->rawRead[0]; //add the action to instruction set
     switch (action[instructNum])      //switch between the different types of moves
     {
       case 0xAA : //Turn Left
-        angle[instructNum] = rawRead[1]; //add the relative turning angle to instruction set
-        if (rawRead[2] != 0xF0)          //If the stop bit isnt next, something went wrong
+        angle[instructNum] = this->rawRead[1]; //add the relative turning angle to instruction set
+        if (this->rawRead[2] != 0xF0)          //If the stop bit isnt next, something went wrong
         {
           Serial.println("ERROR-002: Stop Bit Not Detected as expected"); //print error message
         }
         break;
       case 0xBB : //Turn Right
-        angle[instructNum] = rawRead[1]; //add the turning angle to instruction set
-        if (rawRead[2] != 0xF0)          //If the stop bit isnt next, something went wrong     
+        angle[instructNum] = this->rawRead[1]; //add the turning angle to instruction set
+        if (this->rawRead[2] != 0xF0)          //If the stop bit isnt next, something went wrong     
         {
           Serial.println("ERROR-002: Stop Bit Not Detected as expected"); //print error message
         }
         break;            
       case 0xCC : //Go Forward
-        distance[instructNum] = rawRead[1]; //Add the distance of move to instruction set
-        speedy[instructNum] = rawRead[2];   //add the speed of move to instruction set
-        if (rawRead[3] != 0xF0)             //If the stop bit isnt next, something went wrong
+        distance[instructNum] = this->rawRead[1]; //Add the distance of move to instruction set
+        speedy[instructNum] = this->rawRead[2];   //add the speed of move to instruction set
+        if (this->rawRead[3] != 0xF0)             //If the stop bit isnt next, something went wrong
         {
           Serial.println("ERROR-002: Stop Bit Not Detected as expected"); //print error message
         }
@@ -80,7 +80,7 @@ namespace ASAR
     }
     for (int i = 0; i < 5; i++) //Reset the rawread array with zeros
     {
-      rawRead[i] = 0;
+      this->rawRead[i] = 0;
     }
   }
 
@@ -115,7 +115,7 @@ namespace ASAR
   void XBEE::GetInstructions(int expectedNumInstructions)
   {
     readRawInstruct();         //reads a single instruction set from the XBEE
-    if (rawRead[0] != 0)       // If an instruction was actually read
+    if (this->rawRead[0] != 0)       // If an instruction was actually read
     {
       Interpret_instruct();   //Function call that interprets the latest instruction and fills global arrays      
       if (instructNum >= expectedNumInstructions) //If last instuction was read and intepretted
