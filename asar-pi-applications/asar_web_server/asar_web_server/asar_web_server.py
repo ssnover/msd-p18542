@@ -100,12 +100,14 @@ def command_console():
 
 
 @app.route('/set_state', methods=['POST'])
-def update_simulation_state(new_state):
+def update_simulation_state():
     """
     Update the state of the simulation in the database.
     """
+    new_state = request.form['new_state']
     settings = get_current_settings()
     update_settings(settings[0], settings[1], new_state)
+    return redirect('/')
 
 
 @app.route('/image_stream')
