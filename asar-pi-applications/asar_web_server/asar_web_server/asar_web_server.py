@@ -126,6 +126,21 @@ def update_simulation_state():
     return redirect('/')
 
 
+@app.route('/get_state', methods=["GET"])
+def get_current_state():
+    """
+    """
+    settings = get_current_settings()
+    state = "error"
+    if settings[2] == STATE['STOPPED']:
+        state = "stopped"
+    elif settings[2] == STATE['RUNNING']:
+        state = "running"
+    elif settings[2] == STATE['PAUSED']:
+        state = "paused"
+    return state
+
+
 @app.route('/image_stream')
 def most_recent_image():
     """

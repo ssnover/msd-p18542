@@ -4,39 +4,51 @@
  *          web server.
  */
 
-var updating_image = true;
-
-function periodic_call()
+function are_we_stopped()
 {
-
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open("GET", "/get_state", false);
+    xmlHttp.send(null);
+    if (xmlHttp.responseText == "stopped")
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 
 function get_latest_image()
-{
-    $.ajax (
+{   
+    if (are_we_stopped())
     {
-        type: "GET",
-        cache: false,
-        url: "/image_stream",
-        contentType: "image/jpeg",
-        mimeType: "text/plain; charset=x-user-defined",
-        success: function(data) {
-            //document.getElementById('overhead_view').src = data;
-            $("#overhead_view").attr('src', 'data:image/jpeg;base64,' + base64Encode(data));
-            //document.getElementById("overhead_view").src = "data:image/jpeg;base64," + base64Encode(data);
-        },
-        error: function(xhr, error_string, exception) {
-            alert("Image Update Failed: " + error_string);
-        },
-        complete: function() {
-            if (updating_image)
-            {
+        $("#overhead_view").attr('src', '../static/please-stand-by.jpg');
+        setTimeout(get_latest_image, 500);
+    }
+    else
+    {
+        $.ajax (
+        {
+            type: "GET",
+            cache: false,
+            url: "/image_stream",
+            contentType: "image/jpeg",
+            mimeType: "text/plain; charset=x-user-defined",
+            success: function(data) {
+                $("#overhead_view").attr('src', 'data:image/jpeg;base64,' + base64Encode(data));
+            },
+            error: function(xhr, error_string, exception) {
+                alert("Image Update Failed: " + error_string);
+            },
+            complete: function() {
                 setTimeout(get_latest_image, 500); // Set timer to run function in 500 ms
-            }
-        },
-    });
+            },
+        });
+    }
 }
+
 
 function base64Encode(str)
 {
@@ -69,3 +81,5 @@ function base64Encode(str)
     }
     return out;
 }
+
+get_latest_image();
