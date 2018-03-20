@@ -5,7 +5,7 @@
              database.
 """
 
-from .config import Config
+from .config import Config, DANGER, ENVIRONMENT, STATE
 import datetime
 from flask import Flask, request, session, g, redirect, url_for, abort, \
     render_template, flash, make_response, send_file
@@ -76,8 +76,7 @@ def initdb_handler():
     initializeDatabase()
     print("Initialized the " + __name__ + " database.")
     # Initial settings for application state
-    # TODO: Make enum classes
-    update_settings(0, 0, 0)
+    update_settings(DANGER['SAFE'], ENVIRONMENT['FOREST FIRE'], STATE['STOPPED'])
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -91,7 +90,7 @@ def command_console():
     if request.method == 'POST':
         # get the current settings and replace with form submission
         settings = get_current_settings()
-        if (settings[2] == 0): # if state is STOPPED
+        if (settings[2] == STATE['STOPPED']):
             update_settings(form.danger.data, form.environment.data, settings[2])
         else:
             print("Invalid: User tried to change settings during simulation.")
@@ -104,8 +103,25 @@ def update_simulation_state():
     """
     Update the state of the simulation in the database.
     """
-    new_state = request.form['new_state']
+    button_clicked = request.form['button_clicked']
     settings = get_current_settings()
+    # assume the state won't change by default
+    new_state = settings[2]
+
+    if (settings[2] == STATE['STOPPED']):
+        if button_clicked == 'play':
+            new_state = STATE['RUNNING']
+    elif (settings[2] == STATE['RUNNING']):
+        if button_clicked == 'stop':
+            new_state = STATE['STOPPED']
+        elif button_clicked == 'pause':
+            new_state = STATE['PAUSED']
+    elif (settings[2] == STATE['PAUSED']):
+        if button_clicked == 'play':
+            new_state = STATE['RUNNING']
+        elif button_clicked == 'stop':
+            new_state = STATE['STOPPED']
+
     update_settings(settings[0], settings[1], new_state)
     return redirect('/')
 
