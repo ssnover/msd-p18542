@@ -5,9 +5,6 @@
              database.
 """
 
-import os
-print(os.getcwd())
-
 from .config import Config
 import datetime
 from flask import Flask, request, session, g, redirect, url_for, abort, \
@@ -78,6 +75,9 @@ def initdb_handler():
     """
     initializeDatabase()
     print("Initialized the " + __name__ + " database.")
+    # Initial settings for application state
+    # TODO: Make enum classes
+    update_settings(0, 0, 0)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -86,29 +86,18 @@ def command_console():
     This function loads the resources into the HTML template for the GUI for
     using the web server.
     """
-    backend_database = getDatabase(app.config['DATABASE'])
-    backend_database.execute("""insert into settings
-                                (time_set, danger, environment, state)
-                                values (?, ?, ?, ?)""",
-                                [datetime.datetime.now(), 0, 0, 0]) # TODO: Make enum classes
+    form = SimulationSettingsForm(request.form)
 
-    form = SimulationSettingsForm()
-    if form.validate_on_submit():
-        danger = form.danger.data
-        environment = form.environment.data
-        return redirect('/configure', user_input=(danger, environment))
+    if request.method == 'POST':
+        # get the current settings and replace with form submission
+        settings = get_current_settings()
+        if (settings[2] == 0): # if state is STOPPED
+            update_settings(form.danger.data, form.environment.data, settings[2])
+        else:
+            print("Invalid: User tried to change settings during simulation.")
+        
     return render_template('view.html', form=form)
 
-
-@app.route('/configure', methods=['POST'])
-def configure_simulation_from_gui(user_input):
-    """
-    Captures the form submission into the database. Needs the POST method for
-    form submission.
-    """
-    settings = get_current_settings()
-    print(settings[2]) # The third item is the state value
-    update_settings(user_input[0], user_input[1], settings[2])
 
 @app.route('/set_state', methods=['POST'])
 def update_simulation_state(new_state):
@@ -145,6 +134,7 @@ def update_settings(danger, environment, state):
     """
     Utility method for setting values in the database.
     """
+    print("Updating the settings for the simulation.")
     backend_database = getDatabase(app.config['DATABASE'])
     backend_database.execute("""insert into settings
                                 (time_set, danger, environment, state)
@@ -153,6 +143,7 @@ def update_settings(danger, environment, state):
                               danger,
                               environment,
                               state])
+    backend_database.commit()
 
 def get_current_settings():
     """
@@ -174,6 +165,7 @@ def add_image_to_database(path_to_image):
                                 (image_path, time_taken)
                                 values (?, ?)""",
                              [path_to_image, datetime.datetime.now()])
+    backend_database.commit()
 
 
 def main():

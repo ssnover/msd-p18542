@@ -4,11 +4,11 @@
              from the web GUI.
 """
 
-from flask_wtf import Form
+from flask_wtf import FlaskForm
 from wtforms import SelectField, SubmitField
 
 
-class SimulationSettingsForm(Form):
+class SimulationSettingsForm(FlaskForm):
     danger = SelectField('Danger',
                          choices=[(1, 'Safe'), (2, 'Precarious'), (3, 'Impending Doom')])
     environment = SelectField('Simulation',

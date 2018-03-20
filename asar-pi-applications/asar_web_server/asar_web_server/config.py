@@ -7,5 +7,5 @@
 import os
 
 class Config(object):
-    DATABASE = os.path.join(os.path.realpath(__file__), '..', 'asar-runtime.db')
+    DATABASE = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'asar-runtime.db')
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'asar'

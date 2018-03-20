@@ -10,5 +10,5 @@ create table settings (
     time_set timestamp primary key not null,
     danger integer not null,
     environment integer not null,
-    state integer not null,
+    state integer not null
 );
