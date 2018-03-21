@@ -30,8 +30,8 @@ namespace ASAR
 	    for (int i = 0; i <= 5; i++)        //Read all the inputs (until stop bit is read)
 	   	{
 				this->rawRead[i] = Serial1.read();             //and fill up the temporary array
-	      	//Serial.print("Argument # "); Serial.print(i);
-	      	//Serial.print(", Raw reading: "); Serial.println(rawRead[i], HEX); 
+	      Serial.print("Argument # "); Serial.print(i);
+	      Serial.print(", Raw reading: "); Serial.println(rawRead[i], HEX); 
 	      if(this->rawRead[i] == 0xF0)
 	      {
 	       	i = 6;
@@ -115,8 +115,10 @@ namespace ASAR
   void XBEE::GetInstructions(int expectedNumInstructions)
   {
     readRawInstruct();         //reads a single instruction set from the XBEE
+    //Serial.println("Hello?"); Code Got here
     if (this->rawRead[0] != 0)       // If an instruction was actually read
     {
+      //Serial.print("RawRead[0]: "); Serial.println(this->rawRead[0] , HEX); //Results in single "CC"
       Interpret_instruct();   //Function call that interprets the latest instruction and fills global arrays      
       if (instructNum >= expectedNumInstructions) //If last instuction was read and intepretted
       {
