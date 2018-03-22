@@ -22,54 +22,81 @@ namespace ASAR
 		//empty destructor
 	}
 
-	/*Read a single Instruction from xbee*/
-	void XBEE::readRawInstruct()
+  /*Read everything in buffer from XBEE, should be entire instruct set*/
+  void XBEE::readAllRaw()
+  {
+    bool done_flag = false;
+    int index = 0;
+    while (!done_flag)
+    { 
+      if (Serial.available())
+      {
+        allRaw[index] = Serial1.read();
+        if (index >= 2 && allRaw[index] == 0xFF && allRaw[index - 1] == 0xFF && allRaw[index - 2] == 0xFF)
+        {
+          done_flag = true;
+          instructTotal = index;
+        }
+        index++;
+      }
+    }
+  }
+
+
+
+	/*Read a single Instruction from allRaw array*/
+	void XBEE::readInstruct()
 	{
-	  if (Serial1.available() && Serial1.read() == 0xFF)               //Only if there is something from xbee to read
+	  if (allRaw[byteCounter] == 0xFF)               //Only if there is something from xbee to read
 	  {
 	    for (int i = 0; i <= 5; i++)        //Read all the inputs (until stop bit is read)
 	   	{
-				this->rawRead[i] = Serial1.read();             //and fill up the temporary array
+				singleRead[i] = allRaw[byteCounter];             //and fill up the temporary array
+        byteCounter++;
 	      Serial.print("Argument # "); Serial.print(i);
-	      Serial.print(", Raw reading: "); Serial.println(rawRead[i], HEX); 
-	      if(this->rawRead[i] == 0xF0)
+	      Serial.print(", Raw reading: "); Serial.println(singleRead[i], HEX); 
+	      if(singleRead[i] == 0xF0)
 	      {
-	       	i = 6;
+          break;
 	  		}
 	      else if (i >= 4)
 	      {
 	        Serial.println("ERROR-001: Stop Bit Not Detected");
 	      }
 	   	}
-  	}                                   
+  	} 
+    else
+    {
+      byteCounter++;
+    }                                  
 	}
 
 
   /*Interprets a single raw reading instruction, fills relevant arrays 
    * with the index being the number of instruction */
-  void XBEE::Interpret_instruct()
+  void XBEE::interpretInstruct()
   {
-    action[instructNum] = this->rawRead[0]; //add the action to instruction set
+    action[instructNum] = singleRead[0]; //add the action to instruction set
     switch (action[instructNum])      //switch between the different types of moves
     {
       case 0xAA : //Turn Left
-        angle[instructNum] = this->rawRead[1]; //add the relative turning angle to instruction set
-        if (this->rawRead[2] != 0xF0)          //If the stop bit isnt next, something went wrong
+        angle[instructNum] = singleRead[1]; //add the relative turning angle to instruction set
+        if (singleRead[2] != 0xF0)          //If the stop bit isnt next, something went wrong
         {
           Serial.println("ERROR-002: Stop Bit Not Detected as expected"); //print error message
         }
         break;
       case 0xBB : //Turn Right
-        angle[instructNum] = this->rawRead[1]; //add the turning angle to instruction set
-        if (this->rawRead[2] != 0xF0)          //If the stop bit isnt next, something went wrong     
+        angle[instructNum] = singleRead[1]; //add the turning angle to instruction set
+        if (singleRead[2] != 0xF0)          //If the stop bit isnt next, something went wrong     
         {
           Serial.println("ERROR-002: Stop Bit Not Detected as expected"); //print error message
         }
         break;            
       case 0xCC : //Go Forward
-        distance[instructNum] = this->rawRead[1]; //Add the distance of move to instruction set
-        speedy[instructNum] = this->rawRead[2];   //add the speed of move to instruction set
-        if (this->rawRead[3] != 0xF0)             //If the stop bit isnt next, something went wrong
+        distance[instructNum] = singleRead[1]; //Add the distance of move to instruction set
+        speedy[instructNum] = singleRead[2];   //add the speed of move to instruction set
+        if (singleRead[3] != 0xF0)             //If the stop bit isnt next, something went wrong
         {
           Serial.println("ERROR-002: Stop Bit Not Detected as expected"); //print error message
         }
@@ -78,9 +105,9 @@ namespace ASAR
         Serial.println("ERROR-003: Move-type not not recognized"); //print error message
         break;  
     }
-    for (int i = 0; i < 5; i++) //Reset the rawread array with zeros
+    for (int i = 0; i < 5; i++) //Reset the singleRead array with zeros
     {
-      this->rawRead[i] = 0;
+      singleRead[i] = 0;
     }
   }
 
@@ -112,14 +139,13 @@ namespace ASAR
   }
 
   /*Main loop reads xbee data, interpretes it as instucionts and prints them on motior*/
-  void XBEE::GetInstructions(int expectedNumInstructions)
+  void XBEE::getInstructions(int expectedNumInstructions)
   {
-    readRawInstruct();         //reads a single instruction set from the XBEE
-    //Serial.println("Hello?"); Code Got here
-    if (this->rawRead[0] != 0)       // If an instruction was actually read
+    readAllRaw();
+    readInstruct();         //reads a single instruction set from the XBEE
+    if (singleRead[0] != 0)       // If an instruction was actually read
     {
-      //Serial.print("RawRead[0]: "); Serial.println(this->rawRead[0] , HEX); //Results in single "CC"
-      Interpret_instruct();   //Function call that interprets the latest instruction and fills global arrays      
+      interpretInstruct();   //Function call that interprets the latest instruction and fills global arrays      
       if (instructNum >= expectedNumInstructions) //If last instuction was read and intepretted
       {
         printInstructSet();   //Prints the entire instruction set

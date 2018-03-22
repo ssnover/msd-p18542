@@ -23,20 +23,23 @@ namespace ASAR
 			int distance[20] ={0x00};
 			int angle[20] = {0x00};
 			int speedy[20] = {0x00};
+      int readFlag = 0; //0 is not read 1 is read
 
 			/*reads xbee data, interpretes it as instucionts and prints them on motior*/
-			void GetInstructions(int expectedNumInstructions);
+			void getInstructions(int expectedNumInstructions);
 
 
 
 
 		private:
-
-			int instructNum = 1;            //couner for instruction number initialized to one
-			int rawRead[5] = {0};           //temporary hold place from direct reading of xbee
-
-			void readRawInstruct();    //Function that reads xbee and updates insruction variables
-			void Interpret_instruct(); //Interprets a single instruction and fills global instructions
+			int instructTotal = 0;					//total instructions
+			int instructNum = 0;            //couner for instruction number initialized to one
+			int byteCounter = 0;
+			uint8_t allRaw[1024] = {0};
+			uint8_t singleRead[5] = {0};           //temporary hold place from direct reading of xbee
+			void readAllRaw();
+			void readInstruct();    //Function that reads xbee and updates insruction variables
+			void interpretInstruct(); //Interprets a single instruction and fills global instructions
 			void printInstructSet();   //prints all of the instructions
 	};
 }

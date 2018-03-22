@@ -21,20 +21,36 @@ void setup()
   pinMode(LED, OUTPUT);
   PITimer1.period(Period);
   PITimer1.start(callback);
+  /*This section is trying to be used in Executeinstructs, and does not work*/
+//  while(myXBEE.action[1] == 0)
+//  {
+//    myXBEE.GetInstructions(5);
+//  }
 
+
+  
 }
+
 
 void loop()
 {
   while(Flag)
   {
     Flag = false;
-    myXBEE.GetInstructions(5);
+    digitalWrite(LED, !digitalRead(LED));
+    while(myXBEE.action[1] == 0)
+    {
+      myXBEE.getInstructions(5);
+      if (myXBEE.action[1] != 0)
+      {
+        Serial.print("MyAction: ");Serial.println(myXBEE.action[1], HEX);
+      }
+    }
+   // myXBEE.GetInstructions(5);
   }
 }
 
 void callback()
 {
-  digitalWrite(LED, !digitalRead(LED));
   Flag = true;
 }
