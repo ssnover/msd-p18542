@@ -8,7 +8,7 @@
 #include "PITimer.h"
 
 const int LED = 13;
-const double Period = .01;
+const double Period = .1;
 bool Flag = 0;
 
 void callback();
@@ -37,20 +37,13 @@ void loop()
   while(Flag)
   {
     Flag = false;
-    digitalWrite(LED, !digitalRead(LED));
-    while(myXBEE.action[1] == 0)
-    {
-      myXBEE.getInstructions(5);
-      if (myXBEE.action[1] != 0)
-      {
-        Serial.print("MyAction: ");Serial.println(myXBEE.action[1], HEX);
-      }
-    }
-   // myXBEE.GetInstructions(5);
+    //Serial.println("Waiting for instructions");
+    myXBEE.getInstructions();
   }
 }
 
 void callback()
 {
   Flag = true;
+  digitalWrite(LED, !digitalRead(LED));
 }

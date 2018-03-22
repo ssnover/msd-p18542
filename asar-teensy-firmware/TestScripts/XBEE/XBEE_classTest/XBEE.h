@@ -26,14 +26,14 @@ namespace ASAR
       int readFlag = 0; //0 is not read 1 is read
 
 			/*reads xbee data, interpretes it as instucionts and prints them on motior*/
-			void getInstructions(int expectedNumInstructions);
+			void getInstructions();
 
 
 
 
 		private:
 			int instructTotal = 0;					//total instructions
-			int instructNum = 0;            //couner for instruction number initialized to one
+			int instructNum = 1;            //couner for instruction number initialized to one
 			int byteCounter = 0;
 			uint8_t allRaw[1024] = {0};
 			uint8_t singleRead[5] = {0};           //temporary hold place from direct reading of xbee

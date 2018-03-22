@@ -14,7 +14,7 @@ namespace ASAR
 {
 	XBEE::XBEE()
 	{
-		Serial1.begin(115200);      	//Initialize Xbee, with baud rate
+		Serial1.begin(9600);      	//Initialize Xbee, with baud rate
 	}
 
 	XBEE::~XBEE()
@@ -29,9 +29,10 @@ namespace ASAR
     int index = 0;
     while (!done_flag)
     { 
-      if (Serial.available())
+      if (Serial1.available())
       {
         allRaw[index] = Serial1.read();
+       // Serial.print("Reading: "); Serial.println(allRaw[index], HEX);
         if (index >= 2 && allRaw[index] == 0xFF && allRaw[index - 1] == 0xFF && allRaw[index - 2] == 0xFF)
         {
           done_flag = true;
@@ -47,9 +48,11 @@ namespace ASAR
 	/*Read a single Instruction from allRaw array*/
 	void XBEE::readInstruct()
 	{
-	  if (allRaw[byteCounter] == 0xFF)               //Only if there is something from xbee to read
+    Serial.println("Reading First Instruct");
+	  if (allRaw[byteCounter] == 0xFF)               //Only if something was actually ready by the xbee
 	  {
-	    for (int i = 0; i <= 5; i++)        //Read all the inputs (until stop bit is read)
+	    byteCounter++;
+	    for (int i = 0; i <= 6; i++)        //Read all the inputs (until stop bit is read)
 	   	{
 				singleRead[i] = allRaw[byteCounter];             //and fill up the temporary array
         byteCounter++;
@@ -59,16 +62,12 @@ namespace ASAR
 	      {
           break;
 	  		}
-	      else if (i >= 4)
+	      else if (i >= 5)
 	      {
 	        Serial.println("ERROR-001: Stop Bit Not Detected");
 	      }
 	   	}
-  	} 
-    else
-    {
-      byteCounter++;
-    }                                  
+  	}                                  
 	}
 
 
@@ -76,7 +75,10 @@ namespace ASAR
    * with the index being the number of instruction */
   void XBEE::interpretInstruct()
   {
+    Serial.println("Interpretting the Instruction");
     action[instructNum] = singleRead[0]; //add the action to instruction set
+    Serial.print("Instruction Number: "); Serial.println(instructNum);
+    Serial.print("Action: "); Serial.println(action[instructNum] , HEX);
     switch (action[instructNum])      //switch between the different types of moves
     {
       case 0xAA : //Turn Left
@@ -139,14 +141,15 @@ namespace ASAR
   }
 
   /*Main loop reads xbee data, interpretes it as instucionts and prints them on motior*/
-  void XBEE::getInstructions(int expectedNumInstructions)
+  void XBEE::getInstructions()
   {
+    Serial.println("Reading all insturctions");
     readAllRaw();
     readInstruct();         //reads a single instruction set from the XBEE
-    if (singleRead[0] != 0)       // If an instruction was actually read
+    if (singleRead[1] != 0)       // If an instruction was actually read
     {
       interpretInstruct();   //Function call that interprets the latest instruction and fills global arrays      
-      if (instructNum >= expectedNumInstructions) //If last instuction was read and intepretted
+      if (instructNum >= instructTotal) //If last instuction was read and intepretted
       {
         printInstructSet();   //Prints the entire instruction set
         instructNum = 1;      //reset the instruction counter

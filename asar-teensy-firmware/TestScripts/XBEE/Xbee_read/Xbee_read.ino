@@ -28,7 +28,7 @@ void GetInstructions(int expectedNumInstructions);
 void setup()
 {
   Serial.begin(115200);     //Initialize Serial Monitor w/ baud rate
-  XBEE.begin(115200);       //Initialize Xbee, with baud rate
+  XBEE.begin(9600);       //Initialize Xbee, with baud rate
   pinMode(LED, OUTPUT);     //Initialize LED as output
   PITimer1.period(sPeriod); //Initialize timer1
   PITimer1.start(callback); //attaches callback() as a timer overflow interrupt
