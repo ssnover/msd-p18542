@@ -18,14 +18,16 @@ ASAR::XBEE myXBEE;
 void setup() 
 {
   Serial.begin(9600);
+  delay(1000);
   pinMode(LED, OUTPUT);
   PITimer1.period(Period);
   PITimer1.start(callback);
   /*This section is trying to be used in Executeinstructs, and does not work*/
-//  while(myXBEE.action[1] == 0)
-//  {
-//    myXBEE.GetInstructions(5);
-//  }
+  Serial.println("Waiting for initial Set of Instructions");
+  while(myXBEE.action[1] == 0)
+  { 
+    myXBEE.getInstructions();
+  }
 
 
   
@@ -37,7 +39,7 @@ void loop()
   while(Flag)
   {
     Flag = false;
-    //Serial.println("Waiting for instructions");
+    Serial.println("Waiting for instructions");
     myXBEE.getInstructions();
   }
 }

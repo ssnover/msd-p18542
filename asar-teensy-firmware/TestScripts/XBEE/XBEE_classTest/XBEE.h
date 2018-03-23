@@ -34,7 +34,7 @@ namespace ASAR
 		private:
 			int instructTotal = 0;					//total instructions
 			int instructNum = 1;            //couner for instruction number initialized to one
-			int byteCounter = 0;
+			int rawReadIndex = 0;
 			uint8_t allRaw[1024] = {0};
 			uint8_t singleRead[5] = {0};           //temporary hold place from direct reading of xbee
 			void readAllRaw();
