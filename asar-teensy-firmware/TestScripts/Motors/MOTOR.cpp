@@ -135,7 +135,7 @@ double MOTOR::getAngle()
   Lrevs = LeftCounts / CountsPerRev;
   Rrevs = RightCounts / CountsPerRev; 
   double angle = 0;
-  angle = (Lrevs - Rrevs)*10;
+  angle = (Lrevs - Rrevs)/10;
   return angle;
   
 }

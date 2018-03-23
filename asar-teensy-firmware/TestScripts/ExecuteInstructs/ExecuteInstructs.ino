@@ -36,10 +36,10 @@ void setup()
   Serial.println("Waiting...");
   while(myXBEE.action[1] == 0)
   {
-    myXBEE.GetInstructions(5);
+    myXBEE.getInstructions();
   }
   Serial.println("My Actions Are..");
-  for(int i = 0; i < 5; i++)
+  for(int i = 1; i < myXBEE.instructTotal; i++)
   {
     Serial.print(i); Serial.print(". ");
     Serial.println(myXBEE.action[i], HEX);
@@ -49,11 +49,11 @@ void setup()
 
 void loop()
 {
- /* while(Flag)
+  while(Flag)
   {
     Flag = false;
     instructDone = false;
-    myXBEE.GetInstructions(5);
+    //myXBEE.GetInstructions(5);
    // Serial.print("Instruction One: "); Serial.println(myXBEE.action[1], HEX);
     disp = myMOTOR.getPosition();
     angle = myMOTOR.getAngle();
@@ -65,15 +65,18 @@ void loop()
     {
       case 0xAA : //Turn Left
         myMOTOR.LeftTurn(3);
-        if (angle >= myXBEE.angle[CurrentInstruct]);
+        Serial.print("Goal Angle: "); Serial.println(-myXBEE.angle[CurrentInstruct]);
+        if (angle <= -myXBEE.angle[CurrentInstruct]);
         {
           instructDone = true;
         }
         break;
       case 0xBB : //Turn Right
+        Serial.print("Goal Angle: "); Serial.println(myXBEE.angle[CurrentInstruct]);
         myMOTOR.RightTurn(3);
-        if (angle <= -myXBEE.angle[CurrentInstruct]);
+        if (angle >= myXBEE.angle[CurrentInstruct]);
         {
+          Serial.println("HHHHEEERRRRREEEE");
           instructDone = true;
         }
         break;            
@@ -94,7 +97,7 @@ void loop()
       myMOTOR.initEncoder();
       digitalWrite(LED, !digitalRead(LED));
     }
-  }*/
+  }
 }
 
 void callback()
