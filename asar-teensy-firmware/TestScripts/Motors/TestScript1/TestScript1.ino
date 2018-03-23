@@ -25,6 +25,14 @@ void setup()
 }
 void loop()
 {
+//  myMOTOR.Forward(3);
+//  delay(2000);
+//  myMOTOR.Stop();
+//  delay(1000);
+//  myMOTOR.Backwards(3);
+//  delay(2000);
+//  myMOTOR.Stop();
+//  delay(1000);
   distance = myMOTOR.getPosition();
   angle = myMOTOR.getAngle();
   Serial.print("Distance: "); Serial.print(distance);Serial.println(" Meters"); 
