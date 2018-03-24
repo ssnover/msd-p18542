@@ -37,18 +37,20 @@ void loop()
   angle = myMOTOR.getAngle();
   Serial.print("Distance: "); Serial.print(distance);Serial.println(" Meters"); 
   Serial.print("Angle: "); Serial.print(angle);Serial.println(" Degrees"); 
-  if (distance <= goThisFar && distance >= 0)
-  {
-    myMOTOR.Forward(3);
-  }
-  else if (angle <= 90)
-  {
-    myMOTOR.RightTurn(3);
-  }
-  else
-  {
-    myMOTOR.Stop();
-  }
+  myMOTOR.Backwards(3);
+  
+//  if (distance <= goThisFar && distance >= 0)
+//  {
+//    myMOTOR.Forward(3);
+//  }
+//  else if (angle <= 90)
+//  {
+//    myMOTOR.RightTurn(3);
+//  }
+//  else
+//  {
+//    myMOTOR.Stop();
+//  }
 
   delay(100);
 

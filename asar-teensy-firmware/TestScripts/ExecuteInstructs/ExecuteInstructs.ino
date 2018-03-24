@@ -65,18 +65,19 @@ void loop()
     {
       case 0xAA : //Turn Left
         myMOTOR.LeftTurn(3);
-        Serial.print("Goal Angle: "); Serial.println(-myXBEE.angle[CurrentInstruct]);
-        if (angle <= -myXBEE.angle[CurrentInstruct]);
+        if (abs(angle) >= myXBEE.angle[CurrentInstruct])
         {
+          Serial.print("Angle: "); Serial.println(angle);
+          Serial.print("Goal Angle: "); Serial.println(myXBEE.angle[CurrentInstruct]);
           instructDone = true;
         }
         break;
       case 0xBB : //Turn Right
-        Serial.print("Goal Angle: "); Serial.println(myXBEE.angle[CurrentInstruct]);
         myMOTOR.RightTurn(3);
-        if (angle >= myXBEE.angle[CurrentInstruct]);
+        if (abs(angle) >= myXBEE.angle[CurrentInstruct])
         {
-          Serial.println("HHHHEEERRRRREEEE");
+          Serial.print("Angle: "); Serial.println(angle);
+          Serial.print("Goal Angle: "); Serial.println(myXBEE.angle[CurrentInstruct]);
           instructDone = true;
         }
         break;            
