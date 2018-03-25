@@ -73,7 +73,7 @@ void loop()
         }
         break;
       case 0xBB : //Turn Right
-        myMOTOR.RightTurn(3);
+        myMOTOR.RightTurn(150);
         if (abs(angle) >= myXBEE.angle[CurrentInstruct])
         {
           Serial.print("Angle: "); Serial.println(angle);

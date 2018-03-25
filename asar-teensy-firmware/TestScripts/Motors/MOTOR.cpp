@@ -18,8 +18,9 @@ namespace ASAR
 {
 namespace
 {
-	const int CountsPerRev = 48*34; //48 Counts per motor rev * N=34 Gear output
-	const float WheelRadius = .045;
+	const int COUNTS_PER_REV = 48*34; //48 Counts per motor rev * N=34 Gear output
+	const int WHEEL_RADIUS = 45; //mm
+  const int ROBOT_RADIUS = 85; //mm 
   Encoder LeftEncoder(16, 17);
   Encoder RightEncoder(15, 14);
 }
@@ -44,7 +45,7 @@ MOTOR::~MOTOR()
 
 void MOTOR::Forward(const int Speed)
 {
-	int PWMval = Speed * 50; //Convert Speed Setting to PWM Val
+	int PWMval = Speed; //Convert Speed Setting to PWM Val
 	digitalWrite(this->enablepin_right, HIGH);
 	digitalWrite(this->enablepin_left, HIGH);
  
@@ -59,7 +60,7 @@ void MOTOR::Forward(const int Speed)
   
 void MOTOR::Backwards(const int Speed)
 {
-	int PWMval = Speed * 50; //Convert Speed Setting to PWM Val
+	int PWMval = Speed; //Convert Speed Setting to PWM Val
 
 	digitalWrite(this->enablepin_right, HIGH);
 	digitalWrite(this->enablepin_left, HIGH);
@@ -73,7 +74,7 @@ void MOTOR::Backwards(const int Speed)
   
 void MOTOR::RightTurn(const int Speed)
 {
-	int PWMval = Speed * 50; //Convert Speed Setting to PWM Val
+	int PWMval = Speed; //Convert Speed Setting to PWM Val
 	digitalWrite(this->enablepin_right, HIGH);
 	digitalWrite(this->enablepin_left, HIGH);
   
@@ -86,7 +87,7 @@ void MOTOR::RightTurn(const int Speed)
 
 void MOTOR::LeftTurn(const int Speed)
 {
-	//int PWMval = Speed * 50; //Convert Speed Setting to PWM Val
+	int PWMval = Speed; //Convert Speed Setting to PWM Val
 	digitalWrite(this->enablepin_right, HIGH);
 	digitalWrite(this->enablepin_left, HIGH);
   
@@ -120,11 +121,11 @@ void MOTOR::ReadCounts()
 double MOTOR::getPosition()
 {
 	ReadCounts();
-	Lrevs = LeftCounts / CountsPerRev;
-  Rrevs = RightCounts / CountsPerRev;
+	Lrevs = LeftCounts / COUNTS_PER_REV;
+  Rrevs = RightCounts / COUNTS_PER_REV;
   double pos = 0;
   double revs = (Lrevs + Rrevs) / 2;
-  pos =  revs * 2* 3.14159 * WheelRadius;
+  pos =  revs * 2* PI * WHEEL_RADIUS; //mm
   return pos;
 
 }
@@ -132,10 +133,10 @@ double MOTOR::getPosition()
 double MOTOR::getAngle()
 {
   ReadCounts();
-  Lrevs = LeftCounts / CountsPerRev;
-  Rrevs = RightCounts / CountsPerRev; 
+  Lrevs = LeftCounts / COUNTS_PER_REV;
+  Rrevs = RightCounts / COUNTS_PER_REV; 
   double angle = 0;
-  angle = (Lrevs - Rrevs);
+  angle = ((Lrevs+Rrevs)/2)*(WHEEL_RADIUS/ROBOT_RADIUS)*360;
   return angle;
   
 }

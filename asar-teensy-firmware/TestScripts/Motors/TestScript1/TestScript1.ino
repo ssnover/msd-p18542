@@ -20,6 +20,7 @@ void setup()
 {
   pinMode(13, OUTPUT);
   Serial.begin(9600);
+  delay(500);
   myMOTOR.initEncoder();
 
 }
@@ -37,7 +38,7 @@ void loop()
   angle = myMOTOR.getAngle();
   Serial.print("Distance: "); Serial.print(distance);Serial.println(" Meters"); 
   Serial.print("Angle: "); Serial.print(angle);Serial.println(" Degrees"); 
-  myMOTOR.Backwards(3);
+  myMOTOR.RightTurn(150);
   
 //  if (distance <= goThisFar && distance >= 0)
 //  {
