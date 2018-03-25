@@ -86,7 +86,7 @@ void MOTOR::RightTurn(const int Speed)
 
 void MOTOR::LeftTurn(const int Speed)
 {
-	int PWMval = Speed * 50; //Convert Speed Setting to PWM Val
+	//int PWMval = Speed * 50; //Convert Speed Setting to PWM Val
 	digitalWrite(this->enablepin_right, HIGH);
 	digitalWrite(this->enablepin_left, HIGH);
   
