@@ -41,12 +41,12 @@ def inst_graph():
             attribute['speed'] = 0
             tile[(x, y)] = attribute
 
-    print(tile[(8, 1)])
-    print(tile[(8, 2)])
-    print(tile[(8, 3)])
-    print(tile[(7, 4)])
-    print(tile[(6, 4)])
-    print(tile[(6, 5)])
+    # print(tile[(8, 1)])
+    # print(tile[(8, 2)])
+    # print(tile[(8, 3)])
+    # print(tile[(7, 4)])
+    # print(tile[(6, 4)])
+    # print(tile[(6, 5)])
     return tile
 
 def give_dng(tile):
@@ -59,24 +59,42 @@ def give_dng(tile):
             i = terrain['coordinate'].index([k, j])
             if terrain['color'][i] == 'black':
                 tile[(k, j)]['im_dngr'] = 200
+                tile[(k, j)]['ad_dngr'] = 0
+                tile[(k, j)]['speed'] = 200
             elif terrain['color'][i] == 'blue':
                 tile[(k, j)]['im_dngr'] = 200
+                tile[(k, j)]['ad_dngr'] = 0
+                tile[(k, j)]['speed'] = 200
             elif terrain['color'][i] == 'red':
                 tile[(k, j)]['im_dngr'] = 10
+                tile[(k, j)]['ad_dngr'] = 5
+                tile[(k, j)]['speed'] = 1
             elif terrain['color'][i] == 'orange':
                 tile[(k, j)]['im_dngr'] = 5
+                tile[(k, j)]['ad_dngr'] = 2
+                tile[(k, j)]['speed'] = 0
             elif terrain['color'][i] == 'green':
                 tile[(k, j)]['im_dngr'] = 3
+                tile[(k, j)]['ad_dngr'] = 1
+                tile[(k, j)]['speed'] = 1
             elif terrain['color'][i] == 'yellow':
                 tile[(k, j)]['im_dngr'] = 0
+                tile[(k, j)]['ad_dngr'] = 0
+                tile[(k, j)]['speed'] = 0
             elif terrain['color'][i] == 'white':
                 tile[(k, j)]['im_dngr'] = 0
+                tile[(k, j)]['ad_dngr'] = 0
+                tile[(k, j)]['speed'] = 0
                 start = (k, j)
             elif terrain['color'][i] == 'purple':
                 tile[(k, j)]['im_dngr'] = 0
+                tile[(k, j)]['ad_dngr'] = 0
+                tile[(k, j)]['speed'] = 0
                 goal = (k, j)
             else:
                 tile[(k, j)]['im_dngr'] = 200
+                tile[(k, j)]['ad_dngr'] = 2
+                tile[(k, j)]['speed'] = 200
 
     #print(tile[(1, 1)])
     # print(tile[(5, 5)])
@@ -101,17 +119,9 @@ def a_star_search(tile, start, goal, mode):
         if current == goal:
             break
 
-        # for next in graph.neighbors(current):
-        #     new_cost = cost_so_far[current] + graph.cost(current, next)
-        #     if next not in cost_so_far or new_cost < cost_so_far[next]:
-        #         cost_so_far[next] = new_cost
-        #         priority = new_cost + heuristic(goal, next)
-        #         frontier.put(next, priority)
-        #         came_from[next] = current
-
         for i in range(0, len(tile[current]['children'])):
             next = tile[current]['children'][i]
-            new_cost = cost_so_far[current] + travel(current, next)
+            new_cost = cost_so_far[current] + travel(current, next, tile)
             if next not in cost_so_far or new_cost < cost_so_far[next]:
                 cost_so_far[next] = new_cost
                 if mode == 1:
@@ -125,23 +135,23 @@ def a_star_search(tile, start, goal, mode):
 
     return came_from, start, goal#, cost_so_far
 
-def travel(current, next):
-    travel_cost = math.sqrt(pow((current[0] - next[0]), 2) + pow((current[1] - next[1]), 2))
+def travel(current, next, tile):
+    travel_cost = tile[next]['speed']
+    #travel_cost = math.sqrt(pow((current[0] - next[0]), 2) + pow((current[1] - next[1]), 2))
     return travel_cost
 
 def safe_heuy(goal, next, tile):
-    heuy_cost = tile[next]['danger'] + math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2))
+    heuy_cost = (tile[next]['im_dngr'] * tile[next]['ad_dngr'])*(math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2)))
     # print(heuy_cost)
     return heuy_cost
 
 def med_heuy(goal, next, tile):
-    heuy_cost = tile[next]['danger'] + math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2))
+    heuy_cost = tile[next]['im_dngr'] *(math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2)))
     #print(heuy_cost)
     return heuy_cost
 
 def fast_heuy(goal, next, tile):
-    heuy_cost = 1
-    #heuy_cost = math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2))
+    heuy_cost = tile[next]['speed']*(math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2)))
     # print(heuy_cost)
     return heuy_cost
 
