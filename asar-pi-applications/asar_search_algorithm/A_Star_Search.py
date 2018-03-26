@@ -5,10 +5,10 @@ import json
 
 import math
 
-ter_height = 8  # number of tiles down side
-ter_width = 8   # number of tiles across top
+ter_height = 8  # number of tiles down the side
+ter_width = 8   # number of tiles across the top
 
-mode = 0  # 0 for safe, 1 for med, 2 for fast
+mode = 2  # 0 for safe, 1 for med, 2 for fast
 
 
 # Modifies queue to .get the lowest priority
@@ -37,6 +37,8 @@ def inst_graph():
                 temp_child = [(x-1, y-1), (x, y-1), (x+1, y-1), (x+1, y), (x, y+1), (x-1, y)]
             else:
                 temp_child = [(x, y-1), (x+1, y), (x+1, y+1), (x, y+1), (x-1, y+1), (x-1, y)]
+
+            # remove neighbor nodes that are out of grid
             children = filter(lambda i: 1 <= i[0] <= ter_height and 1 <= i[1] <= ter_width, temp_child)
             attribute['children'] = list(children)
             attribute['im_dngr'] = 0
@@ -66,11 +68,11 @@ def give_dng(tile):
             elif terrain['color'][i] == 'red':
                 tile[(k, j)]['im_dngr'] = 10
                 tile[(k, j)]['ad_dngr'] = 2
-                tile[(k, j)]['speed'] = 1
+                tile[(k, j)]['speed'] = 0
             elif terrain['color'][i] == 'orange':
                 tile[(k, j)]['im_dngr'] = 2
                 tile[(k, j)]['ad_dngr'] = 1
-                tile[(k, j)]['speed'] = 0
+                tile[(k, j)]['speed'] = 1
             elif terrain['color'][i] == 'green':
                 tile[(k, j)]['im_dngr'] = 2
                 tile[(k, j)]['ad_dngr'] = 0
@@ -106,19 +108,20 @@ def a_star_search(tile, start, goal, mode):
 
     while not frontier.empty():
         i = 0
-        current = frontier.get()
+        current = frontier.get()  # pulls the least expensive node off of queue
 
-        if current == goal:
+        if current == goal:  # goal test
             break
 
         for i in range(0, len(tile[current]['children'])):
-            next = tile[current]['children'][i]
-            new_cost = cost_so_far[current] + travel(current, next, tile, mode)
-            if next not in cost_so_far or new_cost < cost_so_far[next]:
-                cost_so_far[next] = new_cost
-                priority = new_cost + heuristic(goal, next, tile)
-                frontier.put(next, priority)
-                came_from[next] = current
+            next = tile[current]['children'][i]  # iterates through children of current node
+            new_cost = cost_so_far[current] + travel(current, next, tile, mode)  # heuristic part 1 (uses danger & Speed)
+            if next not in cost_so_far or new_cost < cost_so_far[next]:  # if next has not been visited
+                if tile[next]['speed'] < 200:  # do not evaluate obstacles (Rock & water)
+                    cost_so_far[next] = new_cost
+                    priority = new_cost + heuristic(goal, next, tile)  # heuristic part 2 (Euclidean distance)
+                    frontier.put(next, priority)  # put evaluated node onto queue
+                    came_from[next] = current
 
     return came_from, start, goal
 
@@ -143,7 +146,7 @@ def travel(current, next, tile, mode):
 # Part 2 of Heuristics. Euclidean distance is used in absence of a way to estimate the danger/speed of tiles to goal
 def heuristic(goal, next, tile):
 
-    heuy_cost = math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2))
+    heuy_cost = math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2))  # Euclidean Distance
 
     # if mode == 1:  # med heuristic (account for speed and immediate danger)
     #     # heuy_cost = tile[next]['im_dngr'] *(math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2)))
@@ -165,8 +168,8 @@ def reconstruct_path(came_from, start, goal):
     while current != start:
         path.append(current)
         current = came_from[current]
-    path.append(start) # optional
-    path.reverse() # optional
+    path.append(start)  # optional
+    path.reverse()  # optional
     return path
 
 
@@ -174,14 +177,9 @@ def reconstruct_path(came_from, start, goal):
 def path_to_move(path, tile):
     print(path)
 
-    curOri = ['+', 180]  # import orientation from mark
+    movement = []
 
-    if curOri[0] == '-':
-        movement = ['ffaa' + format(curOri[1], 'x') + 'f0']
-    else:
-        movement = ['ffbb' + format(curOri[1], 'x') + 'f0']
-
-    ori = 0
+    ori = -120  # import exact orientation from vision system
 
     for i in range(1, len(path)):
         if tile[path[i]]['speed'] == 0:
@@ -234,21 +232,24 @@ def path_to_move(path, tile):
                 turn = 0
                 speed = 0
 
+        # convert the 'out of hex range' angles to their equivalents in range
         if turn == 340:
             turn = -120
         elif turn == 240:
             turn = -60
 
+        # identify positive/negative rotation
         if turn > 0:
-            rot = 'aa'
+            rot = 'aa'  # rotate left
         else:
-            rot = 'bb'
+            rot = 'bb'  # rotate right
 
+        # add a turn + drive instruction
         movement.append('ff{0}{1}f0ffcc28{2}f0'.format(rot, hex(abs(turn))[2:].zfill(2), speed))
 
-    movement.append('ffffff')
+    movement.append('ffffff')  # end transmission
 
-    trail = ''.join(movement)
+    trail = ''.join(movement)  # convert transmission list to string
 
     for i in range(0, len(movement)):  # optional vertical display of instructions
         print(movement[i])
