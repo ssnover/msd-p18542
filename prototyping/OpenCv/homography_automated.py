@@ -3,11 +3,16 @@ import numpy as np
 from four_corners import four_points
 from get_attributes import get_attributes
 import json
-if __name__ == '__main__':
-    # Read in the image.
+import imutils
+import os
 
-    im_src = cv2.imread('hex_t.png')
 
+def automated_homography(input_image=None):
+    if input_image is None:
+        im_src = cv2.imread('all_color_terrain.png')
+    else:
+        im_src = cv2.imread(input_image)
+    final_attributes = []
     # Destination image
     size = (600, 500, 3)
 
@@ -35,9 +40,30 @@ if __name__ == '__main__':
 
     attributes = get_attributes(im_dst)
     print(pts_dst)
-    json_str = json.dumps(attributes)
+    # with attributes as outfile:
+
     # Show output
+
     cv2.imshow("Image", im_dst)
+
+    with open('terrain.txt', 'w') as outfile:
+        json_str = json.dump(attributes, outfile)
+
     print(json_str)
+
+
     cv2.waitKey(0)
+    return os.path.abspath('terrain.txt')
+
+if __name__ == '__main__':
+
+
+    # Read in the image.
+    automated_homography()
+
+
+
+
+
+
 

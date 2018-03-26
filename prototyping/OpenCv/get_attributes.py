@@ -4,12 +4,17 @@ import numpy as np
 import cv2
 from get_coordinate import get_coordinate
 from get_rgbcolor import get_rgbcolor
-
+from coordinate_checklist import coordinate_checklist
+from get_missing_terrain import get_missing_terrain
 
 def get_attributes(image):
-    hexagon_attributes = []
+    number_of_hexagons = 0
+    hexagon_attributes = {}
+    hexagon_attributes['color'] = []
+    hexagon_attributes['coordinate'] = []
     pixel_hsv = []
     pixel_hsv_averages = []
+    coordinate_check = []
 
     resized = imutils.resize(image, width=300)
     ratio = image.shape[0] / float(resized.shape[0])
@@ -43,7 +48,7 @@ def get_attributes(image):
             c = c.astype("float")
             c *= ratio
             c = c.astype("int")
-            px = image[cY, cX]
+            px = [cY, cX]
             print(px)
             pixel_hsv = []
             for i in range(0, 3):
@@ -58,19 +63,21 @@ def get_attributes(image):
             print(np.mean(pixel_hsv, axis=0))
             print(pixel_hsv_averages)
 
-            hexagon_attributes += [get_rgbcolor(average_hsv)]
+            hexagon_attributes['color'].append(get_rgbcolor(average_hsv))
 
-            hexagon_attributes += [get_coordinate(px)]
+            hexagon_attributes['coordinate'].append(get_coordinate(px))
 
             cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
             cv2.circle(image, (cX, cY), 7, (255, 255, 255), -1)
-            cv2.putText(image, shape, (cX, cY), cv2.FONT_HERSHEY_SIMPLEX,
-                        0.5, (255, 255, 255), 2)
-
+            # cv2.putText(image, shape, (cX, cY), cv2.FONT_HERSHEY_SIMPLEX,
+             #           0.5, (255, 255, 255), 2)
+            number_of_hexagons = number_of_hexagons + 1
 
          # show the output image
         cv2.imshow("Image", image)
         cv2.waitKey(0)
-
+    coordinate_check = coordinate_checklist()
+    hexagon_attributes = get_missing_terrain(hexagon_attributes, coordinate_check)
+    # hexagon_attributes = dict(zip(coordinate,color))
     print(hexagon_attributes)
     return hexagon_attributes

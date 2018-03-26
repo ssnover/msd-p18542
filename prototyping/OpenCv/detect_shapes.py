@@ -21,7 +21,7 @@ four_corners = []
 
 # load the image and resize it to a smaller factor so that
 # the shapes can be approximated better
-image = cv2.imread("hex_t.PNG")
+image = cv2.imread("final_hex.jpg")
 resized = imutils.resize(image, width=300)
 ratio = image.shape[0] / float(resized.shape[0])
 
@@ -70,7 +70,7 @@ for c in cnts:
          #cv2.waitKey(0)
 
     # show the output image
-    four_corners.reverse()
+    #four_corners.reverse()
 
     four['points'] = four_corners
     points = np.vstack(four['points']).astype(float)

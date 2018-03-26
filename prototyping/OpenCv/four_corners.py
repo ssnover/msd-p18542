@@ -13,6 +13,7 @@ def four_points(image):
 
     four = {}
     four['points'] = []
+    four['corners'] = [[0, 0], [0, 0], [0, 0], [0, 0]]
     four_corners = []
 
     # load the image and resize it to a smaller factor so that
@@ -39,6 +40,11 @@ def four_points(image):
         # compute the center of the contour, then detect the name of the
         # shape using only the contour
         M = cv2.moments(c)
+        if M["m10"] == 0:
+            M["m10"] = M["m10"]+1
+        if M["m00"] == 0:
+            M["m00"] = M["m00"]+1
+
         cX = int((M["m10"] / M["m00"]) * ratio)
         cY = int((M["m01"] / M["m00"]) * ratio)
         shape = sd.detect(c)
@@ -53,8 +59,8 @@ def four_points(image):
 
             cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
             cv2.circle(image, (cX, cY), 7, (255, 255, 255), -1)
-            cv2.putText(image, shape, (cX, cY), cv2.FONT_HERSHEY_SIMPLEX,
-                    0.5, (255, 255, 255), 2)
+            #cv2.putText(image, shape, (cX, cY), cv2.FONT_HERSHEY_SIMPLEX,
+               #     0.5, (255, 255, 255), 2)
             # print(cX, cY)
 
             if len(four_corners) < 4:
@@ -65,10 +71,20 @@ def four_points(image):
             cv2.waitKey(0)
 
     # show the output image
-    four_corners.reverse()
-    four['points'] = four_corners
-    four = np.vstack(four['points']).astype(float)
-    print(four)
+    # four_corners.reverse()
+    for i in range(0, len(four_corners)):
+        if four_corners[i][0] < 50 and four_corners[i][1] < 50:
+            four['corners'][0] = four_corners[i]
+        elif four_corners[i][0] > 600 and four_corners[i][1] < 50:
+            four['corners'][1] = four_corners[i]
+        elif four_corners[i][0] > 600 and four_corners[i][1] > 500:
+            four['corners'][2] = four_corners[i]
+        elif four_corners[i][0] < 50 and four_corners[i][1] > 500:
+            four['corners'][3] = four_corners[i]
+    print(four['corners'])
+    # four['corners'] = four_corners
+    four = np.vstack(four['corners']).astype(float)
+
     return four
 
 
