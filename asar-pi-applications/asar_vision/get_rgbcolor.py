@@ -24,7 +24,7 @@ def get_rgbcolor(average_hsv):
                      [164, 73, 163])
     colors = [gray, blue, green, red, yellow, white, orange, purple]
 
-    for i in range(0,len(preset_colors)):
+    for i in range(0, len(preset_colors)):
 
         dist = sqrt((average_hsv[0]-preset_colors[i][0])**2 +
                     (average_hsv[1]-preset_colors[i][1])**2 +
