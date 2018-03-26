@@ -8,7 +8,7 @@ import math
 ter_height = 8  # number of tiles down side
 ter_width = 8   # number of tiles across top
 
-mode = 2 #0 for safe, 1 for med, 2 for fast
+mode = 0 #0 for safe, 1 for med, 2 for fast
 
 # Order queue to .get the lowest priority
 class MyPriorityQueue(PriorityQueue):
@@ -67,17 +67,17 @@ def give_dng(tile):
                 tile[(k, j)]['speed'] = 200
             elif terrain['color'][i] == 'red':
                 tile[(k, j)]['im_dngr'] = 10
-                tile[(k, j)]['ad_dngr'] = 5
+                tile[(k, j)]['ad_dngr'] = 2
                 tile[(k, j)]['speed'] = 1
             elif terrain['color'][i] == 'orange':
-                tile[(k, j)]['im_dngr'] = 5
-                tile[(k, j)]['ad_dngr'] = 2
+                tile[(k, j)]['im_dngr'] = 2
+                tile[(k, j)]['ad_dngr'] = 1
                 tile[(k, j)]['speed'] = 0
             elif terrain['color'][i] == 'green':
-                tile[(k, j)]['im_dngr'] = 3
-                tile[(k, j)]['ad_dngr'] = 1
-                tile[(k, j)]['speed'] = 1
-            elif terrain['color'][i] == 'yellow':
+                tile[(k, j)]['im_dngr'] = 2
+                tile[(k, j)]['ad_dngr'] = 0
+                tile[(k, j)]['speed'] = 2
+            elif terrain['color'][i] == 'gray':
                 tile[(k, j)]['im_dngr'] = 0
                 tile[(k, j)]['ad_dngr'] = 0
                 tile[(k, j)]['speed'] = 0
@@ -121,7 +121,7 @@ def a_star_search(tile, start, goal, mode):
 
         for i in range(0, len(tile[current]['children'])):
             next = tile[current]['children'][i]
-            new_cost = cost_so_far[current] + travel(current, next, tile)
+            new_cost = cost_so_far[current] + travel(current, next, tile, mode)
             if next not in cost_so_far or new_cost < cost_so_far[next]:
                 cost_so_far[next] = new_cost
                 if mode == 1:
@@ -135,23 +135,36 @@ def a_star_search(tile, start, goal, mode):
 
     return came_from, start, goal#, cost_so_far
 
-def travel(current, next, tile):
-    travel_cost = tile[next]['speed']
-    #travel_cost = math.sqrt(pow((current[0] - next[0]), 2) + pow((current[1] - next[1]), 2))
+def travel(current, next, tile, mode):
+    if mode == 1:  # med heuristic (account for speed and immediate danger)
+        travel_cost = tile[next]['im_dngr'] + tile[next]['speed']
+    elif mode == 2:  # fast heuristic (ignore danger if the path is quick
+        travel_cost = tile[next]['speed'] * tile[next]['im_dngr']
+    else:  # default safe heuristic (ignore speed of path, choose based only on dangers)
+        ad_dngr = []
+        for item in tile[next]['children']:
+            ad_dngr.append(tile[item]['ad_dngr'])
+            print(tile[item]['ad_dngr'])
+
+        travel_cost = tile[next]['im_dngr'] + sum(ad_dngr)
+
     return travel_cost
 
 def safe_heuy(goal, next, tile):
-    heuy_cost = (tile[next]['im_dngr'] * tile[next]['ad_dngr'])*(math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2)))
+    heuy_cost = math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2))
+    #heuy_cost = (tile[next]['im_dngr'] * tile[next]['ad_dngr'])*(math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2)))
     # print(heuy_cost)
     return heuy_cost
 
 def med_heuy(goal, next, tile):
-    heuy_cost = tile[next]['im_dngr'] *(math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2)))
+    heuy_cost = math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2))
+    #heuy_cost = tile[next]['im_dngr'] *(math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2)))
     #print(heuy_cost)
     return heuy_cost
 
 def fast_heuy(goal, next, tile):
-    heuy_cost = tile[next]['speed']*(math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2)))
+    heuy_cost = math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2))
+    #heuy_cost = tile[next]['speed']*(math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2)))
     # print(heuy_cost)
     return heuy_cost
 
@@ -245,7 +258,7 @@ def path_to_move(path, tile):
         movement.append('ff{0}{1}f0ffcc28{2}f0'.format(rot, hex(abs(turn))[2:].zfill(2), speed))
 
     movement.append('ffffff')
-    
+
     trail = ''.join(movement)
 
     for i in range(0, len(movement)):
