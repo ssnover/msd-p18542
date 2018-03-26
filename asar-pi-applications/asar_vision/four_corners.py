@@ -67,7 +67,7 @@ def four_points(image):
                 four_corners.append([cX, cY])
 
                 print(four_corners)
-                cv2.imshow("Image", image)
+                # cv2.imshow("Image", image)
             cv2.waitKey(0)
 
     # show the output image

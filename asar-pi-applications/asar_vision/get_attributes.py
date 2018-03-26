@@ -67,15 +67,15 @@ def get_attributes(image):
 
             hexagon_attributes['coordinate'].append(get_coordinate(px))
 
-            cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
-            cv2.circle(image, (cX, cY), 7, (255, 255, 255), -1)
+            # cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
+            # cv2.circle(image, (cX, cY), 7, (255, 255, 255), -1)
             # cv2.putText(image, shape, (cX, cY), cv2.FONT_HERSHEY_SIMPLEX,
              #           0.5, (255, 255, 255), 2)
             number_of_hexagons = number_of_hexagons + 1
 
          # show the output image
-        cv2.imshow("Image", image)
-        cv2.waitKey(0)
+        # cv2.imshow("Image", image)
+        # cv2.waitKey(0)
     coordinate_check = coordinate_checklist()
     hexagon_attributes = get_missing_terrain(hexagon_attributes, coordinate_check)
     # hexagon_attributes = dict(zip(coordinate,color))

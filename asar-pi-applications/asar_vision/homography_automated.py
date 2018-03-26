@@ -28,7 +28,7 @@ def automated_homography(input_image=None):
     )
 
     # Show image and wait for 4 clicks.
-    cv2.imshow("Image", im_src)
+    # cv2.imshow("Image", im_src)
     pts_src = four_points(im_src)
     print(pts_src)
     print(pts_dst)
@@ -44,7 +44,7 @@ def automated_homography(input_image=None):
 
     # Show output
 
-    cv2.imshow("Image", im_dst)
+    # cv2.imshow("Image", im_dst)
 
     with open('terrain.txt', 'w') as outfile:
         json_str = json.dump(attributes, outfile)
@@ -52,7 +52,7 @@ def automated_homography(input_image=None):
     print(json_str)
 
 
-    cv2.waitKey(0)
+    # cv2.waitKey(0)
     return os.path.abspath('terrain.txt')
 
 if __name__ == '__main__':
