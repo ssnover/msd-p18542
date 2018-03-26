@@ -177,58 +177,63 @@ def reconstruct_path(came_from, start, goal):
 def path_to_move(path, tile):
     print(path)
 
-    movement = []
+    movement = []  # list of robot instructions
 
-    ori = -120  # import exact orientation from vision system
+    ori = -120  # import exact orientation from vision system (current orientation variable)
 
     for i in range(1, len(path)):
-        if tile[path[i]]['speed'] == 0:
+
+        # convert heuristic speed to hex speed
+        if tile[path[i]]['speed'] == 0:  # fast
             speed = 'ff'
-        else:
+        elif tile[path[i]['speed']] == 1: # medium
+            speed = 'aa'
+        else:  # default speed for unknown objects == slow
             speed = '55'
 
-        if path[i-1][0] % 2 == 0:  #is even
-            if path[i][0] < path[i-1][0] and path[i][1] == path[i-1][1]:
+        # choose appropriate relative angle to turn based on current orientation and relative position of next tile
+        if path[i-1][0] % 2 == 0:  # tile's row is even
+            if path[i][0] < path[i-1][0] and path[i][1] == path[i-1][1]:  # move up && right
                 turn = 60 - ori
                 ori = 60
-            elif path[i][0] < path[i-1][0] and path[i][1] < path[i-1][1]:
+            elif path[i][0] < path[i-1][0] and path[i][1] < path[i-1][1]:  # move up && left
                 turn = 120 - ori
                 ori = 120
-            elif path[i][0] == path[i-1][0] and path[i][1] < path[i-1][1]:
+            elif path[i][0] == path[i-1][0] and path[i][1] < path[i-1][1]:  # move left
                 turn = 180 - ori
                 ori = 180
-            elif path[i][0] > path[i-1][0] and path[i][1] < path[i-1][1]:
+            elif path[i][0] > path[i-1][0] and path[i][1] < path[i-1][1]:  # move down && left
                 turn = ori + 120
                 ori = -120
-            elif path[i][0] > path[i-1][0] and path[i][1] == path[i-1][1]:
+            elif path[i][0] > path[i-1][0] and path[i][1] == path[i-1][1]:  # move down && right
                 turn = ori + 60
                 ori = -60
-            elif path[i][0] == path[i-1][0] and path[i][1] > path[i-1][1]:
+            elif path[i][0] == path[i-1][0] and path[i][1] > path[i-1][1]:  # move right
                 turn = 0 - ori
                 ori = 0
-            else:
+            else:  # default no move
                 turn = 0
                 speed = 0
-        else:
-            if path[i][0] < path[i-1][0] and path[i][1] > path[i-1][1]:
+        else:  # tile's row is odd
+            if path[i][0] < path[i-1][0] and path[i][1] > path[i-1][1]:  # move up && right
                 turn = 60 - ori
                 ori = 60
-            elif path[i][0] < path[i-1][0] and path[i][1] == path[i-1][1]:
+            elif path[i][0] < path[i-1][0] and path[i][1] == path[i-1][1]:  # move up && left
                 turn = 120 - ori
                 ori = 120
-            elif path[i][0] == path[i-1][0] and path[i][1] < path[i-1][1]:
+            elif path[i][0] == path[i-1][0] and path[i][1] < path[i-1][1]:  # move left
                 turn = 180 - ori
                 ori = 180
-            elif path[i][0] > path[i-1][0] and path[i][1] == path[i-1][1]:
+            elif path[i][0] > path[i-1][0] and path[i][1] == path[i-1][1]:  # move down && left
                 turn = ori + 120
                 ori = -120
-            elif path[i][0] > path[i-1][0] and path[i][1] > path[i-1][1]:
+            elif path[i][0] > path[i-1][0] and path[i][1] > path[i-1][1]:  # move down && right
                 turn = ori + 60
                 ori = -60
-            elif path[i][0] == path[i-1][0] and path[i][1] > path[i-1][1]:
+            elif path[i][0] == path[i-1][0] and path[i][1] > path[i-1][1]:  # move right
                 turn = 0 - ori
                 ori = 0
-            else:
+            else:  # default no move
                 turn = 0
                 speed = 0
 
@@ -244,7 +249,7 @@ def path_to_move(path, tile):
         else:
             rot = 'bb'  # rotate right
 
-        # add a turn + drive instruction
+        # add a turn + drive instruction to list of movements
         movement.append('ff{0}{1}f0ffcc28{2}f0'.format(rot, hex(abs(turn))[2:].zfill(2), speed))
 
     movement.append('ffffff')  # end transmission
