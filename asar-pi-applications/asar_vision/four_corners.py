@@ -57,8 +57,8 @@ def four_points(image):
             px = image[cY, cX]
             # print(px)
 
-            cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
-            cv2.circle(image, (cX, cY), 7, (255, 255, 255), -1)
+            # cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
+            # cv2.circle(image, (cX, cY), 7, (255, 255, 255), -1)
             #cv2.putText(image, shape, (cX, cY), cv2.FONT_HERSHEY_SIMPLEX,
                #     0.5, (255, 255, 255), 2)
             # print(cX, cY)
@@ -68,7 +68,7 @@ def four_points(image):
 
                 print(four_corners)
                 # cv2.imshow("Image", image)
-            cv2.waitKey(0)
+            # cv2.waitKey(0)
 
     # show the output image
     # four_corners.reverse()
