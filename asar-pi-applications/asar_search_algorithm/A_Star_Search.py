@@ -8,7 +8,7 @@ import math
 ter_height = 8  # number of tiles down the side
 ter_width = 8   # number of tiles across the top
 
-mode = 2  # 0 for safe, 1 for med, 2 for fast
+mode = 0  # 0 for safe, 1 for med, 2 for fast
 
 
 # Modifies queue to .get the lowest priority
@@ -57,17 +57,17 @@ def give_dng(tile):
         for j in range(1, ter_width+1):
             terrain = json.load(open('terrain.txt'))
             i = terrain['coordinate'].index([k, j])
-            if terrain['color'][i] == 'black':
-                tile[(k, j)]['im_dngr'] = 200
-                tile[(k, j)]['ad_dngr'] = 0
-                tile[(k, j)]['speed'] = 200
-            elif terrain['color'][i] == 'blue':
+            # if terrain['color'][i] == 'black':  # black tile removed, redundancy with blue
+            #     tile[(k, j)]['im_dngr'] = 200
+            #     tile[(k, j)]['ad_dngr'] = 0
+            #     tile[(k, j)]['speed'] = 200
+            if terrain['color'][i] == 'blue':
                 tile[(k, j)]['im_dngr'] = 200
                 tile[(k, j)]['ad_dngr'] = 0
                 tile[(k, j)]['speed'] = 200
             elif terrain['color'][i] == 'red':
-                tile[(k, j)]['im_dngr'] = 10
-                tile[(k, j)]['ad_dngr'] = 2
+                tile[(k, j)]['im_dngr'] = 25
+                tile[(k, j)]['ad_dngr'] = 3
                 tile[(k, j)]['speed'] = 0
             elif terrain['color'][i] == 'orange':
                 tile[(k, j)]['im_dngr'] = 2
@@ -111,17 +111,22 @@ def a_star_search(tile, start, goal, mode):
         current = frontier.get()  # pulls the least expensive node off of queue
 
         if current == goal:  # goal test
+            print('Goal Reached!')
             break
+
 
         for i in range(0, len(tile[current]['children'])):
             next = tile[current]['children'][i]  # iterates through children of current node
             new_cost = cost_so_far[current] + travel(current, next, tile, mode)  # heuristic part 1 (uses danger & Speed)
             if next not in cost_so_far or new_cost < cost_so_far[next]:  # if next has not been visited
                 if tile[next]['speed'] < 200:  # do not evaluate obstacles (Rock & water)
-                    cost_so_far[next] = new_cost
-                    priority = new_cost + heuristic(goal, next, tile)  # heuristic part 2 (Euclidean distance)
-                    frontier.put(next, priority)  # put evaluated node onto queue
-                    came_from[next] = current
+                    if mode == 0 and tile[next]['im_dngr'] >= 25:  # do not drive through fire in safe mode
+                        continue
+                    else:
+                        cost_so_far[next] = new_cost
+                        priority = new_cost + heuristic(goal, next, tile)  # heuristic part 2 (Euclidean distance)
+                        frontier.put(next, priority)  # put evaluated node onto queue
+                        came_from[next] = current
 
     return came_from, start, goal
 
@@ -140,23 +145,26 @@ def travel(current, next, tile, mode):
 
         travel_cost = tile[next]['im_dngr'] + sum(ad_dngr)
 
+
     return travel_cost
 
 
 # Part 2 of Heuristics. Euclidean distance is used in absence of a way to estimate the danger/speed of tiles to goal
 def heuristic(goal, next, tile):
 
-    heuy_cost = math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2))  # Euclidean Distance
 
-    # if mode == 1:  # med heuristic (account for speed and immediate danger)
-    #     # heuy_cost = tile[next]['im_dngr'] *(math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2)))
-    #     # print(heuy_cost)
-    # elif mode == 2:  # fast heuristic (ignore danger if the path is quick
-    #     # heuy_cost = tile[next]['speed']*(math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2)))
-    #     # print(heuy_cost)
-    # else:  # default safe heuristic (ignore speed of path, choose based only on dangers)
-    #     # heuy_cost = (tile[next]['im_dngr'] * tile[next]['ad_dngr'])*(math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2)))
-    #     # print(heuy_cost)
+    if mode == 1:  # med heuristic (account for speed and immediate danger)
+        heuy_cost = math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2))  # Euclidean Distance
+        # heuy_cost = tile[next]['im_dngr'] *(math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2)))
+        # print(heuy_cost)
+    elif mode == 2:  # fast heuristic (ignore danger if the path is quick
+        heuy_cost = math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2))  # Euclidean Distance
+        # heuy_cost = tile[next]['speed']*(math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2)))
+        # print(heuy_cost)
+    else:  # default safe heuristic (ignore speed of path, choose based only on dangers)
+        heuy_cost = math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2))  # Euclidean Distance
+        # heuy_cost = (tile[next]['im_dngr'] * tile[next]['ad_dngr'])*(math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2)))
+        # print(heuy_cost)
 
     return heuy_cost
 
@@ -164,6 +172,11 @@ def heuristic(goal, next, tile):
 # Reconstruct_path pulls the path from the queue
 def reconstruct_path(came_from, start, goal):
     current = goal
+    if current in came_from:
+        print('')
+    else:
+        print('Victim Lost')
+        return -1
     path = []
     while current != start:
         path.append(current)
@@ -175,6 +188,10 @@ def reconstruct_path(came_from, start, goal):
 
 # path_to_move converts the path from coordinates to the robot's instruction protocol
 def path_to_move(path, tile):
+
+    if path == -1:
+        return 'Search Failed'
+
     print(path)
 
     movement = []  # list of robot instructions
@@ -186,7 +203,7 @@ def path_to_move(path, tile):
         # convert heuristic speed to hex speed
         if tile[path[i]]['speed'] == 0:  # fast
             speed = 'ff'
-        elif tile[path[i]['speed']] == 1: # medium
+        elif tile[path[i]]['speed'] == 1:  # medium
             speed = 'aa'
         else:  # default speed for unknown objects == slow
             speed = '55'
