@@ -164,7 +164,7 @@ namespace ASAR
   void XBEE::getInstructions()
   {
     rawReadIndex = 0;
-    Serial.println("getting all insturctions");
+    Serial.println("getting all instructions");
     readAllRaw();
     while (instructNum <= instructTotal)
     {

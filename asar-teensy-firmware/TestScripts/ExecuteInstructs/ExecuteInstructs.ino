@@ -12,7 +12,7 @@
 #include "PITimer.h"
 
 const int LED = 13;
-const double Period = .5;
+const double Period = .01;
 bool Flag = false;
 bool instructDone = false;
 int CurrentInstruct = 1;
@@ -53,45 +53,10 @@ void loop()
   {
     Flag = false;
     instructDone = false;
-    //myXBEE.GetInstructions(5);
-   // Serial.print("Instruction One: "); Serial.println(myXBEE.action[1], HEX);
-    disp = myMOTOR.getPosition();
-    angle = myMOTOR.getAngle();
-    Serial.print("Instruction: #"); Serial.println(CurrentInstruct);
-    Serial.print("Displacement: "); Serial.print(disp); Serial.println(" cm");
-    Serial.print("Angle: "); Serial.print(angle); Serial.println (" deg");
-    Serial.println(myXBEE.action[CurrentInstruct], HEX);
-    switch (myXBEE.action[CurrentInstruct])
-    {
-      case 0xAA : //Turn Left
-        myMOTOR.LeftTurn(3);
-        if (abs(angle) >= myXBEE.angle[CurrentInstruct])
-        {
-          Serial.print("Angle: "); Serial.println(angle);
-          Serial.print("Goal Angle: "); Serial.println(myXBEE.angle[CurrentInstruct]);
-          instructDone = true;
-        }
-        break;
-      case 0xBB : //Turn Right
-        myMOTOR.RightTurn(150);
-        if (abs(angle) >= myXBEE.angle[CurrentInstruct])
-        {
-          Serial.print("Angle: "); Serial.println(angle);
-          Serial.print("Goal Angle: "); Serial.println(myXBEE.angle[CurrentInstruct]);
-          instructDone = true;
-        }
-        break;            
-      case 0xCC : //Go Forward
-        myMOTOR.Forward(myXBEE.speedy[CurrentInstruct]);
-        if (disp >= (myXBEE.distance[CurrentInstruct])/10)
-        {
-          instructDone = true;
-        }
-        break;           
-      default: //If the action type is not recognized
-        myMOTOR.Stop();
-        break;  
-    }
+    disp = myMOTOR.getPosition(); //Initialize the displacement
+    angle = myMOTOR.getAngle();   //Initializes the angle
+    printStatus();
+    executeCurrentInstruct();
     if(instructDone)
     {
       CurrentInstruct++;
@@ -101,8 +66,53 @@ void loop()
   }
 }
 
+/*Used to start the main loop through timer interrupt*/
 void callback()
 {
   //digitalWrite(LED, !digitalRead(LED));
   Flag = true;
 }
+
+/*Sends the current instruction to the motors*/
+void executeCurrentInstruct()
+{
+  switch (myXBEE.action[CurrentInstruct])
+  {
+    case 0xAA : //Turn Left
+      myMOTOR.LeftTurn(150);
+      //Serial.print(angle); Serial.println(" Degrees");
+      //Serial.print(disp); Serial.println(" mMeters");
+      if (abs(angle) >= 180)
+      {
+        instructDone = true;
+      }
+      break;
+    case 0xBB : //Turn Right
+      myMOTOR.RightTurn(150);
+      if (angle >= myXBEE.angle[CurrentInstruct])
+      {
+        instructDone = true;
+      }
+      break;            
+    case 0xCC : //Go Forward
+      myMOTOR.Forward(myXBEE.speedy[CurrentInstruct]);
+      if (disp >= (myXBEE.distance[CurrentInstruct]))
+      {
+        instructDone = true;
+      }
+      break;           
+    default: //If the action type is not recognized
+      myMOTOR.Stop();
+      break;  
+  }
+}
+
+
+void printStatus()
+{
+  Serial.print("Instruction: #"); Serial.println(CurrentInstruct);
+  Serial.print("Displacement: "); Serial.print(disp); Serial.println(" cm");
+  Serial.print("Angle: "); Serial.print(angle); Serial.println (" deg");
+  Serial.println(myXBEE.action[CurrentInstruct], HEX);
+}
+

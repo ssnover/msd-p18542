@@ -19,8 +19,8 @@ namespace ASAR
 namespace
 {
 	const int COUNTS_PER_REV = 48*34; //48 Counts per motor rev * N=34 Gear output
-	const int WHEEL_RADIUS = 45; //mm
-  const int ROBOT_RADIUS = 85; //mm 
+	const float WHEEL_RADIUS = 4.5; //cm
+  const float ROBOT_RADIUS = 8.5; //cm
   Encoder LeftEncoder(16, 17);
   Encoder RightEncoder(15, 14);
 }
@@ -125,7 +125,7 @@ double MOTOR::getPosition()
   Rrevs = RightCounts / COUNTS_PER_REV;
   double pos = 0;
   double revs = (Lrevs + Rrevs) / 2;
-  pos =  revs * 2* PI * WHEEL_RADIUS; //mm
+  pos =  revs * 2* PI * WHEEL_RADIUS; //cm
   return pos;
 
 }
@@ -136,7 +136,7 @@ double MOTOR::getAngle()
   Lrevs = LeftCounts / COUNTS_PER_REV;
   Rrevs = RightCounts / COUNTS_PER_REV; 
   double angle = 0;
-  angle = ((Lrevs+Rrevs)/2)*(WHEEL_RADIUS/ROBOT_RADIUS)*360;
+  angle = Lrevs*(WHEEL_RADIUS/ROBOT_RADIUS)*360;
   return angle;
   
 }
