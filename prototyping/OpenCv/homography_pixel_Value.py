@@ -9,7 +9,7 @@ if __name__ == '__main__':
     pixel_hsv = []
     pixel_hsv_averages = []
     # Read in the image.
-    im_src = cv2.imread("hex_t.png")
+    im_src = cv2.imread("hex_final.png")
 
     # Destination image
     size = (600, 500, 3)
