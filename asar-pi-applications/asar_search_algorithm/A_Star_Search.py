@@ -8,9 +8,10 @@ import math
 ter_height = 8  # number of tiles down side
 ter_width = 8   # number of tiles across top
 
-mode = 0 #0 for safe, 1 for med, 2 for fast
+mode = 0  # 0 for safe, 1 for med, 2 for fast
 
-# Order queue to .get the lowest priority
+
+# Modifies queue to .get the lowest priority
 class MyPriorityQueue(PriorityQueue):
     def __init__(self):
         PriorityQueue.__init__(self)
@@ -24,13 +25,15 @@ class MyPriorityQueue(PriorityQueue):
         _, _, item = PriorityQueue.get(self, *args, **kwargs)
         return item
 
+
+# inst_graph instantiates the dictionary of tiles with its coordinates and attributes
 def inst_graph():
     tile = {}
 
     for x in range(1, ter_height+1):
         for y in range(1, ter_width+1):
             attribute = {}  # prevents the list from overwriting old dictionary keys
-            if x % 2 == 0: #x is even
+            if x % 2 == 0:  # x is even
                 temp_child = [(x-1, y-1), (x, y-1), (x+1, y-1), (x+1, y), (x, y+1), (x-1, y)]
             else:
                 temp_child = [(x, y-1), (x+1, y), (x+1, y+1), (x, y+1), (x-1, y+1), (x-1, y)]
@@ -41,16 +44,11 @@ def inst_graph():
             attribute['speed'] = 0
             tile[(x, y)] = attribute
 
-    # print(tile[(8, 1)])
-    # print(tile[(8, 2)])
-    # print(tile[(8, 3)])
-    # print(tile[(7, 4)])
-    # print(tile[(6, 4)])
-    # print(tile[(6, 5)])
     return tile
 
+
+# give_dng reads the colors of the tiles from the VisionSys. Modifies attribute values accordingly
 def give_dng(tile):
-    terrain = {}
     start = ()
     goal = ()
     for k in range(1, ter_height+1):
@@ -96,16 +94,10 @@ def give_dng(tile):
                 tile[(k, j)]['ad_dngr'] = 2
                 tile[(k, j)]['speed'] = 200
 
-    #print(tile[(1, 1)])
-    # print(tile[(5, 5)])
-    # print(tile[(8, 8)])
-    # print(goal)
-    # print(tile[goal])
-    # print(tile)
-
     return start, goal, tile
 
 
+# Main A* algorithm adapted for use with the dictionary of tiles
 def a_star_search(tile, start, goal, mode):
     frontier = MyPriorityQueue()
     frontier.put(start, 0)
@@ -124,17 +116,14 @@ def a_star_search(tile, start, goal, mode):
             new_cost = cost_so_far[current] + travel(current, next, tile, mode)
             if next not in cost_so_far or new_cost < cost_so_far[next]:
                 cost_so_far[next] = new_cost
-                if mode == 1:
-                    priority = new_cost + med_heuy(goal, next, tile)
-                elif mode == 2:
-                    priority = new_cost + fast_heuy(goal, next, tile)
-                else:
-                    priority = new_cost + safe_heuy(goal, next, tile)
+                priority = new_cost + heuristic(goal, next, tile)
                 frontier.put(next, priority)
                 came_from[next] = current
 
-    return came_from, start, goal#, cost_so_far
+    return came_from, start, goal
 
+
+# travel is part 1 of the heuristic. assigns priority of tiles adjacent to current tile
 def travel(current, next, tile, mode):
     if mode == 1:  # med heuristic (account for speed and immediate danger)
         travel_cost = tile[next]['im_dngr'] + tile[next]['speed']
@@ -144,30 +133,32 @@ def travel(current, next, tile, mode):
         ad_dngr = []
         for item in tile[next]['children']:
             ad_dngr.append(tile[item]['ad_dngr'])
-            print(tile[item]['ad_dngr'])
+            #print(tile[item]['ad_dngr'])
 
         travel_cost = tile[next]['im_dngr'] + sum(ad_dngr)
 
     return travel_cost
 
-def safe_heuy(goal, next, tile):
+
+# Part 2 of Heuristics. Euclidean distance is used in absence of a way to estimate the danger/speed of tiles to goal
+def heuristic(goal, next, tile):
+
     heuy_cost = math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2))
-    #heuy_cost = (tile[next]['im_dngr'] * tile[next]['ad_dngr'])*(math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2)))
-    # print(heuy_cost)
+
+    # if mode == 1:  # med heuristic (account for speed and immediate danger)
+    #     # heuy_cost = tile[next]['im_dngr'] *(math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2)))
+    #     # print(heuy_cost)
+    # elif mode == 2:  # fast heuristic (ignore danger if the path is quick
+    #     # heuy_cost = tile[next]['speed']*(math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2)))
+    #     # print(heuy_cost)
+    # else:  # default safe heuristic (ignore speed of path, choose based only on dangers)
+    #     # heuy_cost = (tile[next]['im_dngr'] * tile[next]['ad_dngr'])*(math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2)))
+    #     # print(heuy_cost)
+
     return heuy_cost
 
-def med_heuy(goal, next, tile):
-    heuy_cost = math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2))
-    #heuy_cost = tile[next]['im_dngr'] *(math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2)))
-    #print(heuy_cost)
-    return heuy_cost
 
-def fast_heuy(goal, next, tile):
-    heuy_cost = math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2))
-    #heuy_cost = tile[next]['speed']*(math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2)))
-    # print(heuy_cost)
-    return heuy_cost
-
+# Reconstruct_path pulls the path from the queue
 def reconstruct_path(came_from, start, goal):
     current = goal
     path = []
@@ -176,14 +167,14 @@ def reconstruct_path(came_from, start, goal):
         current = came_from[current]
     path.append(start) # optional
     path.reverse() # optional
-    #print(path)
     return path
 
-# path_to_move converts the path from coordinates to the robots instruction protocol
+
+# path_to_move converts the path from coordinates to the robot's instruction protocol
 def path_to_move(path, tile):
     print(path)
 
-    curOri = ['+', 180]  #import orientation from mark
+    curOri = ['+', 180]  # import orientation from mark
 
     if curOri[0] == '-':
         movement = ['ffaa' + format(curOri[1], 'x') + 'f0']
@@ -193,8 +184,6 @@ def path_to_move(path, tile):
     ori = 0
 
     for i in range(1, len(path)):
-        #print(tile[path[i]])
-
         if tile[path[i]]['speed'] == 0:
             speed = 'ff'
         else:
@@ -261,7 +250,7 @@ def path_to_move(path, tile):
 
     trail = ''.join(movement)
 
-    for i in range(0, len(movement)):
+    for i in range(0, len(movement)):  # optional vertical display of instructions
         print(movement[i])
 
     print(trail)
