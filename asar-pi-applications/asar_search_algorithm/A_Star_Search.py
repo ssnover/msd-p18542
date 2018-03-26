@@ -163,13 +163,104 @@ def reconstruct_path(came_from, start, goal):
         current = came_from[current]
     path.append(start) # optional
     path.reverse() # optional
-    print(path)
+    #print(path)
     return path
+
+# path_to_move converts the path from coordinates to the robots instruction protocol
+def path_to_move(path, tile):
+    print(path)
+
+    curOri = ['+', 180]  #import orientation from mark
+
+    if curOri[0] == '-':
+        movement = ['ffaa' + format(curOri[1], 'x') + 'f0']
+    else:
+        movement = ['ffbb' + format(curOri[1], 'x') + 'f0']
+
+    ori = 0
+
+    for i in range(1, len(path)):
+        #print(tile[path[i]])
+
+        if tile[path[i]]['speed'] == 0:
+            speed = 'ff'
+        else:
+            speed = '55'
+
+        if path[i-1][0] % 2 == 0:  #is even
+            if path[i][0] < path[i-1][0] and path[i][1] == path[i-1][1]:
+                turn = 60 - ori
+                ori = 60
+            elif path[i][0] < path[i-1][0] and path[i][1] < path[i-1][1]:
+                turn = 120 - ori
+                ori = 120
+            elif path[i][0] == path[i-1][0] and path[i][1] < path[i-1][1]:
+                turn = 180 - ori
+                ori = 180
+            elif path[i][0] > path[i-1][0] and path[i][1] < path[i-1][1]:
+                turn = ori + 120
+                ori = -120
+            elif path[i][0] > path[i-1][0] and path[i][1] == path[i-1][1]:
+                turn = ori + 60
+                ori = -60
+            elif path[i][0] == path[i-1][0] and path[i][1] > path[i-1][1]:
+                turn = 0 - ori
+                ori = 0
+            else:
+                turn = 0
+                speed = 0
+        else:
+            if path[i][0] < path[i-1][0] and path[i][1] > path[i-1][1]:
+                turn = 60 - ori
+                ori = 60
+            elif path[i][0] < path[i-1][0] and path[i][1] == path[i-1][1]:
+                turn = 120 - ori
+                ori = 120
+            elif path[i][0] == path[i-1][0] and path[i][1] < path[i-1][1]:
+                turn = 180 - ori
+                ori = 180
+            elif path[i][0] > path[i-1][0] and path[i][1] == path[i-1][1]:
+                turn = ori + 120
+                ori = -120
+            elif path[i][0] > path[i-1][0] and path[i][1] > path[i-1][1]:
+                turn = ori + 60
+                ori = -60
+            elif path[i][0] == path[i-1][0] and path[i][1] > path[i-1][1]:
+                turn = 0 - ori
+                ori = 0
+            else:
+                turn = 0
+                speed = 0
+
+        if turn == 340:
+            turn = -120
+        elif turn == 240:
+            turn = -60
+
+        if turn > 0:
+            rot = 'aa'
+        else:
+            rot = 'bb'
+
+        movement.append('ff{0}{1}f0ffcc28{2}f0'.format(rot, hex(abs(turn))[2:].zfill(2), speed))
+
+    movement.append('ffffff')
+    
+    trail = ''.join(movement)
+
+    for i in range(0, len(movement)):
+        print(movement[i])
+
+    print(trail)
+
+    return trail
+
+
 
 def main():
     go_start, go_goal, new_tile = give_dng(inst_graph())
     f_came_from, f_start, f_goal = a_star_search(new_tile, go_start, go_goal, mode)
-    reconstruct_path(f_came_from, f_start, f_goal)
+    path_to_move(reconstruct_path(f_came_from, f_start, f_goal), new_tile)
 
 
 
