@@ -14,7 +14,7 @@ namespace ASAR
 {
 	XBEE::XBEE()
 	{
-		Serial1.begin(9600);      	//Initialize Xbee, with baud rate
+		Serial1.begin(BAUD_RATE);      	//Initialize Xbee, with baud rate
 	}
 
 	XBEE::~XBEE()
@@ -76,7 +76,7 @@ namespace ASAR
 			singleRead[i] = allRaw[rawReadIndex];             //and fill up the temporary array
 //      Serial.print("Argument # "); Serial.print(i);
 //      Serial.print(", Raw reading: "); Serial.println(singleRead[i], HEX); 
-      if(singleRead[i] == 0xF0)
+      if(singleRead[i] == 0xF0) //If Stop bit
       {
         break;
   		}
@@ -178,4 +178,5 @@ namespace ASAR
     printInstructSet();   //Prints the entire instruction set
     instructNum = 1;      //reset the instruction counter
   }
-}
+  
+}//NAMESPACE ASAR

@@ -52,7 +52,7 @@
       double Rrevs = 0;
 
 		 
-	 };
+	 }; //MOTOR_H
  }
  #endif
 		 

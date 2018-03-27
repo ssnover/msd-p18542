@@ -29,7 +29,7 @@ ASAR::MOTOR myMOTOR;
 
 void setup() 
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   delay(1000);
   pinMode(LED, OUTPUT);
   PITimer1.period(Period);

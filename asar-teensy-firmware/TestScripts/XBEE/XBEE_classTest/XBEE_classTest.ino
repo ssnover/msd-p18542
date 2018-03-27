@@ -28,9 +28,6 @@ void setup()
   { 
     myXBEE.getInstructions();
   }
-
-
-  
 }
 
 

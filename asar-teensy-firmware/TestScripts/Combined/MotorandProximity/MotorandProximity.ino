@@ -6,20 +6,21 @@
  *  
  */
 
- #include "MOTOR.h"
- #include "Proximity_Sensor.h"
- #include "PITimer.h"
+#include "Motor.h"
+#include "Proximity_Sensor.h"
+#include "PITimer.h"
 
 const int LED = 13;
 const int Period = .1;
+const int OBSTACLE_THRESHOLD = 25;
+const int MOTOR_SPEED = 150;
+const int DELAY_TIME = 50;
 bool Flag = 0;
 
 void callback();
 
- ASAR::MOTOR myMOTOR;
- ASAR::Proximity_Sensor myPing;
-
- void callback();
+ASAR::MOTOR myMOTOR;
+ASAR::Proximity_Sensor myPing;
 
 void setup()
 {
@@ -34,25 +35,21 @@ void loop()
   int distance = 0;
   distance = myPing.CheckProximity();
   Serial.println(distance);
-  if (distance < 25)
+  if (distance < OBSTACLE_THRESHOLD)
   {
     digitalWrite(LED, HIGH);
-    myMOTOR.Forward(5);
+    myMOTOR.Forward(MOTOR_SPEED);
     
   }
   else 
   {
     digitalWrite(LED, LOW);
     myMOTOR.Stop();
-    delay(5);
-    myMOTOR.Backwards(5);
+    delay(DELAY_TIME);
+    myMOTOR.Backwards(MOTOR_SPEED);
   }
-
 }
   
-
-
-
 void callback()
 {
     if (!Flag)

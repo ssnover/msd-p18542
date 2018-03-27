@@ -33,6 +33,7 @@ namespace ASAR
 
 
 		private:
+      const int BAUD_RATE = 115200;
 			int instructNum = 1;            //couner for instruction number initialized to one
 			int rawReadIndex = 0;
 			uint8_t allRaw[1024] = {0};
