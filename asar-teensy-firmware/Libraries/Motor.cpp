@@ -11,8 +11,7 @@
 //LeftB is forward
 
 #include "Arduino.h"
-#include "MOTOR.h"
-
+#include "Motor.h"
 
 namespace ASAR
 {

@@ -7,7 +7,7 @@
  *              (Set of five instructs)
  */
 #include "Arduino.h"
-#include "MOTOR.h"
+#include "Motor.h"
 #include "XBEE.h"
 #include "PITimer.h"
 
