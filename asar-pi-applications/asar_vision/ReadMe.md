@@ -1,4 +1,4 @@
-# _Automatic Image Processing_ 
+# _Automatic Image Processing_  
 **Calibration Routine**
 * This needs to be ran at the very beginning of a simulation.
 * The calibration routine will walk you through clicking each individual color as well as the corners of the terrain in case of automation failure
