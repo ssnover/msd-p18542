@@ -8,7 +8,7 @@ import math
 ter_height = 8  # number of tiles down the side
 ter_width = 8   # number of tiles across the top
 
-mode = 0  # 0 for safe, 1 for med, 2 for fast
+mode = 1  # 0 for safe, 1 for med, 2 for fast
 
 
 # Modifies queue to .get the lowest priority
@@ -202,11 +202,11 @@ def path_to_move(path, tile):
 
         # convert heuristic speed to hex speed
         if tile[path[i]]['speed'] == 0:  # fast
-            speed = 'ff'
+            speed = '96'
         elif tile[path[i]]['speed'] == 1:  # medium
-            speed = 'aa'
+            speed = '64'
         else:  # default speed for unknown objects == slow
-            speed = '55'
+            speed = '32'
 
         # choose appropriate relative angle to turn based on current orientation and relative position of next tile
         if path[i-1][0] % 2 == 0:  # tile's row is even
