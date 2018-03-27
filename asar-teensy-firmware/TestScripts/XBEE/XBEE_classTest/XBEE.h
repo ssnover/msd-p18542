@@ -19,10 +19,10 @@ namespace ASAR
 
 			/*Set of arrays that include all the instrctions  *
 			 *(index of array is instruction number           */
-			int action[20] = {0x00};
-			int distance[20] ={0x00};
-			int angle[20] = {0x00};
-			int speedy[20] = {0x00};
+			int action[1024] = {0x00};
+			int distance[1024] ={0x00};
+			int angle[1024] = {0x00};
+			int speedy[1024] = {0x00};
       int instructTotal = 0;          //total instructions
       //int readFlag = 0; //0 is not read 1 is read
 

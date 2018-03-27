@@ -41,11 +41,9 @@ namespace ASAR
           {
             allRaw[index - i] = 0;
           }
-          Serial.println("Printing all read values.....");
-          /*for (int i = 0; i<= index; i++)
+         /* for (int i = 0; i <= index; i++)
           {
-            Serial.print(i); Serial.print(". ");
-            Serial.println(allRaw[i],HEX);
+            Serial.print(i); Serial.print(". "); Serial.println(allRaw[i], HEX);
           }*/
         }
         else if (allRaw[index] == 0xF0 && start_flag)
@@ -76,8 +74,8 @@ namespace ASAR
    	{
       rawReadIndex++;
 			singleRead[i] = allRaw[rawReadIndex];             //and fill up the temporary array
-      //Serial.print("Argument # "); Serial.print(i);
-      //Serial.print(", Raw reading: "); Serial.println(singleRead[i], HEX); 
+//      Serial.print("Argument # "); Serial.print(i);
+//      Serial.print(", Raw reading: "); Serial.println(singleRead[i], HEX); 
       if(singleRead[i] == 0xF0)
       {
         break;

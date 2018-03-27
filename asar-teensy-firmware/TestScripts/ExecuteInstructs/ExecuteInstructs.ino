@@ -18,9 +18,11 @@ bool instructDone = false;
 int CurrentInstruct = 1;
 double disp = 0;
 double angle = 0;
-
+const int TURN_SPEED = 50;
 
 void callback();
+void executeCurrentInstruct();
+void printStatus();
 
 ASAR::XBEE myXBEE;
 ASAR::MOTOR myMOTOR;
@@ -55,10 +57,10 @@ void loop()
     instructDone = false;
     disp = myMOTOR.getPosition(); //Initialize the displacement
     angle = myMOTOR.getAngle();   //Initializes the angle
-    printStatus();
     executeCurrentInstruct();
     if(instructDone)
     {
+      printStatus();
       CurrentInstruct++;
       myMOTOR.initEncoder();
       digitalWrite(LED, !digitalRead(LED));
@@ -69,7 +71,6 @@ void loop()
 /*Used to start the main loop through timer interrupt*/
 void callback()
 {
-  //digitalWrite(LED, !digitalRead(LED));
   Flag = true;
 }
 
@@ -79,16 +80,14 @@ void executeCurrentInstruct()
   switch (myXBEE.action[CurrentInstruct])
   {
     case 0xAA : //Turn Left
-      myMOTOR.LeftTurn(150);
-      //Serial.print(angle); Serial.println(" Degrees");
-      //Serial.print(disp); Serial.println(" mMeters");
-      if (abs(angle) >= 180)
+      myMOTOR.LeftTurn(TURN_SPEED);
+      if (angle <= -myXBEE.angle[CurrentInstruct])
       {
         instructDone = true;
       }
       break;
     case 0xBB : //Turn Right
-      myMOTOR.RightTurn(150);
+      myMOTOR.RightTurn(TURN_SPEED);
       if (angle >= myXBEE.angle[CurrentInstruct])
       {
         instructDone = true;
@@ -100,7 +99,14 @@ void executeCurrentInstruct()
       {
         instructDone = true;
       }
-      break;           
+      break;  
+    case 0x00 : //if No more instructions
+      myMOTOR.Stop();
+      Serial.println("All Done");      
+      while(1)
+      {
+        //spin forever
+      }
     default: //If the action type is not recognized
       myMOTOR.Stop();
       break;  
