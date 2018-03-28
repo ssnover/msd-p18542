@@ -26,7 +26,7 @@ namespace ASAR
   void XBEE::readAllRaw()
   {
     bool done_flag = false; //flag signaling Completely done with instruction set
-    bool start_flag = false; //flag signaling that bits are actuallaly part of instructuin
+    bool start_flag = false; //flag signaling that BYTEs are actuallaly part of instructuin
     int index = 0; //index that cycles through xbee buffer
     instructTotal = 0;
     while (!done_flag)
@@ -34,7 +34,10 @@ namespace ASAR
       if (Serial1.available())
       {
         allRaw[index] = Serial1.read();
-        if (index >= 2 && allRaw[index] == 0xFF && allRaw[index - 1] == 0xFF && allRaw[index - 2] == 0xFF)
+        if (   index            >= 2 
+            && INSTRUCT_BYTE::END_INSTRUCT_SET == static_cast<INSTRUCT_BYTE>(allRaw[index])
+            && INSTRUCT_BYTE::END_INSTRUCT_SET == static_cast<INSTRUCT_BYTE>(allRaw[index - 1])
+            && INSTRUCT_BYTE::END_INSTRUCT_SET == static_cast<INSTRUCT_BYTE>(allRaw[index - 2]))
         {
           done_flag = true;
           for (int i = 0; i <= 2; i++)
@@ -46,12 +49,12 @@ namespace ASAR
             Serial.print(i); Serial.print(". "); Serial.println(allRaw[i], HEX);
           }*/
         }
-        else if (allRaw[index] == 0xF0 && start_flag)
+        else if (INSTRUCT_BYTE::END_SINGLE_INSTRUCT == static_cast<INSTRUCT_BYTE>(allRaw[index]) && start_flag)
         {
           instructTotal++; 
           start_flag = false;
         }
-        else if (allRaw[index] == 0xFF)
+        else if (INSTRUCT_BYTE::START_INSTRUCT == static_cast<INSTRUCT_BYTE>(allRaw[index]))
         {
           start_flag = true;
         }
@@ -60,29 +63,28 @@ namespace ASAR
     }
   }
 
-
-
 	/*Read a single Instruction from allRaw array*/
 	void XBEE::readInstruct()
 	{
-    while (allRaw[rawReadIndex] != 0xFF)
+    const int MAX_BYTES_PER = 5;
+    while (INSTRUCT_BYTE::START_INSTRUCT != static_cast<INSTRUCT_BYTE>(allRaw[rawReadIndex]))
     {
       //Serial.println("Im removing garbage");
       rawReadIndex ++;
     }
-    for (int i = 0; i <= 6; i++)        //Read all the inputs (until stop bit is read)
+    for (int i = 0; i <= MAX_BYTES_PER+1; i++)        //Read all the inputs (until stop BYTE is read)
    	{
       rawReadIndex++;
 			singleRead[i] = allRaw[rawReadIndex];             //and fill up the temporary array
 //      Serial.print("Argument # "); Serial.print(i);
 //      Serial.print(", Raw reading: "); Serial.println(singleRead[i], HEX); 
-      if(singleRead[i] == 0xF0) //If Stop bit
+      if(INSTRUCT_BYTE::END_SINGLE_INSTRUCT == static_cast<INSTRUCT_BYTE>(singleRead[i])) //If Stop BYTE
       {
         break;
   		}
-      else if (i >= 5)
+      else if (MAX_BYTES_PER <= i)
       {
-        Serial.println("ERROR-001: Stop Bit Not Detected");
+        Serial.println("ERROR-001: Stop BYTE Not Detected");
       }
    	}                             
 	}
@@ -95,28 +97,28 @@ namespace ASAR
     action[instructNum] = singleRead[0]; //add the action to instruction set
     //Serial.print("Instruction Number: "); Serial.println(instructNum);
     //Serial.print("Action: "); Serial.println(action[instructNum] , HEX);
-    switch (action[instructNum])      //switch between the different types of moves
+    switch (static_cast<INSTRUCT_BYTE>(action[instructNum]))      //switch between the different types of moves
     {
-      case 0xAA : //Turn Left
+      case INSTRUCT_BYTE::ACTION_LEFT: //Turn Left
         angle[instructNum] = singleRead[1]; //add the relative turning angle to instruction set
-        if (singleRead[2] != 0xF0)          //If the stop bit isnt next, something went wrong
+        if (singleRead[2] != 0xF0)          //If the stop BYTE isnt next, something went wrong
         {
-          Serial.println("ERROR-002: Stop Bit Not Detected as expected"); //print error message
+          Serial.println("ERROR-002: Stop BYTE Not Detected as expected"); //print error message
         }
         break;
-      case 0xBB : //Turn Right
+      case INSTRUCT_BYTE::ACTION_RIGHT : //Turn Right
         angle[instructNum] = singleRead[1]; //add the turning angle to instruction set
-        if (singleRead[2] != 0xF0)          //If the stop bit isnt next, something went wrong     
+        if (singleRead[2] != 0xF0)          //If the stop BYTE isnt next, something went wrong     
         {
-          Serial.println("ERROR-002: Stop Bit Not Detected as expected"); //print error message
+          Serial.println("ERROR-002: Stop BYTE Not Detected as expected"); //print error message
         }
         break;            
-      case 0xCC : //Go Forward
+      case INSTRUCT_BYTE::ACTION_FORWARD : //Go Forward
         distance[instructNum] = singleRead[1]; //Add the distance of move to instruction set
         speedy[instructNum] = singleRead[2];   //add the speed of move to instruction set
-        if (singleRead[3] != 0xF0)             //If the stop bit isnt next, something went wrong
+        if (INSTRUCT_BYTE::END_SINGLE_INSTRUCT != static_cast<INSTRUCT_BYTE>(singleRead[3]) != 0xF0)             //If the stop BYTE isnt next, something went wrong
         {
-          Serial.println("ERROR-002: Stop Bit Not Detected as expected"); //print error message
+          Serial.println("ERROR-002: Stop BYTE Not Detected as expected"); //print error message
         }
         break;           
       default: //If the action type is not recognized
@@ -136,17 +138,16 @@ namespace ASAR
     for (int i = 1; i <= instructTotal; i++) //For each instruction
     {
       Serial.print("Instruction: "); Serial.println(i);
-      switch (action[i])      //switch between the different types of moves
-      {
-        case 0xAA : //Turn Left
+      switch (static_cast<INSTRUCT_BYTE>(action[i]))      //switch between the different types of moves
+      {LEFT : //Turn Left
           Serial.println("  Move Type: Left Turn");
           Serial.print("    Angle: "); Serial.print(angle[i]); Serial.println (" degrees");
           break;
-        case 0xBB : //Turn Right
+        case INSTRUCT_BYTE::ACTION_RIGHT : //Turn Right
           Serial.println("  Move Type: Right Turn");
           Serial.print("    Angle: "); Serial.print(angle[i]); Serial.println (" degrees");
           break;
-        case 0xCC : //Forwarmd
+        case INSTRUCT_BYTE::ACTION_FORWARD : //Forwarmd
           Serial.println("  Move Type: Forward");
           Serial.print("    Distance: "); Serial.println(distance[i]);
           Serial.print("    Speed: "); Serial.println(speedy[i]);

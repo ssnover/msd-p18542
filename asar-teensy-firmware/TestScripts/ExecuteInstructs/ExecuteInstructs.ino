@@ -11,6 +11,8 @@
 #include "XBEE.h"
 #include "PITimer.h"
 
+using namespace ASAR;
+
 const int LED = 13;
 const double Period = .01;
 bool Flag = false;
@@ -18,7 +20,7 @@ bool instructDone = false;
 int CurrentInstruct = 1;
 double disp = 0;
 double angle = 0;
-const int TURN_SPEED = 50;
+const int TURN_SPEED = 250;
 
 void callback();
 void executeCurrentInstruct();
@@ -64,6 +66,8 @@ void loop()
       CurrentInstruct++;
       myMOTOR.initEncoder();
       digitalWrite(LED, !digitalRead(LED));
+      myMOTOR.Stop();
+      delay(250);
     }
   }
 }
@@ -77,30 +81,30 @@ void callback()
 /*Sends the current instruction to the motors*/
 void executeCurrentInstruct()
 {
-  switch (myXBEE.action[CurrentInstruct])
+  switch (static_cast<XBEE::INSTRUCT_BYTE>(myXBEE.action[CurrentInstruct]))
   {
-    case 0xAA : //Turn Left
+    case XBEE::INSTRUCT_BYTE::ACTION_LEFT : //Turn Left
       myMOTOR.LeftTurn(TURN_SPEED);
       if (angle <= -myXBEE.angle[CurrentInstruct])
       {
         instructDone = true;
       }
       break;
-    case 0xBB : //Turn Right
+    case XBEE::INSTRUCT_BYTE::ACTION_RIGHT : //Turn Right
       myMOTOR.RightTurn(TURN_SPEED);
       if (angle >= myXBEE.angle[CurrentInstruct])
       {
         instructDone = true;
       }
       break;            
-    case 0xCC : //Go Forward
+    case XBEE::INSTRUCT_BYTE::ACTION_FORWARD : //Go Forward
       myMOTOR.Forward(myXBEE.speedy[CurrentInstruct]);
       if (disp >= (myXBEE.distance[CurrentInstruct]))
       {
         instructDone = true;
       }
       break;  
-    case 0x00 : //if No more instructions
+    case XBEE::INSTRUCT_BYTE::DONE_EXECUTION : //if No more instructions
       myMOTOR.Stop();
       Serial.println("All Done");      
       while(1)

@@ -16,7 +16,6 @@ namespace ASAR
 		public:
 			XBEE();		//Constructor (Should probably take in a baud rate)
 			~XBEE();	//Desturctor
-
 			/*Set of arrays that include all the instrctions  *
 			 *(index of array is instruction number           */
 			int action[1024] = {0x00};
@@ -25,12 +24,18 @@ namespace ASAR
 			int speedy[1024] = {0x00};
       int instructTotal = 0;          //total instructions
       //int readFlag = 0; //0 is not read 1 is read
-
 			/*reads xbee data, interpretes it as instucionts and prints them on motior*/
-			void getInstructions();
-
-
-
+		  void getInstructions();
+      enum class INSTRUCT_BYTE
+      {
+        ACTION_LEFT = 0xAA,
+        ACTION_RIGHT = 0xBB,
+        ACTION_FORWARD = 0xCC,
+        END_SINGLE_INSTRUCT = 0xF0,
+        END_INSTRUCT_SET = 0xFF,
+        START_INSTRUCT = 0xFF,
+        DONE_EXECUTION = 0x00
+      };
 
 		private:
       const int BAUD_RATE = 115200;
