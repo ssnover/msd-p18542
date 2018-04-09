@@ -1,14 +1,13 @@
-from queue import Queue
 from queue import PriorityQueue
 
-import json
+import Pi_Cfg as cfg
 
-import math
+import base64
 
-ter_height = 8  # number of tiles down the side
-ter_width = 8   # number of tiles across the top
+ter_height = cfg.ter_height  # number of tiles down the side
+ter_width = cfg.ter_width   # number of tiles across the top
 
-mode = 1  # 0 for safe, 1 for med, 2 for fast
+mode = cfg.mode  # 0 for safe, 1 for med, 2 for fast
 
 
 # Modifies queue to .get the lowest priority
@@ -49,55 +48,6 @@ def inst_graph():
     return tile
 
 
-# give_dng reads the colors of the tiles from the VisionSys. Modifies attribute values accordingly
-def give_dng(tile):
-    start = ()
-    goal = ()
-    for k in range(1, ter_height+1):
-        for j in range(1, ter_width+1):
-            terrain = json.load(open('terrain.txt'))
-            i = terrain['coordinate'].index([k, j])
-            # if terrain['color'][i] == 'black':  # black tile removed, redundancy with blue
-            #     tile[(k, j)]['im_dngr'] = 200
-            #     tile[(k, j)]['ad_dngr'] = 0
-            #     tile[(k, j)]['speed'] = 200
-            if terrain['color'][i] == 'blue':
-                tile[(k, j)]['im_dngr'] = 200
-                tile[(k, j)]['ad_dngr'] = 0
-                tile[(k, j)]['speed'] = 200
-            elif terrain['color'][i] == 'red':
-                tile[(k, j)]['im_dngr'] = 25
-                tile[(k, j)]['ad_dngr'] = 3
-                tile[(k, j)]['speed'] = 0
-            elif terrain['color'][i] == 'orange':
-                tile[(k, j)]['im_dngr'] = 2
-                tile[(k, j)]['ad_dngr'] = 1
-                tile[(k, j)]['speed'] = 1
-            elif terrain['color'][i] == 'green':
-                tile[(k, j)]['im_dngr'] = 2
-                tile[(k, j)]['ad_dngr'] = 0
-                tile[(k, j)]['speed'] = 2
-            elif terrain['color'][i] == 'gray':
-                tile[(k, j)]['im_dngr'] = 0
-                tile[(k, j)]['ad_dngr'] = 0
-                tile[(k, j)]['speed'] = 0
-            elif terrain['color'][i] == 'white':
-                tile[(k, j)]['im_dngr'] = 0
-                tile[(k, j)]['ad_dngr'] = 0
-                tile[(k, j)]['speed'] = 0
-                start = (k, j)
-            elif terrain['color'][i] == 'purple':
-                tile[(k, j)]['im_dngr'] = 0
-                tile[(k, j)]['ad_dngr'] = 0
-                tile[(k, j)]['speed'] = 0
-                goal = (k, j)
-            else:
-                tile[(k, j)]['im_dngr'] = 200
-                tile[(k, j)]['ad_dngr'] = 2
-                tile[(k, j)]['speed'] = 200
-
-    return start, goal, tile
-
 
 # Main A* algorithm adapted for use with the dictionary of tiles
 def a_star_search(tile, start, goal, mode):
@@ -117,56 +67,22 @@ def a_star_search(tile, start, goal, mode):
 
         for i in range(0, len(tile[current]['children'])):
             next = tile[current]['children'][i]  # iterates through children of current node
-            new_cost = cost_so_far[current] + travel(current, next, tile, mode)  # heuristic part 1 (uses danger & Speed)
+            new_cost = cost_so_far[current] + cfg.travel(current, next, tile, mode)  # heuristic part 1 (uses danger & Speed)
             if next not in cost_so_far or new_cost < cost_so_far[next]:  # if next has not been visited
                 if tile[next]['speed'] < 200:  # do not evaluate obstacles (Rock & water)
-                    if mode == 0 and tile[next]['im_dngr'] >= 25:  # do not drive through fire in safe mode
+                    if mode == 0 and tile[next]['im_dngr'] >= cfg.safeLimit:  # do not drive through fire in safe mode
                         continue
                     else:
                         cost_so_far[next] = new_cost
-                        priority = new_cost + heuristic(goal, next, tile)  # heuristic part 2 (Euclidean distance)
+                        priority = new_cost + cfg.heuristic(goal, next, tile)  # heuristic part 2 (Euclidean distance)
+                        #print('{0} --> {1} = {2}'.format(current, next, priority))
                         frontier.put(next, priority)  # put evaluated node onto queue
                         came_from[next] = current
 
+
+
     return came_from, start, goal
 
-
-# travel is part 1 of the heuristic. assigns priority of tiles adjacent to current tile
-def travel(current, next, tile, mode):
-    if mode == 1:  # med heuristic (account for speed and immediate danger)
-        travel_cost = tile[next]['im_dngr'] + tile[next]['speed']
-    elif mode == 2:  # fast heuristic (ignore danger if the path is quick
-        travel_cost = tile[next]['speed'] * tile[next]['im_dngr']
-    else:  # default safe heuristic (ignore speed of path, choose based only on dangers)
-        ad_dngr = []
-        for item in tile[next]['children']:
-            ad_dngr.append(tile[item]['ad_dngr'])
-            #print(tile[item]['ad_dngr'])
-
-        travel_cost = tile[next]['im_dngr'] + sum(ad_dngr)
-
-
-    return travel_cost
-
-
-# Part 2 of Heuristics. Euclidean distance is used in absence of a way to estimate the danger/speed of tiles to goal
-def heuristic(goal, next, tile):
-
-
-    if mode == 1:  # med heuristic (account for speed and immediate danger)
-        heuy_cost = math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2))  # Euclidean Distance
-        # heuy_cost = tile[next]['im_dngr'] *(math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2)))
-        # print(heuy_cost)
-    elif mode == 2:  # fast heuristic (ignore danger if the path is quick
-        heuy_cost = math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2))  # Euclidean Distance
-        # heuy_cost = tile[next]['speed']*(math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2)))
-        # print(heuy_cost)
-    else:  # default safe heuristic (ignore speed of path, choose based only on dangers)
-        heuy_cost = math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2))  # Euclidean Distance
-        # heuy_cost = (tile[next]['im_dngr'] * tile[next]['ad_dngr'])*(math.sqrt(pow((goal[0] - next[0]), 2) + pow((goal[1] - next[1]), 2)))
-        # print(heuy_cost)
-
-    return heuy_cost
 
 
 # Reconstruct_path pulls the path from the queue
@@ -196,17 +112,17 @@ def path_to_move(path, tile):
 
     movement = []  # list of robot instructions
 
-    ori = -120  # import exact orientation from vision system (current orientation variable)
+    ori = cfg.orientation  # import exact orientation from vision system (current orientation variable)
 
     for i in range(1, len(path)):
 
         # convert heuristic speed to hex speed
         if tile[path[i]]['speed'] == 0:  # fast
-            speed = '96'
-        elif tile[path[i]]['speed'] == 1:  # medium
-            speed = '64'
+            speed = cfg.fast
+        elif tile[path[i]]['speed'] == 1:  # smart
+            speed = cfg.smart
         else:  # default speed for unknown objects == slow
-            speed = '32'
+            speed = cfg.safe
 
         # choose appropriate relative angle to turn based on current orientation and relative position of next tile
         if path[i-1][0] % 2 == 0:  # tile's row is even
@@ -262,28 +178,37 @@ def path_to_move(path, tile):
 
         # identify positive/negative rotation
         if turn > 0:
-            rot = 'aa'  # rotate left
+            rot = 'AA'  # rotate left
         else:
-            rot = 'bb'  # rotate right
+            rot = 'BB'  # rotate right
 
         # add a turn + drive instruction to list of movements
-        movement.append('ff{0}{1}f0ffcc28{2}f0'.format(rot, hex(abs(turn))[2:].zfill(2), speed))
+        if turn == 0:
+            movement.append('FFCC28{0}F0'.format(speed))
+        else:
+            movement.append('FF{0}{1}F0'.format(rot, format(abs(turn), '02X')))
+            movement.append('FFCC28{0}F0'.format(speed))
 
-    movement.append('ffffff')  # end transmission
+    movement.append('FFFFFF')  # end transmission
 
     trail = ''.join(movement)  # convert transmission list to string
 
-    for i in range(0, len(movement)):  # optional vertical display of instructions
-        print(movement[i])
+    # for i in range(0, len(movement)):  # optional vertical display of instructions
+    #     print(movement[i])
 
     print(trail)
+
+    binary_trail = base64.b16decode(trail)
+
+
+    #print(binary_trail)
 
     return trail
 
 
 
 def main():
-    go_start, go_goal, new_tile = give_dng(inst_graph())
+    go_start, go_goal, new_tile = cfg.give_dng(inst_graph())
     f_came_from, f_start, f_goal = a_star_search(new_tile, go_start, go_goal, mode)
     path_to_move(reconstruct_path(f_came_from, f_start, f_goal), new_tile)
 
