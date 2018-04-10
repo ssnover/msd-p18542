@@ -6,6 +6,7 @@ ter_height = cfg.ter_height  # number of tiles down the side
 ter_width = cfg.ter_width   # number of tiles across the top
 
 mode = cfg.mode  # 0 for safe, 1 for med, 2 for fast
+inf = cfg.inf   # variable representing impassable terrain
 
 
 # Modifies queue to .get the lowest priority
@@ -67,7 +68,7 @@ def a_star_search(tile, start, goal, mode):
             next = tile[current]['children'][i]  # iterates through children of current node
             new_cost = cost_so_far[current] + cfg.travel(current, next, tile, mode)  # heuristic part 1 (uses danger & Speed)
             if next not in cost_so_far or new_cost < cost_so_far[next]:  # if next has not been visited
-                if tile[next]['speed'] < 200:  # do not evaluate obstacles (Rock & water)
+                if tile[next]['speed'] < inf:  # do not evaluate obstacles (Rock & water)
                     if mode == 0 and tile[next]['im_dngr'] >= cfg.safeLimit:  # do not drive through fire in safe mode
                         continue
                     else:
