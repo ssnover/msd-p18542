@@ -23,8 +23,8 @@ class MyPriorityQueue(PriorityQueue):
         return item
 
 
-# inst_graph instantiates the dictionary of tiles with its coordinates and attributes
-def inst_graph():
+# instantiates the dictionary of tiles with its coordinates and attributes
+def instantiate_graph():
     tile = {}
 
     for x in range(1, ter_height+1):
