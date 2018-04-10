@@ -6,6 +6,7 @@ ter_height = 8  # number of tiles down the side
 ter_width = 8   # number of tiles across the top
 
 mode = 2  # 0 for safe, 1 for smart, 2 for fast
+inf = 200 # variable representing impassable terrain
 
 safeLimit = 25  # danger max for safemode travel
 
