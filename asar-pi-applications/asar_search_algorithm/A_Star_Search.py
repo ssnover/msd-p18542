@@ -206,7 +206,7 @@ def path_to_move(path, tile):
 
 
 def main():
-    go_start, go_goal, new_tile = cfg.give_dng(inst_graph())
+    go_start, go_goal, new_tile = cfg.give_dng(instantiate_graph())
     f_came_from, f_start, f_goal = a_star_search(new_tile, go_start, go_goal, mode)
     path_to_move(reconstruct_path(f_came_from, f_start, f_goal), new_tile)
 
