@@ -1,7 +1,5 @@
 from queue import PriorityQueue
-
 import Pi_Cfg as cfg
-
 import base64
 
 ter_height = cfg.ter_height  # number of tiles down the side
