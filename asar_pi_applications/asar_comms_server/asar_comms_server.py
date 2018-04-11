@@ -84,6 +84,16 @@ class ASARCommunicationsServer(object):
         else:
             return False
 
+    def raw_write(self, raw_data):
+        """
+        Sends a byte array.
+        """
+        if self.my_server_is_running:
+            self.my_serial_port.write(raw_data)
+            return True
+        else:
+            return False
+
     def read(self):
         """
         Reads a message from the buffer.
