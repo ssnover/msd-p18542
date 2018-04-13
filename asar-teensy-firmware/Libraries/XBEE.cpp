@@ -22,6 +22,20 @@ namespace ASAR
 		//empty destructor
 	}
 
+  void XBEE::initInstruction()
+  {
+      Serial.println("Initializing...");
+      action[1024] = {0x00};
+      distance[1024] ={0x00};
+      angle[1024] = {0x00};
+      speedy[1024] = {0x00};
+      instructTotal = 0;          //total instructions
+      instructNum = 1;            //couner for instruction number initialized to one
+      rawReadIndex = 0;
+      allRaw[1024] = {0};
+      singleRead[5] = {0};           //temporary hold place from direct reading of xbee
+  }
+
   /*Read everything in buffer from XBEE, should be entire instruct set*/
   void XBEE::readAllRaw()
   {
@@ -76,8 +90,8 @@ namespace ASAR
    	{
       rawReadIndex++;
 			singleRead[i] = allRaw[rawReadIndex];             //and fill up the temporary array
-//      Serial.print("Argument # "); Serial.print(i);
-//      Serial.print(", Raw reading: "); Serial.println(singleRead[i], HEX); 
+      //Serial.print("Argument # "); Serial.print(i);
+      //Serial.print(", Raw reading: "); Serial.println(singleRead[i], HEX); 
       if(INSTRUCT_BYTE::END_SINGLE_INSTRUCT == static_cast<INSTRUCT_BYTE>(singleRead[i])) //If Stop BYTE
       {
         break;
@@ -85,6 +99,7 @@ namespace ASAR
       else if (MAX_BYTES_PER <= i)
       {
         Serial.println("ERROR-001: Stop BYTE Not Detected");
+        while(1){}
       }
    	}                             
 	}
@@ -103,7 +118,9 @@ namespace ASAR
         angle[instructNum] = singleRead[1]; //add the relative turning angle to instruction set
         if (singleRead[2] != 0xF0)          //If the stop BYTE isnt next, something went wrong
         {
-          Serial.println("ERROR-002: Stop BYTE Not Detected as expected"); //print error message
+          Serial.println("ERROR-002: Stop BYTE Not Detected as expected"); 
+          Serial.println(singleRead[2], HEX);//print error message
+          while(1){}
         }
         break;
       case INSTRUCT_BYTE::ACTION_RIGHT : //Turn Right
@@ -111,18 +128,24 @@ namespace ASAR
         if (singleRead[2] != 0xF0)          //If the stop BYTE isnt next, something went wrong     
         {
           Serial.println("ERROR-002: Stop BYTE Not Detected as expected"); //print error message
+          Serial.println(singleRead[2], HEX);
+          while(1){}
         }
         break;            
       case INSTRUCT_BYTE::ACTION_FORWARD : //Go Forward
         distance[instructNum] = singleRead[1]; //Add the distance of move to instruction set
         speedy[instructNum] = singleRead[2];   //add the speed of move to instruction set
-        if (INSTRUCT_BYTE::END_SINGLE_INSTRUCT != static_cast<INSTRUCT_BYTE>(singleRead[3]) != 0xF0)             //If the stop BYTE isnt next, something went wrong
+        //if (INSTRUCT_BYTE::END_SINGLE_INSTRUCT != static_cast<INSTRUCT_BYTE>(singleRead[3]) != 0xF0)             //If the stop BYTE isnt next, something went wrong
+        if (singleRead[3] != 0xF0) 
         {
           Serial.println("ERROR-002: Stop BYTE Not Detected as expected"); //print error message
+          Serial.println(singleRead[3], HEX);
+          while(1) { }
         }
         break;           
       default: //If the action type is not recognized
         Serial.println("ERROR-003: Move-type not not recognized"); //print error message
+        while(1){}
         break;  
     }
     for (int i = 0; i < 5; i++) //Reset the singleRead array with zeros
@@ -139,7 +162,8 @@ namespace ASAR
     {
       Serial.print("Instruction: "); Serial.println(i);
       switch (static_cast<INSTRUCT_BYTE>(action[i]))      //switch between the different types of moves
-      {LEFT : //Turn Left
+      {
+        case INSTRUCT_BYTE::ACTION_LEFT : //Turn Left
           Serial.println("  Move Type: Left Turn");
           Serial.print("    Angle: "); Serial.print(angle[i]); Serial.println (" degrees");
           break;
@@ -153,8 +177,9 @@ namespace ASAR
           Serial.print("    Speed: "); Serial.println(speedy[i]);
           break;
         default :
-          Serial.print("ERROR-003: Move-type: \""); Serial.print(action[i], HEX); 
+          Serial.print("ERROR-004: Move-type: \""); Serial.print(action[i], HEX); 
           Serial.println("\" not recognized");
+          while(1){}
       }
     }
   }

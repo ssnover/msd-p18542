@@ -53,8 +53,6 @@ namespace ASAR
   	analogWrite(this->PWM_RightB, 0);
   	analogWrite(this->PWM_LeftA, 0);
   	analogWrite(this->PWM_LeftB, PWMval);
-  
-      
   }
   
     
@@ -115,6 +113,7 @@ namespace ASAR
   
   	LeftCounts = -LeftEncoder.read();
   	RightCounts = RightEncoder.read();
+    
   
   }
   

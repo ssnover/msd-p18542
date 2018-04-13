@@ -24,6 +24,7 @@ namespace ASAR
 			int speedy[1024] = {0x00};
       int instructTotal = 0;          //total instructions
       //int readFlag = 0; //0 is not read 1 is read
+      void initInstruction();
 			/*reads xbee data, interpretes it as instucionts and prints them on motior*/
 		  void getInstructions();
       enum class INSTRUCT_BYTE

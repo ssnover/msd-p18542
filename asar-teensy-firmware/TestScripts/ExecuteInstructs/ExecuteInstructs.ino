@@ -18,7 +18,7 @@ const double Period = .01;
 bool Flag = false;
 bool instructDone = false;
 int CurrentInstruct = 1;
-double disp = 0;
+double displacement = 0;
 double angle = 0;
 const int TURN_SPEED = 250;
 
@@ -57,7 +57,7 @@ void loop()
   {
     Flag = false;
     instructDone = false;
-    disp = myMOTOR.getPosition(); //Initialize the displacement
+    displacement = myMOTOR.getPosition(); //Initialize the displacement
     angle = myMOTOR.getAngle();   //Initializes the angle
     executeCurrentInstruct();
     if(instructDone)
@@ -68,6 +68,18 @@ void loop()
       digitalWrite(LED, !digitalRead(LED));
       myMOTOR.Stop();
       delay(250);
+    }
+    if (Serial1.available())
+    {
+      CurrentInstruct = 1;
+      myXBEE.initInstruction();
+      myXBEE.getInstructions();
+      Serial.println("My Actions Are..");
+      for(int i = 1; i < myXBEE.instructTotal; i++)
+      {
+        Serial.print(i); Serial.print(". ");
+        Serial.println(myXBEE.action[i], HEX);
+      }
     }
   }
 }
@@ -83,34 +95,30 @@ void executeCurrentInstruct()
 {
   switch (static_cast<XBEE::INSTRUCT_BYTE>(myXBEE.action[CurrentInstruct]))
   {
-    case XBEE::INSTRUCT_BYTE::ACTION_LEFT : //Turn Left
+    case XBEE::INSTRUCT_BYTE::ACTION_LEFT: //Turn Left
       myMOTOR.LeftTurn(TURN_SPEED);
       if (angle <= -myXBEE.angle[CurrentInstruct])
       {
         instructDone = true;
       }
       break;
-    case XBEE::INSTRUCT_BYTE::ACTION_RIGHT : //Turn Right
+    case XBEE::INSTRUCT_BYTE::ACTION_RIGHT: //Turn Right
       myMOTOR.RightTurn(TURN_SPEED);
       if (angle >= myXBEE.angle[CurrentInstruct])
       {
         instructDone = true;
       }
       break;            
-    case XBEE::INSTRUCT_BYTE::ACTION_FORWARD : //Go Forward
+    case XBEE::INSTRUCT_BYTE::ACTION_FORWARD: //Go Forward
       myMOTOR.Forward(myXBEE.speedy[CurrentInstruct]);
-      if (disp >= (myXBEE.distance[CurrentInstruct]))
+      if (displacement >= (myXBEE.distance[CurrentInstruct]))
       {
         instructDone = true;
       }
       break;  
-    case XBEE::INSTRUCT_BYTE::DONE_EXECUTION : //if No more instructions
+    case XBEE::INSTRUCT_BYTE::DONE_EXECUTION: //if No more instructions
       myMOTOR.Stop();
-      Serial.println("All Done");      
-      while(1)
-      {
-        //spin forever
-      }
+      //Serial.println("All Done");      
     default: //If the action type is not recognized
       myMOTOR.Stop();
       break;  
@@ -121,7 +129,7 @@ void executeCurrentInstruct()
 void printStatus()
 {
   Serial.print("Instruction: #"); Serial.println(CurrentInstruct);
-  Serial.print("Displacement: "); Serial.print(disp); Serial.println(" cm");
+  Serial.print("Displacement: "); Serial.print(displacement); Serial.println(" cm");
   Serial.print("Angle: "); Serial.print(angle); Serial.println (" deg");
   Serial.println(myXBEE.action[CurrentInstruct], HEX);
 }
