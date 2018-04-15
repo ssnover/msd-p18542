@@ -29,7 +29,7 @@ def give_danger(tile):
         for j in range(1, TERRAIN_WIDTH+1):
             terrain = json.load(open('terrain.txt'))
             i = terrain['coordinate'].index([k, j])
-            if terrain['color'][i] == 'blue':
+            if terrain['color'][i] == 'blu':
                 tile[(k, j)]['immediate_danger'] = 200
                 tile[(k, j)]['adjacent_danger'] = 0
                 tile[(k, j)]['speed'] = 200
@@ -37,25 +37,25 @@ def give_danger(tile):
                 tile[(k, j)]['immediate_danger'] = 25
                 tile[(k, j)]['adjacent_danger'] = 3
                 tile[(k, j)]['speed'] = 0
-            elif terrain['color'][i] == 'orange':
+            elif terrain['color'][i] == 'org':
                 tile[(k, j)]['immediate_danger'] = 2
                 tile[(k, j)]['adjacent_danger'] = 1
                 tile[(k, j)]['speed'] = 1
-            elif terrain['color'][i] == 'green':
+            elif terrain['color'][i] == 'grn':
                 tile[(k, j)]['immediate_danger'] = 2
                 tile[(k, j)]['adjacent_danger'] = 0
                 tile[(k, j)]['speed'] = 2
-            elif terrain['color'][i] == 'gray':
+            elif terrain['color'][i] == 'gry':
                 tile[(k, j)]['immediate_danger'] = 0
                 tile[(k, j)]['adjacent_danger'] = 0
                 tile[(k, j)]['speed'] = 0
-            elif terrain['color'][i] == 'white':
+            elif terrain['color'][i] == 'whi':
                 tile[(k, j)]['immediate_danger'] = 0
                 tile[(k, j)]['adjacent_danger'] = 0
                 tile[(k, j)]['speed'] = 0
                 start = (k, j)
                 white = white + 1
-            elif terrain['color'][i] == 'purple':
+            elif terrain['color'][i] == 'prp':
                 tile[(k, j)]['immediate_danger'] = 0
                 tile[(k, j)]['adjacent_danger'] = 0
                 tile[(k, j)]['speed'] = 0
@@ -66,10 +66,14 @@ def give_danger(tile):
                 tile[(k, j)]['adjacent_danger'] = 2
                 tile[(k, j)]['speed'] = 200
 
-    if purple != 1:
-        raise ValueError('Goal DNE')
-    elif white != 1:
-        raise ValueError('Robot cannot be identified')
+    if purple == 0:
+        raise ValueError('No victim identified')
+    elif purple > 1:
+        raise ValueError('Too many victims')
+    elif white == 0:
+        raise ValueError('No ASAR unit identified')
+    elif white > 1:
+        raise ValueError('Too many ASAR units')
 
     return start, goal, tile
 
