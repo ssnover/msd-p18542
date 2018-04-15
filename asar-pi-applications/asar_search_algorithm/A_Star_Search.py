@@ -2,6 +2,8 @@ from queue import PriorityQueue
 import Pi_Cfg as cfg
 import base64
 import logging
+import numpy as np
+import matplotlib.pyplot as plt
 
 with open('search.log', 'w'):
     pass
@@ -101,13 +103,35 @@ def reconstruct_path(came_from, start, goal):
     return path  # This is the final output path to be sent to the vision system for the path overlay on the image
 
 
+def print_path(path):
+
+    logging.debug(path)
+
+    row = {}
+
+    for i in range(8):
+        if i % 2 == 0:  # even
+            row[i] = ['  x', '  x', '  x', '  x', '  x', '  x', '  x', '  x']
+        else:
+            row[i] = ['x  ', 'x  ', 'x  ', 'x  ', 'x  ', 'x  ', 'x  ', 'x  ']
+
+    for index, item in enumerate(path):
+        for i in range(8):
+            for j in range(8):
+                if path[index] == (i+1, j+1) and i % 2 == 0:  # even
+                    row[i][j] = '  O'
+                elif path[index] == (i+1, j+1) and i % 2 != 0:  # odd
+                    row[i][j] = 'O  '
+
+    for i in range(8):
+        logging.debug(' '.join(row[i]))
+
+
 # path_to_move converts the path from coordinates to the robot's instruction protocol
 def path_to_move(path, tile):
 
     if path == -1:
         raise ValueError('No path to convert to instructions')
-
-    logging.debug(path)
 
     movement = []  # list of robot instructions
 
@@ -207,7 +231,9 @@ def path_to_move(path, tile):
 def main():
     start, goal, tile = cfg.give_danger(instantiate_graph())
     came_from, start, goal = a_star_search(tile, start, goal, mode)
-    path_to_move(reconstruct_path(came_from, start, goal), tile)
+    path = reconstruct_path(came_from, start, goal)
+    print_path(path)
+    path_to_move(path, tile)
 
 
 if __name__ == '__main__':
