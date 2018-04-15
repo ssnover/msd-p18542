@@ -2,12 +2,15 @@ from queue import PriorityQueue
 import Pi_Cfg as cfg
 import base64
 import logging
+import sys
 import numpy as np
 import matplotlib.pyplot as plt
 
 with open('search.log', 'w'):
     pass
-logging.basicConfig(filename="search.log", level=logging.DEBUG)
+logging.basicConfig(filename='search.log', level=logging.INFO)
+
+log = logging.getLogger(__name__)
 
 TERRAIN_HEIGHT = cfg.TERRAIN_HEIGHT  # number of tiles down the side
 TERRAIN_WIDTH = cfg.TERRAIN_WIDTH   # number of tiles across the top
@@ -66,22 +69,28 @@ def a_star_search(tile, start, goal, mode):
         current = frontier.get()  # pulls the least expensive node off of queue
 
         if current == goal:  # goal test
-            logging.debug('Goal Reached!')
+            log.info('Goal Reached!')
             break
 
         for i in range(0, len(tile[current]['children'])):
             next = tile[current]['children'][i]  # iterates through children of current node
-            new_cost = cost_so_far[current] + cfg.travel(current, next, tile, mode)  # heuristic part 1 (uses danger & Speed)
-            if next not in cost_so_far or new_cost < cost_so_far[next]:  # if next has not been visited
-                if tile[next]['speed'] < INFINITY:  # do not evaluate obstacles (Rock & water)
-                    if mode == 0 and tile[next]['immediate_danger'] >= cfg.SAFE_LIMIT:  # do not drive through fire in safe mode
-                        continue
-                    else:
-                        cost_so_far[next] = new_cost
-                        priority = new_cost + cfg.heuristic(goal, next, tile)  # heuristic part 2 (Euclidean distance)
-                        # logging.debug('{0} --> {1} = {2}'.format(current, next, priority))
-                        frontier.put(next, priority)  # put evaluated node onto queue
-                        came_from[next] = current
+            if tile[next] == goal:
+                priority = cost_so_far[current] + 1 + cfg.heuristic(goal, next, tile)
+                frontier.put(next, priority)
+                came_from[next] = current
+                break
+            else:
+                new_cost = cost_so_far[current] + cfg.travel(current, next, tile, mode)  # heuristic part 1 (uses danger & Speed)
+                if next not in cost_so_far or new_cost < cost_so_far[next]:  # if next has not been visited
+                    if tile[next]['speed'] < INFINITY:  # do not evaluate obstacles (Rock & water)
+                        if mode == 0 and tile[next]['immediate_danger'] >= cfg.SAFE_LIMIT:  # do not drive through fire in safe mode
+                            continue
+                        else:
+                            cost_so_far[next] = new_cost
+                            priority = new_cost + cfg.heuristic(goal, next, tile)  # heuristic part 2 (Euclidean distance)
+                            log.info('{0} --> {1} = {2}'.format(current, next, priority))
+                            frontier.put(next, priority)  # put evaluated node onto queue
+                            came_from[next] = current
 
     return came_from, start, goal
 
@@ -90,7 +99,7 @@ def a_star_search(tile, start, goal, mode):
 def reconstruct_path(came_from, start, goal):
     current = goal
     if current not in came_from:
-        raise ValueError('No best path')
+        raise ValueError('No drivable path')
         return -1
 
     path = []
@@ -105,7 +114,7 @@ def reconstruct_path(came_from, start, goal):
 
 def print_path(path):
 
-    logging.debug(path)
+    log.info(path)
 
     row = {}
 
@@ -124,7 +133,7 @@ def print_path(path):
                     row[i][j] = 'O  '
 
     for i in range(8):
-        logging.debug(' '.join(row[i]))
+        log.info(' '.join(row[i]))
 
 
 # path_to_move converts the path from coordinates to the robot's instruction protocol
@@ -142,10 +151,10 @@ def path_to_move(path, tile):
         # convert heuristic speed to hex speed
         if tile[path[i]]['speed'] == 0:  # fast
             speed = cfg.FAST
-        elif tile[path[i]]['speed'] == 1:  # smart
-            speed = cfg.SMART
+        elif tile[path[i]]['speed'] == 1:  # medium
+            speed = cfg.MEDIUM
         else:  # default speed for unknown objects == slow
-            speed = cfg.SAFE
+            speed = cfg.SLOW
 
         # choose appropriate relative angle to turn based on current orientation and relative position of next tile
         if path[i-1][0] % 2 == 0:  # tile's row is even
@@ -217,13 +226,13 @@ def path_to_move(path, tile):
     trail = ''.join(movement)  # convert transmission list to string
 
     for i in range(0, len(movement)):  # optional vertical display of instructions
-        logging.debug(movement[i])
+        log.info(movement[i])
 
-    # logging.debug(trail)
+    # log.info(trail)
 
     # binary_trail = base64.b16decode(trail)
 
-    # logging.debug(binary_trail)
+    # log.info(binary_trail)
 
     return trail  # this is the final output robot instructions to be sent to the robot
 
