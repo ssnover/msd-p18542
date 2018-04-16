@@ -93,6 +93,7 @@ void callback()
 /*Sends the current instruction to the motors*/
 void executeCurrentInstruct()
 {
+  double Error = 0;
   switch (static_cast<XBEE::INSTRUCT_BYTE>(myXBEE.action[CurrentInstruct]))
   {
     case XBEE::INSTRUCT_BYTE::ACTION_LEFT: //Turn Left
@@ -131,6 +132,7 @@ void printStatus()
   Serial.print("Instruction: #"); Serial.println(CurrentInstruct);
   Serial.print("Displacement: "); Serial.print(displacement); Serial.println(" cm");
   Serial.print("Angle: "); Serial.print(angle); Serial.println (" deg");
+  //Serial.print("Error: "); Serial.print(straightError); Serial.println(" Degrees/Meter");
   Serial.println(myXBEE.action[CurrentInstruct], HEX);
 }
 

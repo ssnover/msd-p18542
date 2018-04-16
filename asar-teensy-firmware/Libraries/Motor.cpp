@@ -45,14 +45,19 @@ namespace ASAR
   
   void MOTOR::Forward(const int Speed)
   {
-  	int PWMval = Speed; //Convert Speed Setting to PWM Val
+    int Adjust = errorAdjust();
+  	int PWMval_left = Speed + Adjust; //Convert Speed Setting to PWM Val
+    int PWMval_right = Speed - Adjust;
+//    Serial.print("Adjust: "); Serial.println(Adjust);
+//    Serial.print("PWM Left: "); Serial.println(PWMval_left);
+//    Serial.print("PWM Right: "); Serial.println(PWMval_right);
   	digitalWrite(this->enablepin_right, HIGH);
   	digitalWrite(this->enablepin_left, HIGH);
    
-  	analogWrite(this->PWM_RightA, PWMval);
+  	analogWrite(this->PWM_RightA, PWMval_right);
   	analogWrite(this->PWM_RightB, 0);
   	analogWrite(this->PWM_LeftA, 0);
-  	analogWrite(this->PWM_LeftB, PWMval);
+  	analogWrite(this->PWM_LeftB, PWMval_left);
   }
   
     
@@ -109,12 +114,20 @@ namespace ASAR
   }
   
   void MOTOR::ReadCounts()
-  {
-  
+  { 
   	LeftCounts = -LeftEncoder.read();
   	RightCounts = RightEncoder.read();
-    
-  
+  }
+
+  int MOTOR::errorAdjust()
+  {
+    int Error = 0;
+    ReadCounts();
+    Error = (LeftCounts - RightCounts)/2;
+//    Serial.print("Leftcounts: "); Serial.println(LeftCounts);
+//    Serial.print("RightCounts: "); Serial.println(RightCounts);
+//    Serial.print("Error: "); Serial.println(Error);
+    return Error;
   }
   
   double MOTOR::getPosition()

@@ -12,7 +12,7 @@
  {
 	 class MOTOR
 	 {
-		 public:
+		 public: 
 		
 			MOTOR();
 			~MOTOR();
@@ -20,6 +20,7 @@
 			void Backwards(const int Speed);
 			void RightTurn(const int Speed);
 			void LeftTurn(const int Speed);
+      int errorAdjust();
 			void Stop();
       double getPosition();
       double getAngle();
