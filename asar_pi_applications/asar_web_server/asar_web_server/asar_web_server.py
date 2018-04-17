@@ -5,7 +5,7 @@
              database.
 """
 
-from .config import Config, DANGER, ENVIRONMENT, STATE
+from .gui_constants import GUI_CONSTANTS, DANGER, ENVIRONMENT, STATE
 import datetime
 from flask import Flask, request, session, g, redirect, url_for, abort, \
     render_template, flash, make_response, send_file
@@ -16,7 +16,7 @@ import threading
 
 
 app = Flask(__name__)
-app.config.from_object(Config)
+app.config.from_object(GUI_CONSTANTS)
 SAMPLE_IMAGE_PATH = os.path.join(os.sep, 'home', 'ssnover', 'develop', 'msd-p18542', 'asar_pi_applications', 'asar_web_server', 'asar_web_server', 'static', 'hondas2000.jpg')
 APP_WORKER_THREAD = threading.Thread(target=app.run, name="ASAR Web Application Server Thread")
 
@@ -94,7 +94,7 @@ def command_console():
             update_settings(form.danger.data, form.environment.data, settings[2])
         else:
             print("Invalid: User tried to change settings during simulation.")
-        
+
     return render_template('view.html', form=form)
 
 
@@ -188,6 +188,8 @@ def update_settings(danger, environment, state):
 def get_current_settings():
     """
     Utility method to retrieve a tuple of the current simulation settings.
+
+    Returns: The settings in order of (danger, environment, state)
     """
     backend_database = getDatabase(app.config['DATABASE'])
     cursor = backend_database.execute("""select danger, environment, state from settings
