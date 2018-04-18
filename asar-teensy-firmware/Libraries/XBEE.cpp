@@ -22,18 +22,27 @@ namespace ASAR
 		//empty destructor
 	}
 
-  void XBEE::initInstruction()
+  /*Set Everything equal to zero*/
+  void XBEE::initInstruction() 
   {
       Serial.println("Initializing...");
-      action[1024] = {0x00};
-      distance[1024] ={0x00};
-      angle[1024] = {0x00};
-      speedy[1024] = {0x00};
+      int i = 0;
+      for(i=0; i <= 255; i++)
+      {
+        if (i <= 5)
+        {
+          singleRead[i] = 0x00;           //temporary hold place from direct reading of xbee
+        }
+        action[i] = 0x00;
+        distance[i] = 0x00;
+        angle[i] = 0x00;
+        speedy[i] = 0x00;
+        allRaw[i] = 0x00;
+      }
       instructTotal = 0;          //total instructions
       instructNum = 1;            //couner for instruction number initialized to one
       rawReadIndex = 0;
-      allRaw[1024] = {0};
-      singleRead[5] = {0};           //temporary hold place from direct reading of xbee
+     
   }
 
   /*Read everything in buffer from XBEE, should be entire instruct set*/
@@ -47,6 +56,7 @@ namespace ASAR
     { 
       if (Serial1.available())
       {
+        Serial1.println("Data Read...");
         allRaw[index] = Serial1.read();
         if (   index            >= 2 
             && INSTRUCT_BYTE::END_INSTRUCT_SET == static_cast<INSTRUCT_BYTE>(allRaw[index])
@@ -58,10 +68,10 @@ namespace ASAR
           {
             allRaw[index - i] = 0;
           }
-         /* for (int i = 0; i <= index; i++)
+         for (int i = 0; i <= index; i++)
           {
-            Serial.print(i); Serial.print(". "); Serial.println(allRaw[i], HEX);
-          }*/
+            //Serial.print(i); Serial.print(". "); Serial.println(allRaw[i], HEX);
+          }
         }
         else if (INSTRUCT_BYTE::END_SINGLE_INSTRUCT == static_cast<INSTRUCT_BYTE>(allRaw[index]) && start_flag)
         {
@@ -98,7 +108,7 @@ namespace ASAR
   		}
       else if (MAX_BYTES_PER <= i)
       {
-        Serial.println("ERROR-001: Stop BYTE Not Detected");
+        Serial1.println("ERROR-001: Stop BYTE Not Detected");
         while(1){}
       }
    	}                             
@@ -118,8 +128,8 @@ namespace ASAR
         angle[instructNum] = singleRead[1]; //add the relative turning angle to instruction set
         if (singleRead[2] != 0xF0)          //If the stop BYTE isnt next, something went wrong
         {
-          Serial.println("ERROR-002: Stop BYTE Not Detected as expected"); 
-          Serial.println(singleRead[2], HEX);//print error message
+          Serial1.println("ERROR-002: Stop BYTE Not Detected as expected"); 
+          Serial1.println(singleRead[2], HEX);//print error message
           while(1){}
         }
         break;
@@ -127,8 +137,8 @@ namespace ASAR
         angle[instructNum] = singleRead[1]; //add the turning angle to instruction set
         if (singleRead[2] != 0xF0)          //If the stop BYTE isnt next, something went wrong     
         {
-          Serial.println("ERROR-002: Stop BYTE Not Detected as expected"); //print error message
-          Serial.println(singleRead[2], HEX);
+          Serial1.println("ERROR-002: Stop BYTE Not Detected as expected"); //print error message
+          Serial1.println(singleRead[2], HEX);
           while(1){}
         }
         break;            
@@ -138,13 +148,13 @@ namespace ASAR
         //if (INSTRUCT_BYTE::END_SINGLE_INSTRUCT != static_cast<INSTRUCT_BYTE>(singleRead[3]) != 0xF0)             //If the stop BYTE isnt next, something went wrong
         if (singleRead[3] != 0xF0) 
         {
-          Serial.println("ERROR-002: Stop BYTE Not Detected as expected"); //print error message
-          Serial.println(singleRead[3], HEX);
+          Serial1.println("ERROR-002: Stop BYTE Not Detected as expected"); //print error message
+          Serial1.println(singleRead[3], HEX);
           while(1) { }
         }
         break;           
       default: //If the action type is not recognized
-        Serial.println("ERROR-003: Move-type not not recognized"); //print error message
+        Serial1.println("ERROR-003: Move-type not not recognized"); //print error message
         while(1){}
         break;  
     }
@@ -157,28 +167,28 @@ namespace ASAR
   /* Function that prints full instruction set */
   void XBEE::printInstructSet()
   {
-    Serial.println("Printing all Instructions");
+    Serial1.println("Printing all Instructions");
     for (int i = 1; i <= instructTotal; i++) //For each instruction
     {
-      Serial.print("Instruction: "); Serial.println(i);
+      Serial1.print("Instruction: "); Serial1.println(i);
       switch (static_cast<INSTRUCT_BYTE>(action[i]))      //switch between the different types of moves
       {
         case INSTRUCT_BYTE::ACTION_LEFT : //Turn Left
-          Serial.println("  Move Type: Left Turn");
-          Serial.print("    Angle: "); Serial.print(angle[i]); Serial.println (" degrees");
+          Serial1.println("  Move Type: Left Turn");
+          Serial1.print("    Angle: "); Serial1.print(angle[i]); Serial1.println (" degrees");
           break;
         case INSTRUCT_BYTE::ACTION_RIGHT : //Turn Right
-          Serial.println("  Move Type: Right Turn");
-          Serial.print("    Angle: "); Serial.print(angle[i]); Serial.println (" degrees");
+          Serial1.println("  Move Type: Right Turn");
+          Serial1.print("    Angle: "); Serial1.print(angle[i]); Serial1.println (" degrees");
           break;
         case INSTRUCT_BYTE::ACTION_FORWARD : //Forwarmd
-          Serial.println("  Move Type: Forward");
-          Serial.print("    Distance: "); Serial.println(distance[i]);
-          Serial.print("    Speed: "); Serial.println(speedy[i]);
+          Serial1.println("  Move Type: Forward");
+          Serial1.print("    Distance: "); Serial1.println(distance[i]);
+          Serial1.print("    Speed: "); Serial1.println(speedy[i]);
           break;
         default :
-          Serial.print("ERROR-004: Move-type: \""); Serial.print(action[i], HEX); 
-          Serial.println("\" not recognized");
+          Serial1.print("ERROR-004: Move-type: \""); Serial1.print(action[i], HEX); 
+          Serial1.println("\" not recognized");
           while(1){}
       }
     }
@@ -188,7 +198,7 @@ namespace ASAR
   void XBEE::getInstructions()
   {
     rawReadIndex = 0;
-    Serial.println("getting all instructions");
+    Serial1.println("getting all instructions");
     readAllRaw();
     while (instructNum <= instructTotal)
     {

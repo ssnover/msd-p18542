@@ -20,7 +20,7 @@ bool instructDone = false;
 int CurrentInstruct = 1;
 double displacement = 0;
 double angle = 0;
-const int TURN_SPEED = 250;
+const int TURN_SPEED = 150;
 
 void callback();
 void executeCurrentInstruct();
@@ -31,22 +31,23 @@ ASAR::MOTOR myMOTOR;
 
 void setup() 
 {
+  Serial1.begin(115200);
   Serial.begin(115200);
   delay(1000);
   pinMode(LED, OUTPUT);
   PITimer1.period(Period);
   PITimer1.start(callback);
   myMOTOR.initEncoder();
-  Serial.println("Waiting...");
+  Serial1.println("Waiting...");
   while(myXBEE.action[1] == 0)
   {
     myXBEE.getInstructions();
   }
-  Serial.println("My Actions Are..");
+  Serial1.println("My Actions Are..");
   for(int i = 1; i < myXBEE.instructTotal; i++)
   {
-    Serial.print(i); Serial.print(". ");
-    Serial.println(myXBEE.action[i], HEX);
+    Serial1.print(i); Serial1.print(". ");
+    Serial1.println(myXBEE.action[i], HEX);
   }
   
 }
@@ -74,11 +75,11 @@ void loop()
       CurrentInstruct = 1;
       myXBEE.initInstruction();
       myXBEE.getInstructions();
-      Serial.println("My Actions Are..");
+      Serial1.println("My Actions Are..");
       for(int i = 1; i < myXBEE.instructTotal; i++)
       {
-        Serial.print(i); Serial.print(". ");
-        Serial.println(myXBEE.action[i], HEX);
+        Serial1.print(i); Serial1.print(". ");
+        Serial1.println(myXBEE.action[i], HEX);
       }
     }
   }
@@ -93,7 +94,6 @@ void callback()
 /*Sends the current instruction to the motors*/
 void executeCurrentInstruct()
 {
-  double Error = 0;
   switch (static_cast<XBEE::INSTRUCT_BYTE>(myXBEE.action[CurrentInstruct]))
   {
     case XBEE::INSTRUCT_BYTE::ACTION_LEFT: //Turn Left
@@ -119,7 +119,7 @@ void executeCurrentInstruct()
       break;  
     case XBEE::INSTRUCT_BYTE::DONE_EXECUTION: //if No more instructions
       myMOTOR.Stop();
-      //Serial.println("All Done");      
+      //Serial1.println("All Done"); //Prints Continuously     
     default: //If the action type is not recognized
       myMOTOR.Stop();
       break;  
@@ -129,10 +129,10 @@ void executeCurrentInstruct()
 
 void printStatus()
 {
-  Serial.print("Instruction: #"); Serial.println(CurrentInstruct);
-  Serial.print("Displacement: "); Serial.print(displacement); Serial.println(" cm");
-  Serial.print("Angle: "); Serial.print(angle); Serial.println (" deg");
+  Serial1.print("Instruction: #"); Serial1.println(CurrentInstruct);
+  Serial1.print("Displacement: "); Serial1.print(displacement); Serial1.println(" cm");
+  Serial1.print("Angle: "); Serial1.print(angle); Serial1.println (" deg");
   //Serial.print("Error: "); Serial.print(straightError); Serial.println(" Degrees/Meter");
-  Serial.println(myXBEE.action[CurrentInstruct], HEX);
+  Serial1.println(myXBEE.action[CurrentInstruct], HEX);
 }
 
