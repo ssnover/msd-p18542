@@ -20,7 +20,6 @@
 			void Backwards(const int Speed);
 			void RightTurn(const int Speed);
 			void LeftTurn(const int Speed);
-      int errorAdjust();
 			void Stop();
       double getPosition();
       double getAngle();
@@ -51,6 +50,10 @@
       double RightCounts = 0;
       double Lrevs = 0;
       double Rrevs = 0;
+
+      int forwardErrorAdjust();
+      int leftErrorAdjust();
+      int rightErrorAdjust();
 
 		 
 	 }; //MOTOR_H

@@ -18,10 +18,10 @@ namespace ASAR
 			~XBEE();	//Desturctor
 			/*Set of arrays that include all the instrctions  *
 			 *(index of array is instruction number           */
-			int action[1024] = {0x00};
-			int distance[1024] ={0x00};
-			int angle[1024] = {0x00};
-			int speedy[1024] = {0x00};
+			int action[256] = {0x00};
+			int distance[256] ={0x00};
+			int angle[256] = {0x00};
+			int speedy[256] = {0x00};
       int instructTotal = 0;          //total instructions
       //int readFlag = 0; //0 is not read 1 is read
       void initInstruction();
@@ -47,7 +47,7 @@ namespace ASAR
 			void readAllRaw();
 			void readInstruct();    //Function that reads xbee and updates insruction variables
 			void interpretInstruct(); //Interprets a single instruction and fills global instructions
-			void printInstructSet();   //prints all of the instructions
+			void printInstructSet(int serialPort);   //prints all of the instructions
 	};
 }
 #endif

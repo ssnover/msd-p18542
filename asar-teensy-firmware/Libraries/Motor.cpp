@@ -45,13 +45,13 @@ namespace ASAR
   
   void MOTOR::Forward(const int Speed)
   {
-    double Adjust = errorAdjust();
+    double Adjust = forwardErrorAdjust();
     //double Adjust = 0;
   	double PWMval_left = Speed + Adjust; //Convert Speed Setting to PWM Val
     double PWMval_right = Speed - Adjust;
-//    Serial1.print("Adjust: "); Serial1.println(Adjust);
-//    Serial1.print("PWM Left: "); Serial1.println(PWMval_left);
-//    Serial1.print("PWM Right: "); Serial1.println(PWMval_right);
+//    Serial.print("Adjust: "); Serial.print(Adjust);
+//    Serial.print("  PWM Left: "); Serial.print(PWMval_left);
+//    Serial.print("  PWM Right: "); Serial.println(PWMval_right);
   	digitalWrite(this->enablepin_right, HIGH);
   	digitalWrite(this->enablepin_left, HIGH);
    
@@ -64,7 +64,7 @@ namespace ASAR
     
   void MOTOR::Backwards(const int Speed)
   {
-    int Adjust = errorAdjust();
+    int Adjust = forwardErrorAdjust();
     int PWMval_left = Speed - Adjust; //Convert Speed Setting to PWM Val
     int PWMval_right = Speed + Adjust;
 //  	Serial1.print("Adjust: "); Serial1.println(Adjust);
@@ -82,7 +82,7 @@ namespace ASAR
     
   void MOTOR::RightTurn(const int Speed)
   {
-  	int Adjust = errorAdjust();
+  	int Adjust = rightErrorAdjust();
     //Adjust =0;
     int PWMval_left = Speed + Adjust; //Convert Speed Setting to PWM Val
     int PWMval_right = Speed - Adjust;
@@ -101,12 +101,32 @@ namespace ASAR
   
   void MOTOR::LeftTurn(const int Speed)
   {
-    int Adjust = errorAdjust();
-    int PWMval_left = Speed + Adjust; //Convert Speed Setting to PWM Val
-    int PWMval_right = Speed - Adjust;
-//  	Serial1.print("Adjust: "); Serial1.println(Adjust);
-//    Serial1.print("PWM Left: "); Serial1.println(PWMval_left);
-//    Serial1.print("PWM Right: "); Serial1.println(PWMval_right);
+    int Adjust = leftErrorAdjust();
+    int PWMval_left = Speed - Adjust; //Convert Speed Setting to PWM Val
+    int PWMval_right = Speed + Adjust;
+    if ( PWMval_left >= 255 )
+    {
+      PWMval_left = 255;
+      PWMval_right = PWMval_right + Adjust;
+    }
+    else if ( PWMval_left <= 0 )
+    {
+      PWMval_left = 0;
+      PWMval_right = PWMval_right + Adjust;
+    }
+    if ( PWMval_right >= 255 )
+    {
+      PWMval_right = 255;
+      PWMval_left = PWMval_left - Adjust;
+    }
+    else if ( PWMval_right <= 0 )
+    {
+      PWMval_right = 0;
+      PWMval_left = PWMval_left - Adjust;
+    }
+//  	Serial.print("Adjust: "); Serial.println(Adjust);
+//    Serial.print("PWM Left: "); Serial.println(PWMval_left);
+//    Serial.print("PWM Right: "); Serial.println(PWMval_right);
   	digitalWrite(this->enablepin_right, HIGH);
   	digitalWrite(this->enablepin_left, HIGH);
     
@@ -133,13 +153,40 @@ namespace ASAR
   { 
   	LeftCounts = -LeftEncoder.read();
   	RightCounts = RightEncoder.read();
+//    Serial.print("Left: "); Serial.print(LeftCounts);
+//    Serial.print( "Right: "); Serial.println(RightCounts);
   }
 
-  int MOTOR::errorAdjust()
+  int MOTOR::forwardErrorAdjust()
   {
     double Error = 0;
     ReadCounts();
-    Error = (abs(LeftCounts) - abs(RightCounts))/2;
+    Error = ((LeftCounts) - (RightCounts));
+//    Serial.print("Left Counts: "); Serial.print(LeftCounts); 
+//    Serial.print("  Right Counts: "); Serial.print(RightCounts);
+//    Serial.print("  Error: "); Serial.println(Error);
+    return Error;
+  }
+
+  int MOTOR::leftErrorAdjust()
+  {
+    double Error = 0;
+    ReadCounts();
+    Error = ((LeftCounts) + (RightCounts));
+//    Serial.print("Left Counts: "); Serial.print(LeftCounts); 
+//    Serial.print("  Right Counts: "); Serial.print(RightCounts);
+//    Serial.print("  Error: "); Serial.println(Error);
+    return Error;
+  }
+
+  int MOTOR::rightErrorAdjust()
+  {
+    double Error = 0;
+    ReadCounts();
+  //  Error = ((LeftCounts) + (RightCounts));
+//    Serial.print("Left Counts: "); Serial.print(LeftCounts); 
+//    Serial.print("  Right Counts: "); Serial.print(RightCounts);
+//    Serial.print("  Error: "); Serial.println(Error);
     return Error;
   }
   
