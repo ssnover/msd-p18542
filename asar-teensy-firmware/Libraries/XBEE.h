@@ -26,7 +26,7 @@ namespace ASAR
       //int readFlag = 0; //0 is not read 1 is read
       void initInstruction();
 			/*reads xbee data, interpretes it as instucionts and prints them on motior*/
-		  void getInstructions();
+		  bool getInstructions(); //Returns true if the instruction is new, returns false if the instruction is duplicate
       enum class INSTRUCT_BYTE
       {
         ACTION_LEFT = 0xAA,
@@ -42,12 +42,15 @@ namespace ASAR
       const int BAUD_RATE = 115200;
 			int instructNum = 1;            //couner for instruction number initialized to one
 			int rawReadIndex = 0;
+      bool sameInstructFlag = false;
+      uint8_t allRawPrevious[1024] = {0};
 			uint8_t allRaw[1024] = {0};
 			uint8_t singleRead[5] = {0};           //temporary hold place from direct reading of xbee
 			void readAllRaw();
 			void readInstruct();    //Function that reads xbee and updates insruction variables
 			void interpretInstruct(); //Interprets a single instruction and fills global instructions
 			void printInstructSet(int serialPort);   //prints all of the instructions
+    
 	};
 }
 #endif

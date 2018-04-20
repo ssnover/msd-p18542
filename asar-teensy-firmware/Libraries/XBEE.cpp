@@ -25,24 +25,23 @@ namespace ASAR
   /*Set Everything equal to zero*/
   void XBEE::initInstruction() 
   {
-      Serial.println("Initializing...");
-      int i = 0;
-      for(i=0; i <= 255; i++)
+    Serial.println("Initializing...");
+    for(int i=0; i <= 255; i++)
+    {
+      if (i <= 5)
       {
-        if (i <= 5)
-        {
-          singleRead[i] = 0x00;           //temporary hold place from direct reading of xbee
-        }
-        action[i] = 0x00;
-        distance[i] = 0x00;
-        angle[i] = 0x00;
-        speedy[i] = 0x00;
-        allRaw[i] = 0x00;
+        singleRead[i] = 0x00;           //temporary hold place from direct reading of xbee
       }
-      instructTotal = 0;          //total instructions
+      action[i] = 0x00;
+      distance[i] = 0x00;
+      angle[i] = 0x00;
+      speedy[i] = 0x00;
+      allRawPrevious[i] = allRaw[i];
+      allRaw[i] = 0x00;
+     }
+      instructTotal = 1;          //total instructions
       instructNum = 1;            //couner for instruction number initialized to one
-      rawReadIndex = 0;
-     
+      rawReadIndex = 0;     
   }
 
   /*Read everything in buffer from XBEE, should be entire instruct set*/
@@ -69,12 +68,13 @@ namespace ASAR
           }
          for (int i = 0; i <= index; i++)
           {
-           // Serial.print(i); Serial.print(". "); Serial.println(allRaw[i], HEX);
+           //Serial.print(i); Serial.print(". "); Serial.println(allRaw[i], HEX);
           }
         }
         else if (INSTRUCT_BYTE::END_SINGLE_INSTRUCT == static_cast<INSTRUCT_BYTE>(allRaw[index]) && start_flag)
         {
           instructTotal++; 
+          Serial.print("Instruct Total: "); Serial.println(instructTotal);
           start_flag = false;
         }
         else if (INSTRUCT_BYTE::START_INSTRUCT == static_cast<INSTRUCT_BYTE>(allRaw[index]))
@@ -84,23 +84,38 @@ namespace ASAR
         index++;
       }
     }
+    sameInstructFlag = true;
+    for (int i = 0; i <= 1023; i++)
+    {
+      if(allRaw[i] != allRawPrevious[i])
+      {
+        //Serial.print(i); Serial.print(". "); Serial.print(allRaw[i]); Serial.print(" and "); Serial.println(allRawPrevious[i]);
+        sameInstructFlag = false;
+        Serial.println("NEW INSTRUCTIONS!");
+        break;
+      }
+    }
+    if (sameInstructFlag == true)
+    {
+      Serial.println("SAME INSTRUCTIONS!!");
+    }
   }
 
 	/*Read a single Instruction from allRaw array*/
 	void XBEE::readInstruct()
 	{
     const int MAX_BYTES_PER = 5;
-    while (INSTRUCT_BYTE::START_INSTRUCT != static_cast<INSTRUCT_BYTE>(allRaw[rawReadIndex]))
+    while (INSTRUCT_BYTE::START_INSTRUCT != static_cast<INSTRUCT_BYTE>(allRawPrevious[rawReadIndex]))
     {
-      //Serial.println("Im removing garbage");
+      Serial.println("Im removing garbage");
       rawReadIndex ++;
     }
     for (int i = 0; i <= MAX_BYTES_PER+1; i++)        //Read all the inputs (until stop BYTE is read)
    	{
       rawReadIndex++;
-			singleRead[i] = allRaw[rawReadIndex];             //and fill up the temporary array
-//      Serial.print("Argument # "); Serial.print(i);
-//      Serial.print(", Raw reading: "); Serial.println(singleRead[i], HEX); 
+			singleRead[i] = allRawPrevious[rawReadIndex];             //and fill up the temporary array
+      Serial.print("Argument # "); Serial.print(i);
+      Serial.print(", Raw reading: "); Serial.println(singleRead[i], HEX); 
       if(INSTRUCT_BYTE::END_SINGLE_INSTRUCT == static_cast<INSTRUCT_BYTE>(singleRead[i])) //If Stop BYTE
       {
         break;
@@ -225,15 +240,21 @@ namespace ASAR
   }
 
   /*Main loop reads xbee data, interpretes it as instucionts and prints them on motior*/
-  void XBEE::getInstructions()
+  bool XBEE::getInstructions()
   {
     rawReadIndex = 0;
     readAllRaw();
-    while (instructNum <= instructTotal)
+    
+    if (sameInstructFlag)
     {
-      Serial.print("Instruction: "); Serial.print(instructNum); 
-      Serial.print(" Out of: "); Serial.println(instructTotal);
-      readInstruct();         //reads a single instruction set from the XBEE
+      return false;
+    }
+    while (instructNum <= instructTotal && !sameInstructFlag)
+    {
+      initInstruction();
+//      Serial.print("Instruction: "); Serial.print(instructNum); 
+//      Serial.print(" Out of: "); Serial.println(instructTotal);
+      readInstruct(); //reads a single instruction set from the XBEE
       if (singleRead[0] != 0)       // If an instruction was actually read
       {
         interpretInstruct();   //Function call that interprets the latest instruction and fills global arrays             
@@ -242,6 +263,7 @@ namespace ASAR
     }
     printInstructSet(0);   //Prints the entire instruction set
     instructNum = 1;      //reset the instruction counter
+    return true;
   }
   
 }//NAMESPACE ASAR
