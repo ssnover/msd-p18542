@@ -255,12 +255,12 @@ def main():
     # print_path(path)
     # path_to_move(path, tile)
 
-    # runSearch('terrain.txt', 0)  # 0 for safe, 1 for smart, 2 for fast, 3 for direct
-    # input()
-    # runSearch('terrain.txt', 1)
-    # input()
-    # runSearch('terrain.txt', 2)
-    # input()
+    runSearch('terrain.txt', 0)  # 0 for safe, 1 for smart, 2 for fast, 3 for direct
+    input()
+    runSearch('terrain.txt', 1)
+    input()
+    runSearch('terrain.txt', 2)
+    input()
     runSearch('terrain1.txt', 3)
 
 if __name__ == '__main__':
