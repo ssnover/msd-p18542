@@ -9,7 +9,7 @@ logging.basicConfig(filename='search.log', level=logging.INFO)
 TERRAIN_HEIGHT = 8  # number of tiles down the side
 TERRAIN_WIDTH = 8   # number of tiles across the top
 
-testmode = 3  # 0 for safe, 1 for smart, 2 for fast, 3 for direct
+#testmode = 3  # 0 for safe, 1 for smart, 2 for fast, 3 for direct
 INFINITY = 200  # variable representing impassable terrain
 
 SAFE_LIMIT = 25  # danger max for safe mode travel
@@ -18,9 +18,6 @@ SAFE_LIMIT = 25  # danger max for safe mode travel
 FAST = 'FF'
 MEDIUM = 'C8'
 SLOW = '7D'
-
-# initial robot orientation [read from mark's Json eventually]
-orientation = 0
 
 
 # give_dng reads the colors of the tiles from the VisionSys. Modifies attribute values accordingly
@@ -80,7 +77,14 @@ def give_danger(tile, terrain_path):
     elif white > 1:
         raise ValueError('Too many ASAR units')
 
-    return start, goal, tile
+    orientation = -1*terrain['robot_orientation'][0] + 90
+
+    if orientation == 270:
+        orientation = -90
+    elif orientation == -270:
+        orientation = 90
+
+    return start, goal, tile, orientation
 
 
 # travel is part 1 of the heuristic. assigns priority of tiles adjacent to current tile
