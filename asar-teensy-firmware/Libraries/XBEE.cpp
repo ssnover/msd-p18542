@@ -37,10 +37,10 @@ namespace ASAR
       angle[i] = 0x00;
       speedy[i] = 0x00;
       allRawPrevious[i] = allRaw[i];
-      allRaw[i] = 0x00;
+      //allRaw[i] = 0x00;
      }
-      instructTotal = 1;          //total instructions
-      instructNum = 1;            //couner for instruction number initialized to one
+      //instructTotal = 1;          //total instructions
+      //instructNum = 1;            //couner for instruction number initialized to one
       rawReadIndex = 0;     
   }
 
@@ -68,7 +68,7 @@ namespace ASAR
           }
          for (int i = 0; i <= index; i++)
           {
-           //Serial.print(i); Serial.print(". "); Serial.println(allRaw[i], HEX);
+           Serial.print(i); Serial.print(". "); Serial.println(allRaw[i], HEX);
           }
         }
         else if (INSTRUCT_BYTE::END_SINGLE_INSTRUCT == static_cast<INSTRUCT_BYTE>(allRaw[index]) && start_flag)
@@ -104,8 +104,14 @@ namespace ASAR
 	/*Read a single Instruction from allRaw array*/
 	void XBEE::readInstruct()
 	{
+//    Serial.println("allRaw list");
+//    for (int i = 0; i<= 20; i++)
+//    {
+//      Serial.println(allRaw[i], HEX);
+//    }
+    
     const int MAX_BYTES_PER = 5;
-    while (INSTRUCT_BYTE::START_INSTRUCT != static_cast<INSTRUCT_BYTE>(allRawPrevious[rawReadIndex]))
+    while (INSTRUCT_BYTE::START_INSTRUCT != static_cast<INSTRUCT_BYTE>(allRaw[rawReadIndex]))
     {
       Serial.println("Im removing garbage");
       rawReadIndex ++;
@@ -113,7 +119,7 @@ namespace ASAR
     for (int i = 0; i <= MAX_BYTES_PER+1; i++)        //Read all the inputs (until stop BYTE is read)
    	{
       rawReadIndex++;
-			singleRead[i] = allRawPrevious[rawReadIndex];             //and fill up the temporary array
+			singleRead[i] = allRaw[rawReadIndex];             //and fill up the temporary array
       Serial.print("Argument # "); Serial.print(i);
       Serial.print(", Raw reading: "); Serial.println(singleRead[i], HEX); 
       if(INSTRUCT_BYTE::END_SINGLE_INSTRUCT == static_cast<INSTRUCT_BYTE>(singleRead[i])) //If Stop BYTE
@@ -251,9 +257,9 @@ namespace ASAR
     }
     while (instructNum <= instructTotal && !sameInstructFlag)
     {
-      initInstruction();
-//      Serial.print("Instruction: "); Serial.print(instructNum); 
-//      Serial.print(" Out of: "); Serial.println(instructTotal);
+      //initInstruction();
+      Serial.print("Instruction: "); Serial.print(instructNum); 
+      Serial.print(" Out of: "); Serial.println(instructTotal);
       readInstruct(); //reads a single instruction set from the XBEE
       if (singleRead[0] != 0)       // If an instruction was actually read
       {

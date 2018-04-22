@@ -19,8 +19,8 @@ namespace ASAR
   namespace
   {
   	const int COUNTS_PER_REV = 48*34; //48 Counts per motor rev * N=34 Gear output
-  	const float WHEEL_RADIUS = 4.5; //cm
-    const float ROBOT_RADIUS = 8.5; //cm
+  	const float WHEEL_RADIUS = 4.5 + .75; //cm
+    const float ROBOT_RADIUS = 8.5+6.7; //cm
     Encoder LeftEncoder(16, 17);
     Encoder RightEncoder(15, 14);
   }
@@ -206,7 +206,8 @@ namespace ASAR
   {
     ReadCounts();
     Lrevs = LeftCounts / COUNTS_PER_REV;
-    Rrevs = RightCounts / COUNTS_PER_REV; 
+    Rrevs = RightCounts / COUNTS_PER_REV;
+    //Serial.print("Rrevs: "); Serial.println(Rrevs); 
     double angle = 0;
     angle = ((Lrevs-Rrevs)/2)*(WHEEL_RADIUS/ROBOT_RADIUS)*360;
     return angle;
