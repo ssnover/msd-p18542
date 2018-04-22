@@ -9,7 +9,7 @@ logging.basicConfig(filename='search.log', level=logging.INFO)
 TERRAIN_HEIGHT = 8  # number of tiles down the side
 TERRAIN_WIDTH = 8   # number of tiles across the top
 
-mode = 3  # 0 for safe, 1 for smart, 2 for fast, 3 for direct
+testmode = 3  # 0 for safe, 1 for smart, 2 for fast, 3 for direct
 INFINITY = 200  # variable representing impassable terrain
 
 SAFE_LIMIT = 25  # danger max for safe mode travel
@@ -25,14 +25,14 @@ orientation = 0
 
 # give_dng reads the colors of the tiles from the VisionSys. Modifies attribute values accordingly
 # color counter added to handle errors
-def give_danger(tile):
+def give_danger(tile, terrain_path):
     start = ()
     goal = ()
     white = 0
     purple = 0
     for k in range(1, TERRAIN_HEIGHT+1):
         for j in range(1, TERRAIN_WIDTH+1):
-            terrain = json.load(open('terrain.txt'))
+            terrain = json.load(open(terrain_path))
             i = terrain['coordinate'].index([k, j])
             if terrain['color'][i] == 'blu':
                 tile[(k, j)]['immediate_danger'] = 200
@@ -133,7 +133,7 @@ def ceil(x):
 
 
 # Part 2 of Heuristics. Euclidean distance is used in absence of a way to estimate the danger/speed of tiles to goal
-def heuristic(goal, next, tile):
+def heuristic(goal, next, tile, mode):
 
     ax = next[1] - floor(next[0])
     ay = next[1] + ceil(next[0])
