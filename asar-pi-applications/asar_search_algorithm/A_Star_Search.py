@@ -15,9 +15,10 @@ log = logging.getLogger(__name__)
 TERRAIN_HEIGHT = cfg.TERRAIN_HEIGHT  # number of tiles down the side
 TERRAIN_WIDTH = cfg.TERRAIN_WIDTH   # number of tiles across the top
 
-mode = cfg.mode  # 0 for safe, 1 for med, 2 for fast
+testmode = cfg.testmode  # 0 for safe, 1 for med, 2 for fast
 INFINITY = cfg.INFINITY   # variable representing impassable terrain
 
+filename = 'terrain.txt'
 
 # Modifies queue to .get the lowest priority
 class MyPriorityQueue(PriorityQueue):
@@ -87,7 +88,7 @@ def a_star_search(tile, start, goal, mode):
                             continue
                         else:
                             cost_so_far[next] = new_cost
-                            priority = new_cost + cfg.heuristic(goal, next, tile)  # heuristic part 2 (Euclidean distance)
+                            priority = new_cost + cfg.heuristic(goal, next, tile, mode)  # heuristic part 2 (Euclidean distance)
                             log.info('{0} --> {1} = {2}'.format(current, next, priority))
                             frontier.put(next, priority)  # put evaluated node onto queue
                             came_from[next] = current
@@ -237,13 +238,23 @@ def path_to_move(path, tile):
     return trail  # this is the final output robot instructions to be sent to the robot
 
 
-def main():
-    start, goal, tile = cfg.give_danger(instantiate_graph())
+def runSearch(terrain_path, mode):
+    start, goal, tile = cfg.give_danger(instantiate_graph(), terrain_path)
     came_from, start, goal = a_star_search(tile, start, goal, mode)
+    coordinate_path = reconstruct_path(came_from, start, goal)
+    robot_instructions = path_to_move(coordinate_path, tile)
+    return (robot_instructions, coordinate_path)
+
+
+
+def main():
+    start, goal, tile = cfg.give_danger(instantiate_graph(), filename)
+    came_from, start, goal = a_star_search(tile, start, goal, testmode)
     path = reconstruct_path(came_from, start, goal)
     print_path(path)
     path_to_move(path, tile)
 
+    runSearch('terrain.txt', 3)
 
 if __name__ == '__main__':
     main()
