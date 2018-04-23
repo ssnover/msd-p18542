@@ -36,7 +36,7 @@ namespace ASAR
     {
       if (myXBEE.action[1] == 0 && !printedReady)
       {
-        Serial.println("Ready to Receive Instructions..."); 
+        Serial1.println("Ready to Receive Instructions..."); 
         printedReady = true;
       }
       else if (myXBEE.action[1] == 0 && printedReady)
@@ -52,16 +52,17 @@ namespace ASAR
         executeCurrentInstruct();
         if(instructDone)
         {
-          Serial.println("Instruct Done");
-          printStatus(0);
+          Serial1.println("Instruct Done");
+          printStatus(1);
           CurrentInstruct++;
           printedReady = false;
           myMOTOR.initEncoder();
           digitalWrite(LED, !digitalRead(LED));
           myMOTOR.Stop();
-          delay(250);
-          Serial.print("Number of Instructions: "); Serial.println(myXBEE.instructTotal);
-          Serial.print("Current Instruction: "); Serial.println(CurrentInstruct);
+          delay(INSTRUCTION_2_INSTRUCTION_DELAY);
+          myMOTOR.Speed = 0;
+          Serial1.print("Number of Instructions: "); Serial1.println(myXBEE.instructTotal);
+          Serial1.print("Current Instruction: "); Serial1.println(CurrentInstruct);
           if (myXBEE.instructTotal < CurrentInstruct)
           {
             myXBEE.initInstruction();

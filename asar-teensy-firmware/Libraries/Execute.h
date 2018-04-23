@@ -35,7 +35,10 @@
 		 	int CurrentInstruct = 1;
 			double displacement = 0;
 			double angle = 0;
-			const int TURN_SPEED = 240;
+      const double angleError = 0;
+      const double displacementError = 0;
+			const int TURN_SPEED = 220;
+      const int INSTRUCTION_2_INSTRUCTION_DELAY = 250; //milliseconds
 
 			void executeSetup();		 
 			void executeCurrentInstruct();

@@ -43,8 +43,18 @@ namespace ASAR
   
   
   
-  void MOTOR::Forward(const int Speed)
+  void MOTOR::Forward(const int finalSpeed)
   {
+    if (Speed < finalSpeed)
+    {
+      Speed = Speed + ACCEL_PARAMETER;
+    }
+    else 
+    {
+      Speed = finalSpeed;
+    }
+    Serial.print("finalSpeed: "); Serial.print(finalSpeed);
+    Serial.print("Speed: "); Serial.println(Speed);
     double Adjust = forwardErrorAdjust();
     //double Adjust = 0;
   	double PWMval_left = Speed + Adjust; //Convert Speed Setting to PWM Val
@@ -62,8 +72,18 @@ namespace ASAR
   }
   
     
-  void MOTOR::Backwards(const int Speed)
+  void MOTOR::Backwards(const int finalSpeed)
   {
+    if (Speed < finalSpeed)
+    {
+      Speed = Speed + ACCEL_PARAMETER;
+    }
+    else 
+    {
+      Speed = finalSpeed;
+    }
+    Serial.print("finalSpeed: "); Serial.print(finalSpeed);
+    Serial.print("Speed: "); Serial.println(Speed);
     int Adjust = forwardErrorAdjust();
     int PWMval_left = Speed - Adjust; //Convert Speed Setting to PWM Val
     int PWMval_right = Speed + Adjust;
@@ -80,8 +100,18 @@ namespace ASAR
       
   }
     
-  void MOTOR::LeftTurn(const int Speed)
+  void MOTOR::LeftTurn(const int finalSpeed)
   {
+    if (Speed < finalSpeed)
+    {
+      Speed = Speed + ACCEL_PARAMETER;
+    }
+    else 
+    {
+      Speed = finalSpeed;
+    }
+    Serial.print("finalSpeed: "); Serial.print(finalSpeed);
+    Serial.print("Speed: "); Serial.println(Speed);
   	int Adjust = rightErrorAdjust();
     //Adjust =0;
     int PWMval_left = Speed - Adjust; //Convert Speed Setting to PWM Val
@@ -99,8 +129,18 @@ namespace ASAR
       
   }
   
-  void MOTOR::RightTurn(const int Speed)
+  void MOTOR::RightTurn(const int finalSpeed)
   {
+    if (Speed < finalSpeed)
+    {
+      Speed = Speed + ACCEL_PARAMETER;
+    }
+    else 
+    {
+      Speed = finalSpeed;
+    }
+    Serial.print("finalSpeed: "); Serial.print(finalSpeed);
+    Serial.print("Speed: "); Serial.println(Speed);
     int Adjust = leftErrorAdjust();
     int PWMval_left = Speed - Adjust; //Convert Speed Setting to PWM Val
     int PWMval_right = Speed + Adjust;

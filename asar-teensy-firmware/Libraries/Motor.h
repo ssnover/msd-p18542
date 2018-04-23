@@ -24,6 +24,8 @@
       double getPosition();
       double getAngle();
       void initEncoder();
+
+      double Speed = 1;
       
     
     
@@ -50,6 +52,10 @@
       double RightCounts = 0;
       double Lrevs = 0;
       double Rrevs = 0;
+
+      const int START_SPEED = 100;
+      const double ACCEL_PARAMETER = 0.5;
+      
 
       int forwardErrorAdjust();
       int leftErrorAdjust();
