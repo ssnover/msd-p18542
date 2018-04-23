@@ -81,14 +81,14 @@ namespace ASAR
     {
       case XBEE::INSTRUCT_BYTE::ACTION_LEFT: //Turn Left
         myMOTOR.LeftTurn(TURN_SPEED);
-        if (angle <= -myXBEE.angle[CurrentInstruct])
+        if (angle >= myXBEE.angle[CurrentInstruct])
         {
           instructDone = true;
         }
         break;
       case XBEE::INSTRUCT_BYTE::ACTION_RIGHT: //Turn Right
         myMOTOR.RightTurn(TURN_SPEED);
-        if (angle >= myXBEE.angle[CurrentInstruct])
+        if (angle <= -myXBEE.angle[CurrentInstruct])
         {
           instructDone = true;
         }

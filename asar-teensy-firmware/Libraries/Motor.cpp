@@ -80,12 +80,12 @@ namespace ASAR
       
   }
     
-  void MOTOR::RightTurn(const int Speed)
+  void MOTOR::LeftTurn(const int Speed)
   {
   	int Adjust = rightErrorAdjust();
     //Adjust =0;
-    int PWMval_left = Speed + Adjust; //Convert Speed Setting to PWM Val
-    int PWMval_right = Speed - Adjust;
+    int PWMval_left = Speed - Adjust; //Convert Speed Setting to PWM Val
+    int PWMval_right = Speed + Adjust;
 //    Serial1.print("Adjust: "); Serial1.println(Adjust);
 //    Serial1.print("PWM Left: "); Serial1.println(PWMval_left);
 //    Serial1.print("PWM Right: "); Serial1.println(PWMval_right);
@@ -99,7 +99,7 @@ namespace ASAR
       
   }
   
-  void MOTOR::LeftTurn(const int Speed)
+  void MOTOR::RightTurn(const int Speed)
   {
     int Adjust = leftErrorAdjust();
     int PWMval_left = Speed - Adjust; //Convert Speed Setting to PWM Val

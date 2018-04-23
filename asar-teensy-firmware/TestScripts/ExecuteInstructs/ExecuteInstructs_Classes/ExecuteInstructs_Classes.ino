@@ -11,6 +11,7 @@
 #include "PITimer.h"
 
 using namespace ASAR;
+
 const double Period = .01;
 bool Flag = false;
 
