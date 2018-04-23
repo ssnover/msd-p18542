@@ -1,27 +1,19 @@
-INFO:__main__:(7, 3) --> (7, 2) = 5
-INFO:__main__:(7, 3) --> (8, 3) = 5
-INFO:__main__:(7, 3) --> (8, 4) = 5
-INFO:__main__:(7, 3) --> (7, 4) = 4
-INFO:__main__:(7, 3) --> (6, 4) = 3
-INFO:__main__:(7, 3) --> (6, 3) = 4
-INFO:__main__:(6, 4) --> (5, 3) = 4
-INFO:__main__:(6, 4) --> (6, 5) = 4
-INFO:__main__:(6, 4) --> (5, 4) = 3
-INFO:__main__:(5, 4) --> (5, 5) = 4
-INFO:__main__:(5, 4) --> (4, 5) = 3
-INFO:__main__:(5, 4) --> (4, 4) = 4
-INFO:__main__:Goal Reached!
-INFO:__main__:[(7, 3), (6, 4), (5, 4), (4, 5)]
-INFO:__main__:  x   x   x   x   x   x   x   x
-INFO:__main__:x   x   x   x   x   x   x   x  
-INFO:__main__:  x   x   x   x   x   x   x   x
-INFO:__main__:x   x   x   x   O   x   x   x  
-INFO:__main__:  x   x   x   O   x   x   x   x
-INFO:__main__:x   x   x   O   x   x   x   x  
-INFO:__main__:  x   x   O   x   x   x   x   x
-INFO:__main__:x   x   x   x   x   x   x   x  
-INFO:__main__:FFAA3CF0
-INFO:__main__:FFCC28FFF0
-INFO:__main__:FFCC287DF0
-INFO:__main__:FFCC28FFF0
-INFO:__main__:FFFFFF
+DEBUG:root:Goal Reached!
+DEBUG:root:[(7, 1), (8, 2), (8, 3), (8, 4), (7, 4), (6, 4), (6, 3), (5, 2), (4, 3), (3, 3)]
+DEBUG:root:FFAA3CF0
+DEBUG:root:FFCC28FFF0
+DEBUG:root:FFAA3CF0
+DEBUG:root:FFCC28FFF0
+DEBUG:root:FFCC28FFF0
+DEBUG:root:FFAA3CF0
+DEBUG:root:FFCC28FFF0
+DEBUG:root:FFAA3CF0
+DEBUG:root:FFCC28FFF0
+DEBUG:root:FFAA3CF0
+DEBUG:root:FFCC28FFF0
+DEBUG:root:FFBB3CF0
+DEBUG:root:FFCC28FFF0
+DEBUG:root:FFBB3CF0
+DEBUG:root:FFCC28C8F0
+DEBUG:root:FFCC28FFF0
+DEBUG:root:FFFFFF
