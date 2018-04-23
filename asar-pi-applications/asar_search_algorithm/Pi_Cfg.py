@@ -25,7 +25,7 @@ SLOW = '7D'
 def give_danger(tile, terrain_path):
     start = ()
     goal = ()
-    white = 0
+    pink = 0
     purple = 0
     for k in range(1, TERRAIN_HEIGHT+1):
         for j in range(1, TERRAIN_WIDTH+1):
@@ -51,13 +51,17 @@ def give_danger(tile, terrain_path):
                 tile[(k, j)]['immediate_danger'] = 0
                 tile[(k, j)]['adjacent_danger'] = 0
                 tile[(k, j)]['speed'] = 0
-            elif terrain['color'][i] == 'whi':
+            elif terrain['color'][i] == 'ukn':  # flagged unknown tiles
+                tile[(k, j)]['immediate_danger'] = 200
+                tile[(k, j)]['adjacent_danger'] = 3
+                tile[(k, j)]['speed'] = 200
+            elif terrain['color'][i] == 'pnk':  # robot
                 tile[(k, j)]['immediate_danger'] = 0
                 tile[(k, j)]['adjacent_danger'] = 0
                 tile[(k, j)]['speed'] = 0
                 start = (k, j)
-                white = white + 1
-            elif terrain['color'][i] == 'prp':
+                pink = pink + 1
+            elif terrain['color'][i] == 'prp':  # victim
                 tile[(k, j)]['immediate_danger'] = 0
                 tile[(k, j)]['adjacent_danger'] = 0
                 tile[(k, j)]['speed'] = 0
@@ -65,16 +69,16 @@ def give_danger(tile, terrain_path):
                 purple = purple + 1
             else:
                 tile[(k, j)]['immediate_danger'] = 200
-                tile[(k, j)]['adjacent_danger'] = 2
+                tile[(k, j)]['adjacent_danger'] = 3
                 tile[(k, j)]['speed'] = 200
 
     if purple == 0:
         raise ValueError('No victim identified')
     elif purple > 1:
         raise ValueError('Too many victims')
-    elif white == 0:
+    elif pink == 0:
         raise ValueError('No ASAR unit identified')
-    elif white > 1:
+    elif pink > 1:
         raise ValueError('Too many ASAR units')
 
     orientation = -1*terrain['robot_orientation'][0] + 90
