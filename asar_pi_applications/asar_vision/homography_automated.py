@@ -7,16 +7,18 @@ import imutils
 import os
 
 
+
 def automated_homography(input_image=None):
     if input_image is None:
-        im_src = cv2.imread('new_terrain_for_andrew.png')
+        im_src = cv2.imread('terrain_example.jpg')
     else:
         im_src = cv2.imread(input_image)
-    final_attributes = []
     # Destination image
     size = (600, 500, 3)
 
     im_dst = np.zeros(size, np.uint8)
+
+
 
     pts_dst = np.array(
         [
@@ -26,21 +28,17 @@ def automated_homography(input_image=None):
             [0, size[1] - 1]
         ], dtype=float
     )
-
-    # Show image and wait for 4 clicks.
     # cv2.imshow("Image", im_src)
     pts_src = four_points(im_src)
-    print(pts_src)
-    print(pts_dst)
-    # Calculate the homography
+    # print(pts_src)
+    # print(pts_dst)
+    # Calculate the homography to transform the image
     h, status = cv2.findHomography(pts_src, pts_dst)
     # Warp source image to destination
     im_dst = cv2.warpPerspective(im_src, h, size[0:2])
     # print(pts_src)
 
     attributes = get_attributes(im_dst)
-    print(pts_dst)
-    # with attributes as outfile:
 
     # Show output
 
@@ -49,16 +47,14 @@ def automated_homography(input_image=None):
     with open('terrain.txt', 'w') as outfile:
         json_str = json.dump(attributes, outfile)
 
-    print(json_str)
+    #print(json_str)
 
-
-    # cv2.waitKey(0)
+    #cv2.waitKey(0)
     return os.path.abspath('terrain.txt')
+
 
 if __name__ == '__main__':
 
-
-    # Read in the image.
     automated_homography()
 
 

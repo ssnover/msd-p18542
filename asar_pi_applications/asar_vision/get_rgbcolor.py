@@ -6,23 +6,23 @@ from math import sqrt
 
 def get_rgbcolor(average_hsv):
     distances = []
-    gray = "gray"
-    blue = "blue"
-    green = "green"
+    gray = "gry"
+    blue = "blu"
+    green = "grn"
     red = "red"
-    yellow = "yellow"
-    white = "white"
-    orange = "orange"
-    purple = "purple"
+    yellow = "yel"
+    pink = "pnk"
+    orange = "org"
+    purple = "prp"
     preset_colors = ([127, 127, 127],
                      [204, 72, 63],
                      [76, 177, 34],
                      [36, 28, 237],
                      [0, 242, 255],
-                     [255, 255, 255],
+                     [255, 0, 255],
                      [39, 127, 255],
                      [164, 73, 163])
-    colors = [gray, blue, green, red, yellow, white, orange, purple]
+    colors = [gray, blue, green, red, yellow, pink, orange, purple]
 
     for i in range(0, len(preset_colors)):
 
