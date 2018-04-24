@@ -11,7 +11,7 @@ def get_rgbcolor(average_hsv):
     green = "green"
     red = "red"
     yellow = "yellow"
-    white = "white"
+    pink = "pink"
     orange = "orange"
     purple = "purple"
     preset_colors = ([127, 127, 127],
@@ -19,10 +19,10 @@ def get_rgbcolor(average_hsv):
                      [76, 177, 34],
                      [36, 28, 237],
                      [0, 242, 255],
-                     [255, 255, 255],
+                     [255, 0, 255],
                      [39, 127, 255],
                      [164, 73, 163])
-    colors = [gray, blue, green, red, yellow, white, orange, purple]
+    colors = [gray, blue, green, red, yellow, pink, orange, purple]
 
     for i in range(0, len(preset_colors)):
 

@@ -17,7 +17,7 @@ import threading
 
 app = Flask(__name__)
 app.config.from_object(Config)
-SAMPLE_IMAGE_PATH = os.path.join(os.sep, 'home', 'ssnover', 'develop', 'msd-p18542', 'asar-pi-applications', 'asar_web_server', 'asar_web_server', 'static', 'hondas2000.jpg')
+SAMPLE_IMAGE_PATH = os.path.join(os.sep, 'home', 'ssnover', 'develop', 'msd-p18542', 'asar_pi_applications', 'asar_web_server', 'asar_web_server', 'static', 'hondas2000.jpg')
 APP_WORKER_THREAD = threading.Thread(target=app.run, name="ASAR Web Application Server Thread")
 
 

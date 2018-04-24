@@ -6,12 +6,20 @@ from get_coordinate import get_coordinate
 from get_rgbcolor import get_rgbcolor
 from coordinate_checklist import coordinate_checklist
 from get_missing_terrain import get_missing_terrain
+from robot_tracking import find_robot_orientation
+from robot_distance_incorrect import robot_distance_incorrect
+
 
 def get_attributes(image):
     number_of_hexagons = 0
     hexagon_attributes = {}
+    robot_tracking = {}
+    hexagon_pixel_values = []
+    robot_actual_location = []
     hexagon_attributes['color'] = []
     hexagon_attributes['coordinate'] = []
+    hexagon_attributes['robot distance incorrect'] = []
+    hexagon_attributes['robot orientation'] = []
     pixel_hsv = []
     pixel_hsv_averages = []
     coordinate_check = []
@@ -49,35 +57,44 @@ def get_attributes(image):
             c *= ratio
             c = c.astype("int")
             px = [cY, cX]
-            print(px)
+            # print(px)
             pixel_hsv = []
             for i in range(0, 3):
                 for k in range(0, 3):
                     pixel = image[cY + i, cX + k]
                     pixel_hsv.insert(i + k, pixel)
-                    print(pixel)
+                    # print(pixel)
 
             # calculate the average H, S, and V values for each hexagon tile
             average_hsv = np.mean(pixel_hsv, axis=0)
             pixel_hsv_averages.append(np.mean(pixel_hsv, axis=0))
-            print(np.mean(pixel_hsv, axis=0))
-            print(pixel_hsv_averages)
-
+            # print(np.mean(pixel_hsv, axis=0))
+            # print(pixel_hsv_averages)
+            # return all of the hexagon attributes from called functions
             hexagon_attributes['color'].append(get_rgbcolor(average_hsv))
-
+            hexagon_pixel_values.append(px)
             hexagon_attributes['coordinate'].append(get_coordinate(px))
 
-            # cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
+
+            cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
             # cv2.circle(image, (cX, cY), 7, (255, 255, 255), -1)
             # cv2.putText(image, shape, (cX, cY), cv2.FONT_HERSHEY_SIMPLEX,
              #           0.5, (255, 255, 255), 2)
             number_of_hexagons = number_of_hexagons + 1
 
          # show the output image
-        # cv2.imshow("Image", image)
-        # cv2.waitKey(0)
+        cv2.imshow("Image", image)
+        cv2.waitKey(0)
+    # find the robot orientation and direction of travel
+    robot_attributes = find_robot_orientation(image)
+    robot_actual_location = robot_attributes[1]
+    angle = robot_attributes[0]
+    hexagon_attributes['robot orientation'] = angle
+    robot_distance_movement = robot_distance_incorrect(robot_actual_location, hexagon_pixel_values)
+    hexagon_attributes['robot distance incorrect'] = robot_distance_movement
+    # find any tiles that were not found by the vision system and set them to unpassable
     coordinate_check = coordinate_checklist()
     hexagon_attributes = get_missing_terrain(hexagon_attributes, coordinate_check)
     # hexagon_attributes = dict(zip(coordinate,color))
-    print(hexagon_attributes)
+    # print(hexagon_attributes)
     return hexagon_attributes

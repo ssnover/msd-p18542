@@ -15,7 +15,6 @@ def four_points(image):
     four['points'] = []
     four['corners'] = [[0, 0], [0, 0], [0, 0], [0, 0]]
     four_corners = []
-
     # load the image and resize it to a smaller factor so that
     # the shapes can be approximated better
     resized = imutils.resize(image, width=300)
@@ -48,7 +47,7 @@ def four_points(image):
         cX = int((M["m10"] / M["m00"]) * ratio)
         cY = int((M["m01"] / M["m00"]) * ratio)
         shape = sd.detect(c)
-        if shape == "triangle":
+        if shape == "triangle" and len(c) >10:
             # multiply the contour (x, y)-coordinates by the resize ratio,
             # then draw the contours and the name of the shape on the image
             c = c.astype("float")
@@ -58,7 +57,7 @@ def four_points(image):
             # print(px)
 
             cv2.drawContours(image, [c], -1, (0, 255, 0), 2)
-            cv2.circle(image, (cX, cY), 7, (255, 255, 255), -1)
+            # cv2.circle(image, (cX, cY), 7, (255, 255, 255), -1)
             #cv2.putText(image, shape, (cX, cY), cv2.FONT_HERSHEY_SIMPLEX,
                #     0.5, (255, 255, 255), 2)
             # print(cX, cY)
@@ -66,21 +65,25 @@ def four_points(image):
             if len(four_corners) < 4:
                 four_corners.append([cX, cY])
 
-                print(four_corners)
-                # cv2.imshow("Image", image)
+                # print(four_corners)
+                cv2.imshow("Image", image)
             cv2.waitKey(0)
+
 
     # show the output image
     # four_corners.reverse()
     for i in range(0, len(four_corners)):
-        if four_corners[i][0] < 50 and four_corners[i][1] < 50:
+        if four_corners[i][0] < 200 and four_corners[i][1] < 200:
             four['corners'][0] = four_corners[i]
-        elif four_corners[i][0] > 600 and four_corners[i][1] < 50:
+        elif four_corners[i][0] > 600 and four_corners[i][1] < 200:
             four['corners'][1] = four_corners[i]
         elif four_corners[i][0] > 600 and four_corners[i][1] > 500:
             four['corners'][2] = four_corners[i]
-        elif four_corners[i][0] < 50 and four_corners[i][1] > 500:
+        elif four_corners[i][0] < 200 and four_corners[i][1] > 500:
             four['corners'][3] = four_corners[i]
+
+    if len(four_corners) != 4:
+        four['corners'] = [[121, 74], [567, 53], [704, 436], [22, 465]]
     print(four['corners'])
     # four['corners'] = four_corners
     four = np.vstack(four['corners']).astype(float)
