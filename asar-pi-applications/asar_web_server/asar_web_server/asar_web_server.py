@@ -5,12 +5,12 @@
              database.
 """
 
-from .config import Config, DANGER, ENVIRONMENT, STATE
+from config import Config, DANGER, ENVIRONMENT, STATE
 import datetime
 from flask import Flask, request, session, g, redirect, url_for, abort, \
     render_template, flash, make_response, send_file
 import os
-from .simulation_settings import SimulationSettingsForm
+from simulation_settings import SimulationSettingsForm
 import sqlite3
 import threading
 
@@ -212,7 +212,8 @@ def main():
     """
     Runs the application on localhost:5000.
     """
-    APP_WORKER_THREAD.start()
+    #APP_WORKER_THREAD.start()
+    app.run(host='0.0.0.0', port=5000)
 
 
 if __name__ == "__main__":
