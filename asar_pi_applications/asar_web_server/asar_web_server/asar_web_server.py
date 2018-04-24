@@ -147,13 +147,10 @@ def most_recent_image():
     This function opens the database to grab the most recent image taken to push
     to the client.
     """
-    backend_database = getDatabase(app.config['DATABASE'])
-    cursor = backend_database.execute('select image_path from images order by time_taken desc')
-    result = cursor.fetchall()
-    if (len(result) > 0):
+    image_path = get_most_recent_image()
+    if image_path:
         print("Sending off the most recent image.")
-        path_to_image = result[0][0]
-        return send_file(path_to_image, mimetype='image/jpeg')
+        return send_file(image_path, mimetype='image/jpeg')
     else:
         print("Sending the default image.")
         return send_file(SAMPLE_IMAGE_PATH, mimetype='image/jpeg')
@@ -198,6 +195,7 @@ def get_current_settings():
     current_settings = cursor.fetchall()[0]
     return current_settings
 
+
 def add_image_to_database(path_to_image):
     """
     Utility method for adding image to database.
@@ -208,6 +206,21 @@ def add_image_to_database(path_to_image):
                                 values (?, ?)""",
                              [path_to_image, datetime.datetime.now()])
     backend_database.commit()
+
+
+def get_most_recent_image():
+    """
+    Utility method grabbing the most recent image from the database.
+    """
+    backend_database = getDatabase(app.config['DATABASE'])
+    cursor = backend_database.execute("""select image_path from images
+                                         order by time_taken desc
+                                         limit 1""")
+    result = cursor.fetchall()
+    if len(result) > 0:
+        return result[0][0]
+    else:
+        return None
 
 
 def main():
