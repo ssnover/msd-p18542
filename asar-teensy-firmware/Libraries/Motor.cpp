@@ -53,8 +53,8 @@ namespace ASAR
     {
       Speed = finalSpeed;
     }
-    Serial.print("finalSpeed: "); Serial.print(finalSpeed);
-    Serial.print("Speed: "); Serial.println(Speed);
+//    Serial.print("finalSpeed: "); Serial.print(finalSpeed);
+//    Serial.print("Speed: "); Serial.println(Speed);
     double Adjust = forwardErrorAdjust();
     //double Adjust = 0;
   	double PWMval_left = Speed + Adjust; //Convert Speed Setting to PWM Val
@@ -82,8 +82,8 @@ namespace ASAR
     {
       Speed = finalSpeed;
     }
-    Serial.print("finalSpeed: "); Serial.print(finalSpeed);
-    Serial.print("Speed: "); Serial.println(Speed);
+//    Serial.print("finalSpeed: "); Serial.print(finalSpeed);
+//    Serial.print("Speed: "); Serial.println(Speed);
     int Adjust = forwardErrorAdjust();
     int PWMval_left = Speed - Adjust; //Convert Speed Setting to PWM Val
     int PWMval_right = Speed + Adjust;
@@ -139,8 +139,8 @@ namespace ASAR
     {
       Speed = finalSpeed;
     }
-    Serial.print("finalSpeed: "); Serial.print(finalSpeed);
-    Serial.print("Speed: "); Serial.println(Speed);
+//    Serial.print("finalSpeed: "); Serial.print(finalSpeed);
+//    Serial.print("Speed: "); Serial.println(Speed);
     int Adjust = leftErrorAdjust();
     int PWMval_left = Speed - Adjust; //Convert Speed Setting to PWM Val
     int PWMval_right = Speed + Adjust;
@@ -179,6 +179,7 @@ namespace ASAR
   
   void MOTOR::Stop()
   {
+    Serial.println("Stopping");
   	digitalWrite(this->enablepin_right, HIGH);
   	digitalWrite(this->enablepin_left, HIGH);
     

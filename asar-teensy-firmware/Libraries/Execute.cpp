@@ -23,7 +23,6 @@ namespace ASAR
     {
       if (myXBEE.getInstructions()) //If new instruction
       {
-        //myMOTOR.initEncoder();
         Serial.println("To Do list:");
         for(int i = 1; i <= myXBEE.instructTotal; i++)
         {
@@ -63,12 +62,12 @@ namespace ASAR
           myMOTOR.Speed = 0;
           Serial1.print("Number of Instructions: "); Serial1.println(myXBEE.instructTotal);
           Serial1.print("Current Instruction: "); Serial1.println(CurrentInstruct);
+          readyForNew = true;
           if (myXBEE.instructTotal < CurrentInstruct)
           {
             myXBEE.initInstruction();
             CurrentInstruct = 1;
             instructDone = false;
-            readyForNew = true;
           }
         }
       }
@@ -101,6 +100,12 @@ namespace ASAR
           instructDone = true;
         }
         break;  
+      case XBEE::INSTRUCT_BYTE::ACTION_STAHP:
+        Serial1.println("STOPPING!!!");
+        myMOTOR.Stop();
+        myXBEE.initInstruction();
+        instructDone = true;
+        break;
       case XBEE::INSTRUCT_BYTE::DONE_EXECUTION: //if No more instructions
         myMOTOR.Stop(); 
       default: //If the action type is not recognized

@@ -32,6 +32,7 @@ namespace ASAR
         ACTION_LEFT = 0xAA,
         ACTION_RIGHT = 0xBB,
         ACTION_FORWARD = 0xCC,
+        ACTION_STAHP = 0x99,
         END_SINGLE_INSTRUCT = 0xF0,
         END_INSTRUCT_SET = 0xFF,
         START_INSTRUCT = 0xFF,

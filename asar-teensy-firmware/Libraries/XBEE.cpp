@@ -172,7 +172,10 @@ namespace ASAR
           Serial1.println(singleRead[3], HEX);
           while(1) { }
         }
-        break;           
+        break;
+      case INSTRUCT_BYTE::ACTION_STAHP :
+          Serial1.println("Read Stop Instruction!!");   
+        break;      
       default: //If the action type is not recognized
         Serial1.println("ERROR-003: Move-type not not recognized"); //print error message
         while(1){}
@@ -236,6 +239,9 @@ namespace ASAR
             Serial.print("    Distance: "); Serial.println(distance[i]);
             Serial.print("    Speed: "); Serial.println(speedy[i]);
             break;
+         case INSTRUCT_BYTE::ACTION_STAHP : //Stop
+            Serial.println("  Move Type: Stop");
+            break;
           default :
             Serial.print("ERROR-004: Move-type: \""); Serial.print(action[i], HEX); 
             Serial.println("\" not recognized");
@@ -257,7 +263,6 @@ namespace ASAR
     }
     while (instructNum <= instructTotal && !sameInstructFlag)
     {
-      //initInstruction();
       Serial.print("Instruction: "); Serial.print(instructNum); 
       Serial.print(" Out of: "); Serial.println(instructTotal);
       readInstruct(); //reads a single instruction set from the XBEE
