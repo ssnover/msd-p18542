@@ -227,7 +227,8 @@ def main():
     """
     Runs the application on localhost:5000.
     """
-    APP_WORKER_THREAD.start()
+    #APP_WORKER_THREAD.start()
+    app.run(host='0.0.0.0', port=5000)
 
 
 if __name__ == "__main__":

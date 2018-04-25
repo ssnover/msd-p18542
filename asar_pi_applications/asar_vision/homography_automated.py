@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
-from four_corners import four_points
-from get_attributes import get_attributes
+from .four_corners import four_points
+from .get_attributes import get_attributes
 import json
 import imutils
 import os
