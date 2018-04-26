@@ -31,6 +31,7 @@ int Proximity_Sensor::CheckProximity()
 {
   int duration = 0;  //Time taken to receive signal back (proportional to distance)
   double distance = 0; //Distance away from an object
+  const float SPEED_OF_SOUND = .034; // Centimeters per second
 
  /*
   * Sends out a pulse
@@ -42,7 +43,7 @@ int Proximity_Sensor::CheckProximity()
   digitalWrite(trigPin, LOW);
 
   duration = pulseIn(echoPin, HIGH); //waits to receive pulse, and times it
-  distance = duration*0.034/2; //convert to a distance, (possibly cm?)
+  distance = duration*SPEED_OF_SOUND/2; //convert to a distance (Speed of sound, there and back)
   return distance;
 }
 }//NameSpace ASAR

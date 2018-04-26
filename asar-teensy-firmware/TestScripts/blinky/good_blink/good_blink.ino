@@ -3,7 +3,7 @@
 #include "PITimer.h"
 
 const int LED = 13;
-const double sPeriod = .1; 
+const double sPeriod = 1; 
 double Time = 0;
 double othertime = 0;
 bool Flag = 0;

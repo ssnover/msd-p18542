@@ -1,51 +1,45 @@
 def get_coordinate(px):
-    x = px[0]
-    y = px[1]
+    x = px[1]
+    y = px[0]
+    range_min_x = []
+    range_min_y = []
+    range_max_x = []
+    range_max_y = []
+    pixel_range = {}
+    pixel_range['y'] = []
+    pixel_range['x'] = []
+    coordinate = [9, 9]
 
-    if y < 299:
-        if y < 150:
-            if y < 80:
-                y = 1
-            elif y > 80:
-                y = 2
-        elif y > 150:
-            if y < 220:
-                y = 3
-            elif y > 220:
-                y = 4
-    elif y > 299:
-        if y < 440:
-            if y < 370:
-                y = 5
-            elif y > 370:
-                y = 6
-        elif y > 440:
-            if y < 511:
-                y = 7
-            elif y > 511:
-                y = 8
-    if x < 250:
-        if x < 130:
-            if x < 70:
-                x = 1
-            elif x > 70:
-                x = 2
-        elif x > 130:
-            if x < 190:
-                x = 3
-            elif x > 190:
-                x = 4
-    elif x > 250:
-        if x < 370:
-            if x < 310:
-                x = 5
-            elif x > 310:
-                x = 6
-        elif x > 370:
-            if x < 430:
-                x = 7
-            elif x > 430:
-                x = 8
-    coordinate = [x, y]
+    startx = 69
+    starty = 40
+    for j in range(1, 9):
+        range_min_y = starty - 15
+        range_max_y = starty + 15
+
+        for i in range(1, 9):
+            range_min_x = startx - 15
+            range_max_x = startx + 15
+            if j % 2 == 0:
+                startx = 29 + 71 * (i - 1)
+            else:
+                startx = 71 + 71 * (i - 1)
+
+            pixel_range['x'] += [(range_min_x, range_max_x)]
+            pixel_range['y'] += [(range_min_y, range_max_y)]
+        starty = starty + 61
+    for k in range(0, len(pixel_range['x'])):
+        if pixel_range['x'][k][1] > x > pixel_range['x'][k][0]:
+            if k > 8:
+                k = k-8
+            if k == 0:
+                k = k+1
+            coordinate[1] = k
+            break
+    for m in range(0, len(pixel_range['y'])):
+         if pixel_range['y'][m][1] > y > pixel_range['y'][m][0]:
+             coordinate[0] = (m // 8)+1
+             break
+    if coordinate[0] == 9 or coordinate[1] == 9:
+        return None
 
     return coordinate

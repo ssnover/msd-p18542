@@ -33,12 +33,15 @@ const int songLength = 18;
 // in your song. A space represents a rest (no tone)
 
 char notes[] = "cdfda ag cdfdg gf "; // a space represents a rest
+//char notes[] = "ccccc cc ccccc cc ";
 
 // Beats is an array of values for each note and rest.
 // A "1" represents a quarter-note, 2 a half-note, etc.
 // Don't forget that the rests (spaces) need a length as well.
 
 int beats[] = {1,1,1,1,1,1,4,4,2,1,1,1,1,1,1,4,4,2};
+
+
 
 // The tempo is how fast to play the song.
 // To make the song play faster, decrease this value.
