@@ -25,8 +25,8 @@ def four_points(image):
     # the shapes can be approximated better
     resized = imutils.resize(image, width=300)
     ratio = image.shape[0] / float(resized.shape[0])
-    cv2.imshow('mask', mask)
-    cv2.waitKey(0)
+    # cv2.imshow('mask', mask)
+    # cv2.waitKey(0)
     # convert the resized image to grayscale, blur it slightly,
     # and threshold it
     '''
