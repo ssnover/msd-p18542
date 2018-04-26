@@ -9,14 +9,25 @@ import cv2
 import json
 
 def four_points(image):
-
-
     four = {}
     four['points'] = []
     four['corners'] = [[0, 0], [0, 0], [0, 0], [0, 0]]
     four_corners = []
     triangleLower = (23, 193, 159)
     triangleUpper = (255, 255, 255)
+
+    parameters = json.load(open('parameters.txt'))
+    # print(parameters)
+    four['corners'] = [parameters['corners'][0], parameters['corners'][1], parameters['corners'][2],
+                       parameters['corners'][3]]
+
+    print(four['corners'])
+    # four['corners'] = four_corners
+    four = np.vstack(four['corners']).astype(float)
+
+    return four
+
+'''
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     mask = cv2.inRange(hsv, triangleLower, triangleUpper)
     mask = cv2.erode(mask, None, iterations=0)
@@ -29,11 +40,11 @@ def four_points(image):
     # cv2.waitKey(0)
     # convert the resized image to grayscale, blur it slightly,
     # and threshold it
-    '''
+
     gray = cv2.cvtColor(resized, cv2.COLOR_BGR2GRAY)
     blurred = cv2.GaussianBlur(gray, (5, 5), 0)
     thresh = cv2.threshold(blurred, 60, 255, cv2.THRESH_BINARY)[1]
-    '''
+
     # find contours in the thresholded image and initialize the
     # shape detector
 
@@ -74,8 +85,8 @@ def four_points(image):
                 four_corners.append([cX, cY])
 
                 print(four_corners)
-                #cv2.imshow("Image", image)
-            #cv2.waitKey(0)
+                cv2.imshow("Image", image)
+            cv2.waitKey(0)
 
 
     # show the output image
@@ -92,12 +103,12 @@ def four_points(image):
 
     if len(four_corners) != 4:
         parameters = json.load(open('parameters.txt'))
-        print(parameters)
+        # print(parameters)
         four['corners'] = [parameters['corners'][0], parameters['corners'][1], parameters['corners'][2], parameters['corners'][3]]
     print(four['corners'])
     # four['corners'] = four_corners
     four = np.vstack(four['corners']).astype(float)
 
     return four
-
+'''
 
