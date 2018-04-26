@@ -41,7 +41,7 @@ def get_attributes(image):
     for k in range(0, len(thresh_points)):
         thresh = cv2.threshold(blurred, thresh_points[k], 255, cv2.THRESH_BINARY)[1]
         canny_edge = cv2.Canny(blurred, canny_points[k], 40)
-        cv2.imshow('thresh', thresh)
+        # cv2.imshow('thresh', thresh)
         cnts = cv2.findContours(thresh, cv2.RETR_EXTERNAL,
                              cv2.CHAIN_APPROX_SIMPLE)
         cnts = cnts[0] if imutils.is_cv2() else cnts[1]

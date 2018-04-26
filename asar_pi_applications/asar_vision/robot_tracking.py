@@ -16,8 +16,8 @@ def find_robot_orientation(image):
     mask = cv2.inRange(hsv, robotLower, robotUpper)
     mask = cv2.erode(mask, None, iterations=0)
     mask = cv2.dilate(mask, None, iterations=0)
-    cv2.imshow('mask', mask)
-    cv2.waitKey(0)
+    # cv2.imshow('mask', mask)
+    # cv2.waitKey(0)
     # find contours in the mask and initialize the current
     # (x, y) center of the ball
     # find contours in thresholded image, then grab the largest
@@ -107,8 +107,8 @@ def find_robot_orientation(image):
     cv2.putText(image, str(angle), (int(cx) - 50, int(cy) - 50), cv2.FONT_HERSHEY_DUPLEX, 0.8, (255, 255, 255), 2,
                 cv2.LINE_AA)
     # show the output image
-    cv2.imshow("Image", image)
-    cv2.waitKey(0)
+    # cv2.imshow("Image", image)
+    # cv2.waitKey(0)
     return angle, center
 
 
