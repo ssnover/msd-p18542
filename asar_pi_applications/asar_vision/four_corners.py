@@ -6,7 +6,7 @@ from pyimagesearch.shapedetector import ShapeDetector
 import imutils
 import numpy as np
 import cv2
-
+import json
 
 def four_points(image):
 
@@ -15,21 +15,29 @@ def four_points(image):
     four['points'] = []
     four['corners'] = [[0, 0], [0, 0], [0, 0], [0, 0]]
     four_corners = []
+    triangleLower = (23, 193, 159)
+    triangleUpper = (255, 255, 255)
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    mask = cv2.inRange(hsv, triangleLower, triangleUpper)
+    mask = cv2.erode(mask, None, iterations=0)
+    mask = cv2.dilate(mask, None, iterations=0)
     # load the image and resize it to a smaller factor so that
     # the shapes can be approximated better
     resized = imutils.resize(image, width=300)
     ratio = image.shape[0] / float(resized.shape[0])
-
+    cv2.imshow('mask', mask)
+    cv2.waitKey(0)
     # convert the resized image to grayscale, blur it slightly,
     # and threshold it
+    '''
     gray = cv2.cvtColor(resized, cv2.COLOR_BGR2GRAY)
     blurred = cv2.GaussianBlur(gray, (5, 5), 0)
     thresh = cv2.threshold(blurred, 60, 255, cv2.THRESH_BINARY)[1]
-
+    '''
     # find contours in the thresholded image and initialize the
     # shape detector
 
-    cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
+    cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
                          cv2.CHAIN_APPROX_SIMPLE)
     cnts = cnts[0] if imutils.is_cv2() else cnts[1]
     sd = ShapeDetector()
@@ -44,14 +52,14 @@ def four_points(image):
         if M["m00"] == 0:
             M["m00"] = M["m00"]+1
 
-        cX = int((M["m10"] / M["m00"]) * ratio)
-        cY = int((M["m01"] / M["m00"]) * ratio)
+        cX = int((M["m10"] / M["m00"]))#   * ratio)
+        cY = int((M["m01"] / M["m00"]))#   * ratio)
         shape = sd.detect(c)
-        if shape == "triangle" and len(c) >10:
+        if shape == "triangle" and len(c) > 25:
             # multiply the contour (x, y)-coordinates by the resize ratio,
             # then draw the contours and the name of the shape on the image
             c = c.astype("float")
-            c *= ratio
+            # c *= ratio
             c = c.astype("int")
             px = image[cY, cX]
             # print(px)
@@ -65,9 +73,9 @@ def four_points(image):
             if len(four_corners) < 4:
                 four_corners.append([cX, cY])
 
-                # print(four_corners)
-                cv2.imshow("Image", image)
-            cv2.waitKey(0)
+                print(four_corners)
+                #cv2.imshow("Image", image)
+            #cv2.waitKey(0)
 
 
     # show the output image
@@ -75,15 +83,17 @@ def four_points(image):
     for i in range(0, len(four_corners)):
         if four_corners[i][0] < 200 and four_corners[i][1] < 200:
             four['corners'][0] = four_corners[i]
-        elif four_corners[i][0] > 600 and four_corners[i][1] < 200:
+        elif four_corners[i][0] > 500 and four_corners[i][1] < 200:
             four['corners'][1] = four_corners[i]
-        elif four_corners[i][0] > 600 and four_corners[i][1] > 500:
+        elif four_corners[i][0] > 600 and four_corners[i][1] > 300:
             four['corners'][2] = four_corners[i]
-        elif four_corners[i][0] < 200 and four_corners[i][1] > 500:
+        elif four_corners[i][0] < 200 and four_corners[i][1] > 300:
             four['corners'][3] = four_corners[i]
 
     if len(four_corners) != 4:
-        four['corners'] = [[121, 74], [567, 53], [704, 436], [22, 465]]
+        parameters = json.load(open('parameters.txt'))
+        print(parameters)
+        four['corners'] = [parameters['corners'][0], parameters['corners'][1], parameters['corners'][2], parameters['corners'][3]]
     print(four['corners'])
     # four['corners'] = four_corners
     four = np.vstack(four['corners']).astype(float)

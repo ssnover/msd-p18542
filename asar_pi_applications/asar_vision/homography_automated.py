@@ -10,15 +10,12 @@ import os
 
 def automated_homography(input_image=None):
     if input_image is None:
-        im_src = cv2.imread('terrain_example.jpg')
+        im_src = cv2.imread('hex_t.png')
     else:
         im_src = cv2.imread(input_image)
     # Destination image
     size = (600, 500, 3)
-
     im_dst = np.zeros(size, np.uint8)
-
-
 
     pts_dst = np.array(
         [

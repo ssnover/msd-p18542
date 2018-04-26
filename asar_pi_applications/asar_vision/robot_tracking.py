@@ -8,14 +8,16 @@ def find_robot_orientation(image):
     robot = {}
     robot['angle'] = []
     robot['direction'] = []
-    robotLower = (161, 174, 236)
+    robotLower = (116, 151, 226)
     robotUpper = (255, 255, 255)
     distances = []
     # img = cv2.imread('all_color_terrain_with_robot.png')
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     mask = cv2.inRange(hsv, robotLower, robotUpper)
-    mask = cv2.erode(mask, None, iterations=2)
-    mask = cv2.dilate(mask, None, iterations=2)
+    mask = cv2.erode(mask, None, iterations=0)
+    mask = cv2.dilate(mask, None, iterations=0)
+    cv2.imshow('mask', mask)
+    cv2.waitKey(0)
     # find contours in the mask and initialize the current
     # (x, y) center of the ball
     # find contours in thresholded image, then grab the largest
@@ -23,6 +25,8 @@ def find_robot_orientation(image):
     cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
                             cv2.CHAIN_APPROX_SIMPLE)
     cnts = cnts[0] if imutils.is_cv2() else cnts[1]
+
+
     c = max(cnts, key=cv2.contourArea)
     M = cv2.moments(c)
 
