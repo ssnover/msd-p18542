@@ -1,8 +1,11 @@
-
+import os
 import cv2
 import numpy as np
 from math import sqrt
 import json
+
+
+PARAMETERS_FILE = os.path.join(os.path.abspath(os.path.dirname(__file__)), "parameters.txt")
 
 
 def get_rgbcolor(average_hsv):
@@ -17,7 +20,7 @@ def get_rgbcolor(average_hsv):
     pink = "pnk"
     black = "blk"
     colors = [red, blue, green, gray, purple, yellow, orange, pink, black]
-    parameters = json.load(open('parameters.txt'))
+    parameters = json.load(open(PARAMETERS_FILE))
     if len(parameters['value']) < 9:
         preset_colors = ([36, 28, 237],
                          [204, 72, 63],
