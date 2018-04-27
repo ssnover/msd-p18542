@@ -16,18 +16,19 @@ def get_rgbcolor(average_hsv):
     orange = "org"
     pink = "pnk"
     black = "blk"
-    colors = [red, blue, green, gray, purple, yellow, orange, pink, black]
+    colors = [red, blue, green, gray, purple, orange, pink]
     parameters = json.load(open('parameters.txt'))
-    if len(parameters['value']) < 9:
+    print(len(parameters['value'][0]))
+    print(len(parameters['corners']))
+    if len(parameters['value'][0]) < 7:
         preset_colors = ([36, 28, 237],
                          [204, 72, 63],
                          [76, 177, 34],
                          [127, 127, 127],
                          [164, 73, 163],
-                         [0, 242, 255],
                          [39, 127, 255],
-                         [255, 0, 255],
-                         [0, 0, 0])
+                         [255, 0, 255])
+
         for i in range(0, len(preset_colors)):
             dist = sqrt((average_hsv[0] - preset_colors[i][0]) ** 2 +
                         (average_hsv[1] - preset_colors[i][1]) ** 2 +
@@ -42,9 +43,8 @@ def get_rgbcolor(average_hsv):
                          [parameters['value'][0][3]],
                          [parameters['value'][0][4]],
                          [parameters['value'][0][5]],
-                         [parameters['value'][0][6]],
-                         [parameters['value'][0][7]],
-                         [parameters['value'][0][8]])
+                         [parameters['value'][0][6]])
+
 
 
         for i in range(0, len(preset_colors)):

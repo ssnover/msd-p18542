@@ -21,6 +21,7 @@ def get_attributes(image):
     hexagon_attributes['pixel'] = []
     hexagon_attributes['robot distance incorrect'] = []
     hexagon_attributes['robot orientation'] = []
+    hexagon_attributes['robot location'] = []
     final_list_coordinate = []
     final_list_color = []
     final_list_pixel = []
@@ -30,7 +31,7 @@ def get_attributes(image):
     thresh_points = []
     canny_points = []
     canny_points = [0, 10, 20, 25, 30, 35, 40, 45, 50]
-    thresh_points = [60, 80, 90, 100, 110, 120, 130, 140]
+    thresh_points = [40, 50, 60, 80, 90, 100, 110, 120, 130, 140]
     resized = imutils.resize(image, width=300)
     ratio = image.shape[0] / float(resized.shape[0])
 
@@ -40,7 +41,7 @@ def get_attributes(image):
     blurred = cv2.GaussianBlur(gray, (5, 5), 0)
     for k in range(0, len(thresh_points)):
         thresh = cv2.threshold(blurred, thresh_points[k], 255, cv2.THRESH_BINARY)[1]
-        canny_edge = cv2.Canny(blurred, canny_points[k], 40)
+        # canny_edge = cv2.Canny(blurred, canny_points[k], 40)
         # cv2.imshow('thresh', thresh)
         cnts = cv2.findContours(thresh, cv2.RETR_EXTERNAL,
                              cv2.CHAIN_APPROX_SIMPLE)
@@ -60,8 +61,7 @@ def get_attributes(image):
             cX = int((M["m10"] / M["m00"])) #   * ratio)
             cY = int((M["m01"] / M["m00"]))#   * ratio)
             shape = sd.detect(c)
-            if shape == "hexagon":#  and 140 > len(c) > 100:
-                print(len(c))
+            if shape == "hexagon" and 140 > len(c) > 85:
                 # multiply the contour (x, y)-coordinates by the resize ratio,
                 # then draw the contours and the name of the shape on the image
                 c = c.astype("float")
@@ -70,8 +70,8 @@ def get_attributes(image):
                 px = [cY, cX]
                 # print(px)
                 pixel_hsv = []
-                for i in range(0, 3):
-                    for k in range(0, 3):
+                for i in range(0, 7):
+                    for k in range(0, 7):
                         pixel = image[cY + i, cX + k]
                         pixel_hsv.insert(i + k, pixel)
                         # print(pixel)
@@ -100,7 +100,7 @@ def get_attributes(image):
                  #           0.5, (255, 255, 255), 2)
             # show the output image
             # cv2.imshow("Image", image)
-            # cv2.waitKey(0)
+           #  cv2.waitKey(0)
 
 
     # reset the hexagon attribute lists to the final lists without duplicates
@@ -115,6 +115,7 @@ def get_attributes(image):
     hexagon_attributes['robot orientation'] = angle
     robot_distance_movement = robot_distance_incorrect(robot_actual_location, hexagon_pixel_values)
     hexagon_attributes['robot distance incorrect'] = robot_distance_movement
+    hexagon_attributes['robot location'] = get_coordinate(robot_actual_location)
 
     coordinate_check = coordinate_checklist()
     hexagon_attributes = get_missing_terrain(hexagon_attributes, coordinate_check)
