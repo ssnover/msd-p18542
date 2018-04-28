@@ -2,19 +2,21 @@ import cv2
 import numpy as np
 from .four_corners import four_points
 from .get_attributes import get_attributes
+from .draw_robot_path import draw_robot_path
 import json
-import imutils
 import os
-
 
 
 def automated_homography(input_image=None):
     if input_image is None:
-        im_src = cv2.imread('hex_t.png')
+        im_src = cv2.imread('terrain_example_fieldhouse.jpg')
     else:
         im_src = cv2.imread(input_image)
+
+    # im_src = cv2.cvtColor(im_src, cv2.COLOR_BGR2HSV)
     # Destination image
     size = (600, 500, 3)
+
     im_dst = np.zeros(size, np.uint8)
 
     pts_dst = np.array(
@@ -25,28 +27,23 @@ def automated_homography(input_image=None):
             [0, size[1] - 1]
         ], dtype=float
     )
-    # cv2.imshow("Image", im_src)
     pts_src = four_points(im_src)
-    # print(pts_src)
-    # print(pts_dst)
     # Calculate the homography to transform the image
     h, status = cv2.findHomography(pts_src, pts_dst)
     # Warp source image to destination
     im_dst = cv2.warpPerspective(im_src, h, size[0:2])
-    # print(pts_src)
-
+    # cv2.imshow('image', im_dst)
+    # cv2.waitKey(0)
     attributes = get_attributes(im_dst)
-
-    # Show output
-
-    # cv2.imshow("Image", im_dst)
 
     with open('terrain.txt', 'w') as outfile:
         json_str = json.dump(attributes, outfile)
+    # Show output
 
-    #print(json_str)
+    im_dst = draw_robot_path(im_dst)
+    # cv2.imshow("Image", im_dst)
+    # cv2.waitKey(0)
 
-    #cv2.waitKey(0)
     return os.path.abspath('terrain.txt')
 
 

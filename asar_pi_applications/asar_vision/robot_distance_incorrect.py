@@ -16,5 +16,5 @@ def robot_distance_incorrect(robot_actual_location, hexagon_pixel_values):
     pixel_distance = (correct_position[0] - robot_actual_location[0], correct_position[1]-robot_actual_location[1])
     # print(correct_position, robot_actual_location, pixel_distance)
     # convert to actual distance
-    distance_to_get_back = (pixel_distance[0]/1.98, pixel_distance[1]/1.64)
+    distance_to_get_back = (pixel_distance[0]/1.79, pixel_distance[1]/1.749)
     return distance_to_get_back
