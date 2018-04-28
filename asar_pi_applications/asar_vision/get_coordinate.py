@@ -40,6 +40,7 @@ def get_coordinate(px):
              coordinate[0] = (m // 8)+1
              break
     if coordinate[0] == 9 or coordinate[1] == 9:
+
         return None
 
     return coordinate

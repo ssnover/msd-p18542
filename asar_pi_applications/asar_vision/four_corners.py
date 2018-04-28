@@ -21,7 +21,6 @@ def four_points(image):
     four['corners'] = [parameters['corners'][0], parameters['corners'][1], parameters['corners'][2],
                        parameters['corners'][3]]
 
-    print(four['corners'])
     # four['corners'] = four_corners
     four = np.vstack(four['corners']).astype(float)
 

@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 from math import sqrt
 import json
-
+from scipy.spatial import distance as dist
 
 def get_rgbcolor(average_hsv):
     distances = []
@@ -16,46 +16,23 @@ def get_rgbcolor(average_hsv):
     orange = "org"
     pink = "pnk"
     black = "blk"
-    colors = [red, blue, green, gray, purple, orange, pink]
+    colors = [red, blue, green, gray, orange, purple, pink]
     parameters = json.load(open('parameters.txt'))
-    print(len(parameters['value'][0]))
-    print(len(parameters['corners']))
-    if len(parameters['value'][0]) < 7:
-        preset_colors = ([36, 28, 237],
-                         [204, 72, 63],
-                         [76, 177, 34],
-                         [127, 127, 127],
-                         [164, 73, 163],
-                         [39, 127, 255],
-                         [255, 0, 255])
-
+    if len(parameters['value'][0]) < 10:
+        preset_colors = ([174, 224],
+                         [102, 148],
+                         [36, 135],
+                         [13, 46],
+                         [13, 160],
+                         [148.5, 117],
+                         [158, 252])
         for i in range(0, len(preset_colors)):
-            dist = sqrt((average_hsv[0] - preset_colors[i][0]) ** 2 +
-                        (average_hsv[1] - preset_colors[i][1]) ** 2 +
-                        (average_hsv[2] - preset_colors[i][2]) ** 2)
-            distances += [dist]
+            # de = dist.euclidean(average_hsv[0][0], preset_colors[i])
+            d = sqrt((average_hsv[0][0][0] - preset_colors[i][0]) ** 2 +
+                        (average_hsv[0][0][1] - preset_colors[i][1]) ** 2)
+            distances += [d]
         index_min = np.argmin(distances)
-
-    else:
-        preset_colors = ([parameters['value'][0][0]],
-                         [parameters['value'][0][1]],
-                         [parameters['value'][0][2]],
-                         [parameters['value'][0][3]],
-                         [parameters['value'][0][4]],
-                         [parameters['value'][0][5]],
-                         [parameters['value'][0][6]])
+        color = colors[index_min]
+        return color
 
 
-
-        for i in range(0, len(preset_colors)):
-
-            dist = sqrt((average_hsv[0]-preset_colors[i][0][0])**2 +
-                        (average_hsv[1]-preset_colors[i][0][1])**2 +
-                        (average_hsv[2]-preset_colors[i][0][2])**2)
-            distances += [dist]
-        index_min = np.argmin(distances)
-
-    color = colors[index_min]
-    print(preset_colors[index_min])
-    print(color)
-    return color

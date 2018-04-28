@@ -8,7 +8,7 @@ def find_robot_orientation(image):
     robot = {}
     robot['angle'] = []
     robot['direction'] = []
-    robotLower = (116, 151, 226)
+    robotLower = (157, 70, 250)
     robotUpper = (255, 255, 255)
     distances = []
     # img = cv2.imread('all_color_terrain_with_robot.png')
@@ -16,6 +16,9 @@ def find_robot_orientation(image):
     mask = cv2.inRange(hsv, robotLower, robotUpper)
     mask = cv2.erode(mask, None, iterations=0)
     mask = cv2.dilate(mask, None, iterations=0)
+    result = cv2.bitwise_and(image, image, mask=mask)
+
+
     # cv2.imshow('mask', mask)
     # cv2.waitKey(0)
     # find contours in the mask and initialize the current
@@ -37,7 +40,6 @@ def find_robot_orientation(image):
     extRight = tuple(c[c[:, :, 0].argmax()][0])
     extTop = tuple(c[c[:, :, 1].argmin()][0])
     extBot = tuple(c[c[:, :, 1].argmax()][0])
-    print(extBot, extLeft, extRight, extTop, (cx, cy))
     # Take care of the extra point, because there are only 3 sides,
     # the distance max will be flawed of far point is 2 points (ie bottom and right)
     if abs(extLeft[0] - extRight[0]) < 10 and abs(extLeft[1] - extRight[1]) < 10:
@@ -75,9 +77,7 @@ def find_robot_orientation(image):
 
         distances += [dist]
     index_min = np.argmax(distances)
-    print(distances)
     top_triangle = (extreme_points[index_min])
-    print(top_triangle)
     center = (cx, cy)
     # Create vector containing the top of the isosceles triangle
     # and the center of the contour that was found
@@ -102,9 +102,8 @@ def find_robot_orientation(image):
     if top_triangle[0] > center[0]:
         angle = 180 - angle
     angle = round(angle)
-    print(angle)
 
-    cv2.putText(image, str(angle), (int(cx) - 50, int(cy) - 50), cv2.FONT_HERSHEY_DUPLEX, 0.8, (255, 255, 255), 2,
+    cv2.putText(image, str(angle), (int(cx) + 50, int(cy) + 50), cv2.FONT_HERSHEY_DUPLEX, 0.8, (255, 255, 255), 2,
                 cv2.LINE_AA)
     # show the output image
     # cv2.imshow("Image", image)
