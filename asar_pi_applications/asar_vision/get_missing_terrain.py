@@ -2,7 +2,7 @@ def get_missing_terrain(hexagon_attributes, coordinate_check):
 
     differences = []
     color_differences = []
-    blue = "blue"
+    blue = "unk"
     differences = [i for i in coordinate_check + hexagon_attributes['coordinate']
                    if i not in coordinate_check or i not in hexagon_attributes['coordinate']]
 

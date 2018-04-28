@@ -77,7 +77,7 @@ def give_danger(tile, terrain_path):
     elif pink > 1:
         raise ValueError('Too many ASAR units')
 
-    orientation = -1*terrain['robot_orientation'] + 90
+    orientation = -1*terrain['robot orientation'] + 90
 
     if orientation == 270:
         orientation = -90
