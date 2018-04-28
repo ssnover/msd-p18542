@@ -6,7 +6,7 @@
 
 import os
 
-class Config(object):
+class GUI_CONSTANTS(object):
     DATABASE = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'asar-runtime.db')
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'asar'
 
@@ -18,7 +18,7 @@ DANGER = {
 
 ENVIRONMENT = {
     'FOREST FIRE'  : 1,
-    'BLIZZARD'     : 2, 
+    'BLIZZARD'     : 2,
 }
 
 STATE = {

@@ -1,8 +1,8 @@
 import cv2
 import numpy as np
-from four_corners import four_points
-from get_attributes import get_attributes
-from draw_robot_path import draw_robot_path
+from .four_corners import four_points
+from .get_attributes import get_attributes
+from .draw_robot_path import draw_robot_path
 import json
 import os
 
@@ -40,7 +40,6 @@ def automated_homography(input_image=None):
         json_str = json.dump(attributes, outfile)
     # Show output
 
-    im_dst = draw_robot_path(im_dst)
     # cv2.imshow("Image", im_dst)
     # cv2.waitKey(0)
 

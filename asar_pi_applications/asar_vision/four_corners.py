@@ -2,11 +2,16 @@
 # python detect_shapes.py --image shapes_and_colors.png
 
 # import the necessary packages
-from pyimagesearch.shapedetector import ShapeDetector
+from .pyimagesearch.shapedetector import ShapeDetector
 import imutils
 import numpy as np
+import os
 import cv2
 import json
+
+
+PARAMETERS_FILEPATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "parameters.txt")
+
 
 def four_points(image):
     four = {}
@@ -16,7 +21,7 @@ def four_points(image):
     triangleLower = (23, 193, 159)
     triangleUpper = (255, 255, 255)
 
-    parameters = json.load(open('parameters.txt'))
+    parameters = json.load(open(PARAMETERS_FILEPATH))
     # print(parameters)
     four['corners'] = [parameters['corners'][0], parameters['corners'][1], parameters['corners'][2],
                        parameters['corners'][3]]

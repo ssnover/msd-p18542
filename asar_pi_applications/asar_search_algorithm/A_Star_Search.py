@@ -1,10 +1,7 @@
 from queue import PriorityQueue
-import Pi_Cfg as cfg
+import asar_search_algorithm.Pi_Cfg as CONFIG
 import base64
 import logging
-import sys
-import numpy as np
-import matplotlib.pyplot as plt
 
 with open('search.log', 'w'):
     pass
@@ -12,13 +9,13 @@ logging.basicConfig(filename='search.log', level=logging.INFO)
 
 log = logging.getLogger(__name__)
 
-TERRAIN_HEIGHT = cfg.TERRAIN_HEIGHT  # number of tiles down the side
-TERRAIN_WIDTH = cfg.TERRAIN_WIDTH   # number of tiles across the top
+TERRAIN_HEIGHT = CONFIG.TERRAIN_HEIGHT  # number of tiles down the side
+TERRAIN_WIDTH = CONFIG.TERRAIN_WIDTH   # number of tiles across the top
 
-#testmode = cfg.testmode  # 0 for safe, 1 for med, 2 for fast
-INFINITY = cfg.INFINITY   # variable representing impassable terrain
+INFINITY = CONFIG.INFINITY   # variable representing impassable terrain
 
 filename = 'terrain.txt'
+
 
 # Modifies queue to .get the lowest priority
 class MyPriorityQueue(PriorityQueue):
@@ -66,7 +63,6 @@ def a_star_search(tile, start, goal, mode):
     cost_so_far = {start: 0}
 
     while not frontier.empty():
-        i = 0
         current = frontier.get()  # pulls the least expensive node off of queue
 
         if current == goal:  # goal test
@@ -76,19 +72,22 @@ def a_star_search(tile, start, goal, mode):
         for i in range(0, len(tile[current]['children'])):
             next = tile[current]['children'][i]  # iterates through children of current node
             if tile[next] == goal:
-                priority = cost_so_far[current] + 1 + cfg.heuristic(goal, next, tile)
+                priority = cost_so_far[current] + 1 + CONFIG.heuristic(goal, next, tile)
                 frontier.put(next, priority)
                 came_from[next] = current
                 break
             else:
-                new_cost = cost_so_far[current] + cfg.travel(current, next, tile, mode)  # heuristic part 1 (uses danger & Speed)
+                # heuristic part 1 (uses danger & Speed)
+                new_cost = cost_so_far[current] + CONFIG.travel(current, next, tile, mode)
                 if next not in cost_so_far or new_cost < cost_so_far[next]:  # if next has not been visited
                     if tile[next]['speed'] < INFINITY:  # do not evaluate obstacles (Rock & water)
-                        if mode == 0 and tile[next]['immediate_danger'] >= cfg.SAFE_LIMIT:  # do not drive through fire in safe mode
+                        # do not drive through fire in safe mode
+                        if mode == 0 and tile[next]['immediate_danger'] >= CONFIG.SAFE_LIMIT:
                             continue
                         else:
                             cost_so_far[next] = new_cost
-                            priority = new_cost + cfg.heuristic(goal, next, tile, mode)  # heuristic part 2 (Euclidean distance)
+                            # heuristic part 2 (Euclidean distance)
+                            priority = new_cost + CONFIG.heuristic(goal, next, tile, mode)
                             log.info('{0} --> {1} = {2}'.format(current, next, priority))
                             frontier.put(next, priority)  # put evaluated node onto queue
                             came_from[next] = current
@@ -101,7 +100,6 @@ def reconstruct_path(came_from, start, goal):
     current = goal
     if current not in came_from:
         raise ValueError('No drivable path')
-        return -1
 
     path = []
     while current != start:
@@ -145,17 +143,17 @@ def path_to_move(path, tile, orientation):
 
     movement = []  # list of robot instructions
 
-    #orientation = cfg.orientation  # import exact orientation from vision system (current orientation variable)
+    # orientation = cfg.orientation  # import exact orientation from vision system (current orientation variable)
 
     for i in range(1, len(path)):
 
         # convert heuristic speed to hex speed
         if tile[path[i]]['speed'] == 0:  # fast
-            speed = cfg.FAST
+            speed = CONFIG.FAST
         elif tile[path[i]]['speed'] == 1:  # medium
-            speed = cfg.MEDIUM
+            speed = CONFIG.MEDIUM
         else:  # default speed for unknown objects == slow
-            speed = cfg.SLOW
+            speed = CONFIG.SLOW
 
         # choose appropriate relative angle to turn based on current orientation and relative position of next tile
         if path[i-1][0] % 2 == 0:  # tile's row is even
@@ -231,30 +229,23 @@ def path_to_move(path, tile, orientation):
 
     # log.info(trail)
 
-    # binary_trail = base64.b16decode(trail)
+    binary_trail = base64.b16decode(trail)
 
     # log.info(binary_trail)
 
-    return trail  # this is the final output robot instructions to be sent to the robot
+    return binary_trail
 
 
 def runSearch(terrain_path, mode):
-    start, goal, tile, orientation = cfg.give_danger(instantiate_graph(), terrain_path)
+    start, goal, tile, orientation = CONFIG.give_danger(instantiate_graph(), terrain_path)
     came_from, start, goal = a_star_search(tile, start, goal, mode)
     coordinate_path = reconstruct_path(came_from, start, goal)
     robot_instructions = path_to_move(coordinate_path, tile, orientation)
     print_path(coordinate_path)
-    return (robot_instructions, coordinate_path)
-
+    return robot_instructions, coordinate_path, start, goal
 
 
 def main():
-    # start, goal, tile = cfg.give_danger(instantiate_graph(), filename)
-    # came_from, start, goal = a_star_search(tile, start, goal, testmode)
-    # path = reconstruct_path(came_from, start, goal)
-    # print_path(path)
-    # path_to_move(path, tile)
-
     runSearch('terrain.txt', 0)  # 0 for safe, 1 for smart, 2 for fast, 3 for direct
     input()
     runSearch('terrain.txt', 1)
@@ -263,6 +254,6 @@ def main():
     input()
     runSearch('terrain1.txt', 3)
 
+
 if __name__ == '__main__':
     main()
-

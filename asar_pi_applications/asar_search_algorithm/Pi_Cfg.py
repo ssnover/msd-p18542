@@ -1,15 +1,11 @@
-import math
 import json
-import numpy as np
 import logging
-import sys
 
 logging.basicConfig(filename='search.log', level=logging.INFO)
 
 TERRAIN_HEIGHT = 8  # number of tiles down the side
 TERRAIN_WIDTH = 8   # number of tiles across the top
 
-#testmode = 3  # 0 for safe, 1 for smart, 2 for fast, 3 for direct
 INFINITY = 200  # variable representing impassable terrain
 
 SAFE_LIMIT = 25  # danger max for safe mode travel
@@ -81,7 +77,7 @@ def give_danger(tile, terrain_path):
     elif pink > 1:
         raise ValueError('Too many ASAR units')
 
-    orientation = -1*terrain['robot_orientation'][0] + 90
+    orientation = -1*terrain['robot orientation'] + 90
 
     if orientation == 270:
         orientation = -90
@@ -150,7 +146,7 @@ def heuristic(goal, next, tile, mode):
     dx = bx - ax
     dy = by - ay
 
-    if np.sign(dx) == np.sign(dy):
+    if (dx * dy) > 0:
         hexagonal_manhattan_distance = max(abs(dx), abs(dy))
     # elif np.sign(dx) != np.sign(dy) and abs(dx) == abs(dy):
     #     hexagonal_manhattan_distance = max(abs(dx), abs(dy))+1

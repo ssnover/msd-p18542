@@ -5,16 +5,14 @@ path = []
 pixel_path = []
 def draw_robot_path(image, coordinates):
     #parameters = json.load(open('terrain.txt'))
-
+    swapped_coordinates = list()
     for i in range(0, len(coordinates)):
-        temp_coordinate = coordinates[i][0]
-        coordinates[i][0] = coordinates[i][1]
-        coordinates[i][1] = temp_coordinate
+        swapped_coordinates += [coordinates[i][1], coordinates[i][0]]
 
     for j in range(0, len(path)):
-        for i in range(0, len(coordinates)):
-            if path[j][0] == coordinates[i][0] and path[j][1] == coordinates[i][1]:
-                pixel_path.append(tuple(coordinates[i]))
+        for i in range(0, len(swapped_coordinates)):
+            if path[j][0] == swapped_coordinates[i][0] and path[j][1] == swapped_coordinates[i][1]:
+                pixel_path.append(tuple(swapped_coordinates[i]))
     thickness = int(5)
     tuple(pixel_path)
 

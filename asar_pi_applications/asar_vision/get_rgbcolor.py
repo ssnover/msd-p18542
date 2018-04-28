@@ -1,9 +1,11 @@
-
+import os
 import cv2
 import numpy as np
 from math import sqrt
 import json
-from scipy.spatial import distance as dist
+
+PARAMETERS_FILE = os.path.join(os.path.abspath(os.path.dirname(__file__)), "parameters.txt")
+
 
 def get_rgbcolor(average_hsv):
     distances = []
@@ -16,8 +18,8 @@ def get_rgbcolor(average_hsv):
     orange = "org"
     pink = "pnk"
     black = "blk"
+    parameters = json.load(open(PARAMETERS_FILE))
     colors = [red, blue, green, gray, orange, purple, pink]
-    parameters = json.load(open('parameters.txt'))
     if len(parameters['value'][0]) < 10:
         preset_colors = ([174, 224],
                          [102, 148],

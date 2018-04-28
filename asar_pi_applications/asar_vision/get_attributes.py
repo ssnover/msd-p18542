@@ -1,14 +1,14 @@
-from pyimagesearch.shapedetector import ShapeDetector
+from .pyimagesearch.shapedetector import ShapeDetector
 import imutils
 import numpy as np
 import cv2
-from get_coordinate import get_coordinate
-from get_rgbcolor import get_rgbcolor
-from coordinate_checklist import coordinate_checklist
-from get_missing_terrain import get_missing_terrain
-from robot_tracking import find_robot_orientation
-from robot_distance_incorrect import robot_distance_incorrect
-from find_victim import find_victim
+from .get_coordinate import get_coordinate
+from .get_rgbcolor import get_rgbcolor
+from .coordinate_checklist import coordinate_checklist
+from .get_missing_terrain import get_missing_terrain
+from .robot_tracking import find_robot_orientation
+from .robot_distance_incorrect import robot_distance_incorrect
+#from .find_victim import find_victim
 
 
 def get_attributes(image):
