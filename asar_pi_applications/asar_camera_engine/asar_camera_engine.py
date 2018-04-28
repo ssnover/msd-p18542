@@ -20,12 +20,12 @@ except ImportError:
 
 class ASARCameraEngine:
 
-    def __init__(self, frequency, database_path, image_path):
+    def __init__(self, frequency, database_store_call, image_path):
         """
         Constructor.
         """
         self.my_camera = PiCamera()
-        self.my_database_path = database_path
+        self.my_capture_call = database_store_call
         self.my_images_directory = image_path
         self.my_capture_frequency = frequency
         self.my_worker_thread = threading.Thread(target=self.cameraEngineImageContext, args=())
@@ -100,7 +100,8 @@ class ASARCameraEngine:
         while self.my_running_status:
             print("Taking that picture!")
             # need to start putting image paths in database
-            self.takePicture()
+            new_image_path = self.takePicture()
+
             time.sleep(1 / self.my_capture_frequency - 0.1)
 
     def cameraEngineVideoContext(self, path, length_in_seconds):
