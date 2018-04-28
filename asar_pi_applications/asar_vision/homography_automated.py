@@ -40,7 +40,6 @@ def automated_homography(input_image=None):
         json_str = json.dump(attributes, outfile)
     # Show output
 
-    im_dst = draw_robot_path(im_dst)
     # cv2.imshow("Image", im_dst)
     # cv2.waitKey(0)
 

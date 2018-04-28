@@ -3,7 +3,6 @@ import cv2
 import numpy as np
 from math import sqrt
 import json
-from scipy.spatial import distance as dist
 
 PARAMETERS_FILE = os.path.join(os.path.abspath(os.path.dirname(__file__)), "parameters.txt")
 

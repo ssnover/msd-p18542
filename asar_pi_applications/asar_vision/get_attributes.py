@@ -8,7 +8,7 @@ from .coordinate_checklist import coordinate_checklist
 from .get_missing_terrain import get_missing_terrain
 from .robot_tracking import find_robot_orientation
 from .robot_distance_incorrect import robot_distance_incorrect
-from .find_victim import find_victim
+#from .find_victim import find_victim
 
 
 def get_attributes(image):
